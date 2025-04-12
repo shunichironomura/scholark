@@ -1,18 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ResearchTopic } from '../types';
-
-// Define the API response types for research topics
-interface ResearchTopicsResponse {
-  success: boolean;
-  error?: string;
-  topics: ResearchTopic[];
-}
-
-interface ResearchTopicResponse {
-  success: boolean;
-  error?: string;
-  topic: ResearchTopic;
-}
+import {
+  ResearchTopic,
+  ResearchTopicDetail,
+  TopicNote,
+  TopicConference,
+  ResearchTopicsResponse,
+  ResearchTopicResponse,
+  ResearchTopicDetailResponse,
+  TopicNotesResponse,
+  TopicNoteResponse,
+  TopicConferencesResponse,
+  TopicConferenceResponse
+} from '../types';
 
 export function useResearchTopics() {
   const [topics, setTopics] = useState<ResearchTopic[]>([]);
@@ -56,6 +55,29 @@ export function useResearchTopics() {
       }
     } catch (err) {
       setError('Error fetching research topic');
+      console.error(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Fetch detailed information about a research topic, including notes and linked conferences
+  const fetchTopicDetail = useCallback(async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/research-topics/${id}/detail`);
+      const data = await response.json() as ResearchTopicDetailResponse;
+
+      if (data.success) {
+        return data.topic;
+      } else {
+        setError(data.error || 'Failed to fetch research topic details');
+        return null;
+      }
+    } catch (err) {
+      setError('Error fetching research topic details');
       console.error(err);
       return null;
     } finally {
@@ -154,6 +176,242 @@ export function useResearchTopics() {
     }
   }, []);
 
+  // Fetch all notes for a research topic
+  const fetchTopicNotes = useCallback(async (topicId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/research-topics/${topicId}/notes`);
+      const data = await response.json() as TopicNotesResponse;
+
+      if (data.success) {
+        return data.notes;
+      } else {
+        setError(data.error || 'Failed to fetch topic notes');
+        return null;
+      }
+    } catch (err) {
+      setError('Error fetching topic notes');
+      console.error(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Create a new note for a research topic
+  const createTopicNote = useCallback(async (topicId: string, content: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/research-topics/${topicId}/notes`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content }),
+      });
+
+      const data = await response.json() as TopicNoteResponse;
+
+      if (data.success) {
+        return data.note;
+      } else {
+        setError(data.error || 'Failed to create topic note');
+        return null;
+      }
+    } catch (err) {
+      setError('Error creating topic note');
+      console.error(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Update a note
+  const updateTopicNote = useCallback(async (noteId: string, content: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/topic-notes/${noteId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content }),
+      });
+
+      const data = await response.json() as TopicNoteResponse;
+
+      if (data.success) {
+        return data.note;
+      } else {
+        setError(data.error || 'Failed to update topic note');
+        return null;
+      }
+    } catch (err) {
+      setError('Error updating topic note');
+      console.error(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Delete a note
+  const deleteTopicNote = useCallback(async (noteId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/topic-notes/${noteId}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        return true;
+      } else {
+        setError(data.error || 'Failed to delete topic note');
+        return false;
+      }
+    } catch (err) {
+      setError('Error deleting topic note');
+      console.error(err);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Fetch all linked conferences for a research topic
+  const fetchTopicConferences = useCallback(async (topicId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/research-topics/${topicId}/conferences`);
+      const data = await response.json() as TopicConferencesResponse;
+
+      if (data.success) {
+        return data.topicConferences;
+      } else {
+        setError(data.error || 'Failed to fetch topic conferences');
+        return null;
+      }
+    } catch (err) {
+      setError('Error fetching topic conferences');
+      console.error(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Link a conference to a research topic
+  const linkConferenceToTopic = useCallback(async (
+    topicId: string,
+    conferenceId: string,
+    paperTitle?: string,
+    notes?: string
+  ) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/research-topics/${topicId}/conferences`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          conference_id: conferenceId,
+          paper_title: paperTitle || null,
+          notes: notes || null,
+        }),
+      });
+
+      const data = await response.json() as TopicConferenceResponse;
+
+      if (data.success) {
+        return data.topicConference;
+      } else {
+        setError(data.error || 'Failed to link conference to topic');
+        return null;
+      }
+    } catch (err) {
+      setError('Error linking conference to topic');
+      console.error(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Update a topic-conference link
+  const updateTopicConference = useCallback(async (
+    linkId: string,
+    conferenceId: string,
+    paperTitle?: string,
+    notes?: string
+  ) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/topic-conferences/${linkId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          conference_id: conferenceId,
+          paper_title: paperTitle || null,
+          notes: notes || null,
+        }),
+      });
+
+      const data = await response.json() as TopicConferenceResponse;
+
+      if (data.success) {
+        return data.topicConference;
+      } else {
+        setError(data.error || 'Failed to update topic-conference link');
+        return null;
+      }
+    } catch (err) {
+      setError('Error updating topic-conference link');
+      console.error(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Delete a topic-conference link
+  const deleteTopicConference = useCallback(async (linkId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/topic-conferences/${linkId}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        return true;
+      } else {
+        setError(data.error || 'Failed to delete topic-conference link');
+        return false;
+      }
+    } catch (err) {
+      setError('Error deleting topic-conference link');
+      console.error(err);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   // Load research topics on initial mount
   useEffect(() => {
     fetchTopics();
@@ -165,8 +423,17 @@ export function useResearchTopics() {
     error,
     fetchTopics,
     fetchTopic,
+    fetchTopicDetail,
     createTopic,
     updateTopic,
     deleteTopic,
+    fetchTopicNotes,
+    createTopicNote,
+    updateTopicNote,
+    deleteTopicNote,
+    fetchTopicConferences,
+    linkConferenceToTopic,
+    updateTopicConference,
+    deleteTopicConference,
   };
 }

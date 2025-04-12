@@ -1,6 +1,8 @@
 -- Drop existing tables if they exist
 DROP TABLE IF EXISTS conferences;
 DROP TABLE IF EXISTS research_topics;
+DROP TABLE IF EXISTS topic_notes;
+DROP TABLE IF EXISTS topic_conferences;
 
 -- Create tables
 CREATE TABLE conferences (
@@ -15,6 +17,26 @@ CREATE TABLE research_topics (
   id TEXT PRIMARY KEY, -- store UUID here
   name TEXT NOT NULL,
   description TEXT
+);
+
+-- Table for storing private notes related to research topics
+CREATE TABLE topic_notes (
+  id TEXT PRIMARY KEY,
+  topic_id TEXT NOT NULL,
+  content TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (topic_id) REFERENCES research_topics(id) ON DELETE CASCADE
+);
+
+-- Table for linking conferences to research topics
+CREATE TABLE topic_conferences (
+  id TEXT PRIMARY KEY,
+  topic_id TEXT NOT NULL,
+  conference_id TEXT NOT NULL,
+  paper_title TEXT,
+  notes TEXT,
+  FOREIGN KEY (topic_id) REFERENCES research_topics(id) ON DELETE CASCADE,
+  FOREIGN KEY (conference_id) REFERENCES conferences(id) ON DELETE CASCADE
 );
 
 -- Insert example conference data

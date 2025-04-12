@@ -1,4 +1,5 @@
 import { ResearchTopic } from '../types';
+import { Link } from 'react-router-dom';
 
 interface ResearchTopicCardProps {
   topic: ResearchTopic;
@@ -11,14 +12,17 @@ export function ResearchTopicCard({ topic, onEdit, onDelete }: ResearchTopicCard
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-      <div className="p-6">
+      <Link to={`/research-topics/${id}`} className="block p-6">
         <div className="flex justify-between items-start">
           <h3 className="text-xl font-semibold text-zinc-900 mb-2">{name}</h3>
           {(onEdit || onDelete) && (
             <div className="flex space-x-2">
               {onEdit && (
                 <button
-                  onClick={() => onEdit(id)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onEdit(id);
+                  }}
                   className="text-blue-600 hover:text-blue-800"
                   aria-label="Edit research topic"
                 >
@@ -29,7 +33,10 @@ export function ResearchTopicCard({ topic, onEdit, onDelete }: ResearchTopicCard
               )}
               {onDelete && (
                 <button
-                  onClick={() => onDelete(id)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onDelete(id);
+                  }}
                   className="text-red-600 hover:text-red-800"
                   aria-label="Delete research topic"
                 >
@@ -54,7 +61,7 @@ export function ResearchTopicCard({ topic, onEdit, onDelete }: ResearchTopicCard
           </svg>
           <span>Research Topic</span>
         </div>
-      </div>
+      </Link>
     </div>
   );
 }

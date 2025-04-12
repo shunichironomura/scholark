@@ -43,6 +43,18 @@ const researchTopicSchema = z.object({
   description: z.string().nullable().optional(),
 });
 
+// Define the validation schema for creating/updating a topic note
+const topicNoteSchema = z.object({
+  content: z.string().min(1, "Note content is required"),
+});
+
+// Define the validation schema for linking a conference to a topic
+const topicConferenceSchema = z.object({
+  conference_id: z.string().min(1, "Conference ID is required"),
+  paper_title: z.string().nullable().optional(),
+  notes: z.string().nullable().optional(),
+});
+
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 // Original endpoint
@@ -417,6 +429,501 @@ app.delete("/api/research-topics/:id", async (c) => {
     return c.json({
       success: false,
       error: error instanceof Error ? error.message : "Failed to delete research topic"
+    }, 500);
+  }
+});
+
+// GET detailed information about a research topic, including notes and linked conferences
+app.get("/api/research-topics/:id/detail", async (c) => {
+  try {
+    const id = c.req.param('id');
+
+    // Get the research topic
+    const { results: topicResults } = await c.env.DB.prepare(
+      "SELECT * FROM research_topics WHERE id = ?"
+    )
+      .bind(id)
+      .all();
+
+    if (topicResults.length === 0) {
+      return c.json({
+        success: false,
+        error: "Research topic not found"
+      }, 404);
+    }
+
+    const topic = topicResults[0];
+
+    // Get the notes for this topic
+    const { results: noteResults } = await c.env.DB.prepare(
+      "SELECT * FROM topic_notes WHERE topic_id = ? ORDER BY created_at DESC"
+    )
+      .bind(id)
+      .all();
+
+    // Get the linked conferences for this topic
+    const { results: conferenceResults } = await c.env.DB.prepare(`
+      SELECT tc.*, c.name, c.start_date, c.paper_deadline, c.metadata
+      FROM topic_conferences tc
+      JOIN conferences c ON tc.conference_id = c.id
+      WHERE tc.topic_id = ?
+    `)
+      .bind(id)
+      .all();
+
+    // Process the results to parse the metadata JSON
+    const linkedConferences = conferenceResults.map(result => {
+      const { id, topic_id, conference_id, paper_title, notes, name, start_date, paper_deadline, metadata } = result;
+      return {
+        id,
+        topic_id,
+        conference_id,
+        paper_title,
+        notes,
+        conference: parseMetadata({
+          id: conference_id,
+          name,
+          start_date,
+          paper_deadline,
+          metadata
+        })
+      };
+    });
+
+    return c.json({
+      success: true,
+      topic: {
+        ...topic,
+        notes: noteResults,
+        conferences: linkedConferences
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching research topic detail:", error);
+    return c.json({
+      success: false,
+      error: "Failed to fetch research topic detail"
+    }, 500);
+  }
+});
+
+// GET all notes for a research topic
+app.get("/api/research-topics/:id/notes", async (c) => {
+  try {
+    const topicId = c.req.param('id');
+
+    // Check if research topic exists
+    const { results: topicResults } = await c.env.DB.prepare(
+      "SELECT * FROM research_topics WHERE id = ?"
+    )
+      .bind(topicId)
+      .all();
+
+    if (topicResults.length === 0) {
+      return c.json({
+        success: false,
+        error: "Research topic not found"
+      }, 404);
+    }
+
+    // Get all notes for this topic
+    const { results } = await c.env.DB.prepare(
+      "SELECT * FROM topic_notes WHERE topic_id = ? ORDER BY created_at DESC"
+    )
+      .bind(topicId)
+      .all();
+
+    return c.json({
+      success: true,
+      notes: results
+    });
+  } catch (error) {
+    console.error("Error fetching topic notes:", error);
+    return c.json({
+      success: false,
+      error: "Failed to fetch topic notes"
+    }, 500);
+  }
+});
+
+// CREATE a new note for a research topic
+app.post("/api/research-topics/:id/notes", zValidator("json", topicNoteSchema), async (c) => {
+  try {
+    const topicId = c.req.param('id');
+    const data = c.req.valid('json');
+    const id = uuidv4();
+    const createdAt = new Date().toISOString();
+
+    // Check if research topic exists
+    const { results: topicResults } = await c.env.DB.prepare(
+      "SELECT * FROM research_topics WHERE id = ?"
+    )
+      .bind(topicId)
+      .all();
+
+    if (topicResults.length === 0) {
+      return c.json({
+        success: false,
+        error: "Research topic not found"
+      }, 404);
+    }
+
+    const result = await c.env.DB.prepare(
+      "INSERT INTO topic_notes (id, topic_id, content, created_at) VALUES (?, ?, ?, ?)"
+    )
+      .bind(id, topicId, data.content, createdAt)
+      .run();
+
+    if (!result.success) {
+      throw new Error("Failed to insert topic note");
+    }
+
+    return c.json({
+      success: true,
+      note: {
+        id,
+        topic_id: topicId,
+        content: data.content,
+        created_at: createdAt
+      }
+    }, 201);
+  } catch (error) {
+    console.error("Error creating topic note:", error);
+    return c.json({
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to create topic note"
+    }, 500);
+  }
+});
+
+// UPDATE a note
+app.put("/api/topic-notes/:id", zValidator("json", topicNoteSchema), async (c) => {
+  try {
+    const id = c.req.param('id');
+    const data = c.req.valid('json');
+
+    // Check if note exists
+    const { results } = await c.env.DB.prepare(
+      "SELECT * FROM topic_notes WHERE id = ?"
+    )
+      .bind(id)
+      .all();
+
+    if (results.length === 0) {
+      return c.json({
+        success: false,
+        error: "Note not found"
+      }, 404);
+    }
+
+    const result = await c.env.DB.prepare(
+      "UPDATE topic_notes SET content = ? WHERE id = ?"
+    )
+      .bind(data.content, id)
+      .run();
+
+    if (!result.success) {
+      throw new Error("Failed to update note");
+    }
+
+    return c.json({
+      success: true,
+      note: {
+        ...results[0],
+        content: data.content
+      }
+    });
+  } catch (error) {
+    console.error("Error updating note:", error);
+    return c.json({
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to update note"
+    }, 500);
+  }
+});
+
+// DELETE a note
+app.delete("/api/topic-notes/:id", async (c) => {
+  try {
+    const id = c.req.param('id');
+
+    // Check if note exists
+    const { results } = await c.env.DB.prepare(
+      "SELECT * FROM topic_notes WHERE id = ?"
+    )
+      .bind(id)
+      .all();
+
+    if (results.length === 0) {
+      return c.json({
+        success: false,
+        error: "Note not found"
+      }, 404);
+    }
+
+    const result = await c.env.DB.prepare(
+      "DELETE FROM topic_notes WHERE id = ?"
+    )
+      .bind(id)
+      .run();
+
+    if (!result.success) {
+      throw new Error("Failed to delete note");
+    }
+
+    return c.json({
+      success: true,
+      message: "Note deleted successfully"
+    });
+  } catch (error) {
+    console.error("Error deleting note:", error);
+    return c.json({
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to delete note"
+    }, 500);
+  }
+});
+
+// GET all linked conferences for a research topic
+app.get("/api/research-topics/:id/conferences", async (c) => {
+  try {
+    const topicId = c.req.param('id');
+
+    // Check if research topic exists
+    const { results: topicResults } = await c.env.DB.prepare(
+      "SELECT * FROM research_topics WHERE id = ?"
+    )
+      .bind(topicId)
+      .all();
+
+    if (topicResults.length === 0) {
+      return c.json({
+        success: false,
+        error: "Research topic not found"
+      }, 404);
+    }
+
+    // Get all linked conferences for this topic
+    const { results } = await c.env.DB.prepare(`
+      SELECT tc.*, c.name, c.start_date, c.paper_deadline, c.metadata
+      FROM topic_conferences tc
+      JOIN conferences c ON tc.conference_id = c.id
+      WHERE tc.topic_id = ?
+    `)
+      .bind(topicId)
+      .all();
+
+    // Process the results to parse the metadata JSON
+    const linkedConferences = results.map(result => {
+      const { id, topic_id, conference_id, paper_title, notes, name, start_date, paper_deadline, metadata } = result;
+      return {
+        id,
+        topic_id,
+        conference_id,
+        paper_title,
+        notes,
+        conference: parseMetadata({
+          id: conference_id,
+          name,
+          start_date,
+          paper_deadline,
+          metadata
+        })
+      };
+    });
+
+    return c.json({
+      success: true,
+      topicConferences: linkedConferences
+    });
+  } catch (error) {
+    console.error("Error fetching topic conferences:", error);
+    return c.json({
+      success: false,
+      error: "Failed to fetch topic conferences"
+    }, 500);
+  }
+});
+
+// LINK a conference to a research topic
+app.post("/api/research-topics/:id/conferences", zValidator("json", topicConferenceSchema), async (c) => {
+  try {
+    const topicId = c.req.param('id');
+    const data = c.req.valid('json');
+    const id = uuidv4();
+
+    // Check if research topic exists
+    const { results: topicResults } = await c.env.DB.prepare(
+      "SELECT * FROM research_topics WHERE id = ?"
+    )
+      .bind(topicId)
+      .all();
+
+    if (topicResults.length === 0) {
+      return c.json({
+        success: false,
+        error: "Research topic not found"
+      }, 404);
+    }
+
+    // Check if conference exists
+    const { results: conferenceResults } = await c.env.DB.prepare(
+      "SELECT * FROM conferences WHERE id = ?"
+    )
+      .bind(data.conference_id)
+      .all();
+
+    if (conferenceResults.length === 0) {
+      return c.json({
+        success: false,
+        error: "Conference not found"
+      }, 404);
+    }
+
+    // Check if the link already exists
+    const { results: existingResults } = await c.env.DB.prepare(
+      "SELECT * FROM topic_conferences WHERE topic_id = ? AND conference_id = ?"
+    )
+      .bind(topicId, data.conference_id)
+      .all();
+
+    if (existingResults.length > 0) {
+      return c.json({
+        success: false,
+        error: "Conference is already linked to this topic"
+      }, 400);
+    }
+
+    const result = await c.env.DB.prepare(
+      "INSERT INTO topic_conferences (id, topic_id, conference_id, paper_title, notes) VALUES (?, ?, ?, ?, ?)"
+    )
+      .bind(id, topicId, data.conference_id, data.paper_title || null, data.notes || null)
+      .run();
+
+    if (!result.success) {
+      throw new Error("Failed to link conference to topic");
+    }
+
+    return c.json({
+      success: true,
+      topicConference: {
+        id,
+        topic_id: topicId,
+        conference_id: data.conference_id,
+        paper_title: data.paper_title || null,
+        notes: data.notes || null
+      }
+    }, 201);
+  } catch (error) {
+    console.error("Error linking conference to topic:", error);
+    return c.json({
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to link conference to topic"
+    }, 500);
+  }
+});
+
+// UPDATE a topic-conference link
+app.put("/api/topic-conferences/:id", zValidator("json", topicConferenceSchema), async (c) => {
+  try {
+    const id = c.req.param('id');
+    const data = c.req.valid('json');
+
+    // Check if topic-conference link exists
+    const { results } = await c.env.DB.prepare(
+      "SELECT * FROM topic_conferences WHERE id = ?"
+    )
+      .bind(id)
+      .all();
+
+    if (results.length === 0) {
+      return c.json({
+        success: false,
+        error: "Topic-conference link not found"
+      }, 404);
+    }
+
+    // Check if conference exists
+    const { results: conferenceResults } = await c.env.DB.prepare(
+      "SELECT * FROM conferences WHERE id = ?"
+    )
+      .bind(data.conference_id)
+      .all();
+
+    if (conferenceResults.length === 0) {
+      return c.json({
+        success: false,
+        error: "Conference not found"
+      }, 404);
+    }
+
+    const result = await c.env.DB.prepare(
+      "UPDATE topic_conferences SET conference_id = ?, paper_title = ?, notes = ? WHERE id = ?"
+    )
+      .bind(data.conference_id, data.paper_title || null, data.notes || null, id)
+      .run();
+
+    if (!result.success) {
+      throw new Error("Failed to update topic-conference link");
+    }
+
+    return c.json({
+      success: true,
+      topicConference: {
+        id,
+        topic_id: results[0].topic_id,
+        conference_id: data.conference_id,
+        paper_title: data.paper_title || null,
+        notes: data.notes || null
+      }
+    });
+  } catch (error) {
+    console.error("Error updating topic-conference link:", error);
+    return c.json({
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to update topic-conference link"
+    }, 500);
+  }
+});
+
+// DELETE a topic-conference link
+app.delete("/api/topic-conferences/:id", async (c) => {
+  try {
+    const id = c.req.param('id');
+
+    // Check if topic-conference link exists
+    const { results } = await c.env.DB.prepare(
+      "SELECT * FROM topic_conferences WHERE id = ?"
+    )
+      .bind(id)
+      .all();
+
+    if (results.length === 0) {
+      return c.json({
+        success: false,
+        error: "Topic-conference link not found"
+      }, 404);
+    }
+
+    const result = await c.env.DB.prepare(
+      "DELETE FROM topic_conferences WHERE id = ?"
+    )
+      .bind(id)
+      .run();
+
+    if (!result.success) {
+      throw new Error("Failed to delete topic-conference link");
+    }
+
+    return c.json({
+      success: true,
+      message: "Topic-conference link deleted successfully"
+    });
+  } catch (error) {
+    console.error("Error deleting topic-conference link:", error);
+    return c.json({
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to delete topic-conference link"
     }, 500);
   }
 });

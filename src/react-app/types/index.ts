@@ -20,6 +20,23 @@ export interface ResearchTopic {
   description: string | null;
 }
 
+// Define the TopicNote type
+export interface TopicNote {
+  id: string;
+  topic_id: string;
+  content: string;
+  created_at: string;
+}
+
+// Define the TopicConference type
+export interface TopicConference {
+  id: string;
+  topic_id: string;
+  conference_id: string;
+  paper_title: string | null;
+  notes: string | null;
+}
+
 // Define the UserConferencePlan type
 export interface UserConferencePlan {
   id: string;
@@ -38,6 +55,12 @@ export interface ConferenceWithLabels extends Conference {
   plan?: UserConferencePlan;
 }
 
+// Define the ResearchTopicDetail type (ResearchTopic with notes and linked conferences)
+export interface ResearchTopicDetail extends ResearchTopic {
+  notes?: TopicNote[];
+  conferences?: (TopicConference & { conference: Conference })[];
+}
+
 // Define the API response types
 export interface ApiResponse<T> {
   success: boolean;
@@ -51,4 +74,32 @@ export interface ConferencesResponse extends ApiResponse<Conference[]> {
 
 export interface ConferenceResponse extends ApiResponse<Conference> {
   conference: Conference;
+}
+
+export interface ResearchTopicsResponse extends ApiResponse<ResearchTopic[]> {
+  topics: ResearchTopic[];
+}
+
+export interface ResearchTopicResponse extends ApiResponse<ResearchTopic> {
+  topic: ResearchTopic;
+}
+
+export interface ResearchTopicDetailResponse extends ApiResponse<ResearchTopicDetail> {
+  topic: ResearchTopicDetail;
+}
+
+export interface TopicNotesResponse extends ApiResponse<TopicNote[]> {
+  notes: TopicNote[];
+}
+
+export interface TopicNoteResponse extends ApiResponse<TopicNote> {
+  note: TopicNote;
+}
+
+export interface TopicConferencesResponse extends ApiResponse<TopicConference[]> {
+  topicConferences: TopicConference[];
+}
+
+export interface TopicConferenceResponse extends ApiResponse<TopicConference> {
+  topicConference: TopicConference;
 }
