@@ -43,62 +43,61 @@ app.get("/api/test", (c) => {
 
 // Authentication endpoints
 // Google OAuth
-app.use("/api/auth/google",
+app.get("/api/auth/google",
   googleAuth({
     client_id: GOOGLE_CLIENT_ID,
     client_secret: GOOGLE_CLIENT_SECRET,
     scope: ['openid', 'email', 'profile'],
     redirect_uri: REDIRECT_URL,
-  })
-);
+  }),
+  async (c) => {
+    console.log("Google OAuth callback triggered");
+    console.log("Client ID:", GOOGLE_CLIENT_ID);
+    console.log("Client Secret length:", GOOGLE_CLIENT_SECRET ? GOOGLE_CLIENT_SECRET.length : 0);
+    try {
+      // Get the Google user info from the middleware
+      const googleUser = c.get('user-google');
 
-app.get("/api/auth/google", async (c) => {
-  console.log("Google OAuth callback triggered");
-  console.log("Client ID:", GOOGLE_CLIENT_ID);
-  console.log("Client Secret length:", GOOGLE_CLIENT_SECRET ? GOOGLE_CLIENT_SECRET.length : 0);
-  try {
-    // Get the Google user info from the middleware
-    const googleUser = c.get('user-google');
+      if (!googleUser || !googleUser.email) {
+        return c.json({
+          success: false,
+          error: "Failed to get user information from Google"
+        }, 500);
+      }
 
-    if (!googleUser || !googleUser.email) {
+      // Check if the user's email is whitelisted
+      const isUserWhitelisted = await isWhitelisted(c.env.DB, googleUser.email);
+      if (!isUserWhitelisted) {
+        return c.json({
+          success: false,
+          error: "Your email is not whitelisted for this application"
+        }, 403);
+      }
+
+      // Find or create the user in the database
+      const user = await findOrCreateUser(c.env.DB, googleUser as GoogleUserInfo);
+
+      if (!user) {
+        return c.json({
+          success: false,
+          error: "Failed to create or find user"
+        }, 500);
+      }
+
+      // Create a JWT token for the user
+      const token = await createToken(user);
+
+      // Redirect to the frontend with the token
+      return c.redirect(`/?token=${token}`);
+    } catch (error) {
+      console.error("Error in OAuth callback:", error);
       return c.json({
         success: false,
-        error: "Failed to get user information from Google"
+        error: "Authentication failed"
       }, 500);
     }
-
-    // Check if the user's email is whitelisted
-    const isUserWhitelisted = await isWhitelisted(c.env.DB, googleUser.email);
-    if (!isUserWhitelisted) {
-      return c.json({
-        success: false,
-        error: "Your email is not whitelisted for this application"
-      }, 403);
-    }
-
-    // Find or create the user in the database
-    const user = await findOrCreateUser(c.env.DB, googleUser as GoogleUserInfo);
-
-    if (!user) {
-      return c.json({
-        success: false,
-        error: "Failed to create or find user"
-      }, 500);
-    }
-
-    // Create a JWT token for the user
-    const token = await createToken(user);
-
-    // Redirect to the frontend with the token
-    return c.redirect(`/?token=${token}`);
-  } catch (error) {
-    console.error("Error in OAuth callback:", error);
-    return c.json({
-      success: false,
-      error: "Authentication failed"
-    }, 500);
   }
-});
+);
 
 // Get current user
 app.get("/api/auth/me", authMiddleware, async (c) => {
