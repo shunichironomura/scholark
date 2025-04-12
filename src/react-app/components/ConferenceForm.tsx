@@ -17,9 +17,11 @@ export function ConferenceForm({
   const [formData, setFormData] = useState({
     name: initialData.name || '',
     start_date: initialData.start_date || '',
+    end_date: initialData.end_date || '',
     paper_deadline: initialData.paper_deadline || '',
-    location: initialData.metadata?.location || '',
-    website: initialData.metadata?.website || '',
+    abstract_deadline: initialData.abstract_deadline || '',
+    location: initialData.location || '',
+    website: initialData.website_url || '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,13 +53,13 @@ export function ConferenceForm({
     const submissionData: Partial<Conference> = {
       name: formData.name,
       start_date: fixDateFormat(formData.start_date),
+      end_date: fixDateFormat(formData.end_date),
       paper_deadline: fixDateFormat(formData.paper_deadline),
+      abstract_deadline: fixDateFormat(formData.abstract_deadline),
       location: formData.location || null,
       website_url: formData.website || null,
-      metadata: {
-        location: formData.location,
-        website: formData.website,
-      },
+      // Keep metadata for backward compatibility
+      metadata: {},
     };
 
     // Add id if it exists in initialData
@@ -100,6 +102,44 @@ export function ConferenceForm({
               // Ensure the date is in YYYY-MM-DD format
               const date = e.target.value;
               setFormData(prev => ({ ...prev, start_date: date }));
+            }}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="end_date" className="block text-sm font-medium text-gray-700">
+            Conference End Date
+          </label>
+          <input
+            type="date"
+            id="end_date"
+            name="end_date"
+            value={formData.end_date}
+            onChange={(e) => {
+              // Ensure the date is in YYYY-MM-DD format
+              const date = e.target.value;
+              setFormData(prev => ({ ...prev, end_date: date }));
+            }}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="abstract_deadline" className="block text-sm font-medium text-gray-700">
+            Abstract Submission Deadline
+          </label>
+          <input
+            type="date"
+            id="abstract_deadline"
+            name="abstract_deadline"
+            value={formData.abstract_deadline}
+            onChange={(e) => {
+              // Ensure the date is in YYYY-MM-DD format
+              const date = e.target.value;
+              setFormData(prev => ({ ...prev, abstract_deadline: date }));
             }}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
