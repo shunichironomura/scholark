@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useConferences } from '../hooks/useConferences';
 import { useResearchTopics } from '../hooks/useResearchTopics';
-import { UserConferencePlan } from '../../shared/schemas';
+import { UserConferencePlan, Conference } from '../../shared/schemas';
 
 // Define the schedule item interface
 interface ScheduleItem {
@@ -76,8 +76,9 @@ export function SchedulePage() {
         for (const topic of topics) {
           // Get the display name from either name or topic_name property
           const displayName = topic.name || (topic as any).topic_name || "Research Topic";
-          console.log("Fetching conferences for topic:", topic.id, displayName);
-          const topicConferences = await fetchTopicConferences(topic.id);
+          const topicId = topic.id || '';
+          console.log("Fetching conferences for topic:", topicId, displayName);
+          const topicConferences = await fetchTopicConferences(topicId);
           console.log("Topic conferences result:", topicConferences);
           if (topicConferences) {
             // Add conference IDs to the set
@@ -124,36 +125,37 @@ export function SchedulePage() {
 
       // Filter conferences to only include those linked to research topics
       const filteredConferences = conferences.filter(conf =>
-        linkedConferenceIds.has(conf.id)
+        conf.id && linkedConferenceIds.has(conf.id)
       );
       console.log("Filtered conferences:", filteredConferences);
 
       filteredConferences.forEach(conference => {
-        console.log("Processing conference:", conference.id, conference.name);
+        const confId = conference.id || '';
+        console.log("Processing conference:", confId, conference.name);
 
         // Add conference start date
         if (conference.start_date) {
           console.log("Adding start date item:", conference.start_date);
           items.push({
-            id: `${conference.id}-start`,
+            id: `${confId}-start`,
             date: new Date(conference.start_date),
             type: 'conference_start',
             title: `Conference: ${conference.name}`,
-            conferenceId: conference.id,
+            conferenceId: confId,
             conferenceName: conference.name,
-            description: conference.metadata?.location ? `Location: ${conference.metadata.location}` : undefined
+            description: conference.location ? `Location: ${conference.location}` : undefined
           });
         }
 
-        // Add conference end date if available in metadata
-        if (conference.metadata?.end_date) {
-          console.log("Adding end date item:", conference.metadata.end_date);
+        // Add conference end date if available
+        if (conference.end_date) {
+          console.log("Adding end date item:", conference.end_date);
           items.push({
-            id: `${conference.id}-end`,
-            date: new Date(conference.metadata.end_date),
+            id: `${confId}-end`,
+            date: new Date(conference.end_date),
             type: 'conference_end',
             title: `Conference Ends: ${conference.name}`,
-            conferenceId: conference.id,
+            conferenceId: confId,
             conferenceName: conference.name
           });
         }
@@ -162,24 +164,24 @@ export function SchedulePage() {
         if (conference.paper_deadline) {
           console.log("Adding paper deadline item:", conference.paper_deadline);
           items.push({
-            id: `${conference.id}-paper`,
+            id: `${confId}-paper`,
             date: new Date(conference.paper_deadline),
             type: 'paper_deadline',
             title: `Paper Deadline: ${conference.name}`,
-            conferenceId: conference.id,
+            conferenceId: confId,
             conferenceName: conference.name
           });
         }
 
-        // Add abstract deadline if available in metadata
-        if (conference.metadata?.abstract_deadline) {
-          console.log("Adding abstract deadline item:", conference.metadata.abstract_deadline);
+        // Add abstract deadline if available
+        if (conference.abstract_deadline) {
+          console.log("Adding abstract deadline item:", conference.abstract_deadline);
           items.push({
-            id: `${conference.id}-abstract`,
-            date: new Date(conference.metadata.abstract_deadline),
+            id: `${confId}-abstract`,
+            date: new Date(conference.abstract_deadline),
             type: 'abstract_deadline',
             title: `Abstract Deadline: ${conference.name}`,
-            conferenceId: conference.id,
+            conferenceId: confId,
             conferenceName: conference.name
           });
         }

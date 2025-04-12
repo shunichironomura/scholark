@@ -140,7 +140,7 @@ export function ConferencesPage() {
               </svg>
             </div>
             <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
+              <p className="text-sm text-red-700">{typeof error === 'string' ? error : 'An error occurred'}</p>
             </div>
           </div>
         </div>

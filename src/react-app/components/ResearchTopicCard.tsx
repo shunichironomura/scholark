@@ -8,8 +8,9 @@ interface ResearchTopicCardProps {
 }
 
 export function ResearchTopicCard({ topic, onEdit, onDelete }: ResearchTopicCardProps) {
-  // Get the display name from either name or topic_name property
-  const { id, description } = topic;
+  // Get the display name and id from the topic
+  const { description } = topic;
+  const id = topic.id || ''; // Provide a default empty string for id
   const displayName = topic.name || (topic as any).topic_name || "Research Topic";
 
   return (

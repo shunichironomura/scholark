@@ -276,9 +276,9 @@ app.post("/api/research-topics", zValidator("json", ResearchTopicSchema), async 
     const id = uuidv4();
 
     const result = await c.env.DB.prepare(
-      "INSERT INTO research_topic (id, name, description) VALUES (?, ?, ?)"
+      "INSERT INTO research_topic (id, user_id, topic_name, description) VALUES (?, ?, ?, ?)"
     )
-      .bind(id, data.name, data.description || null)
+      .bind(id, '1', data.name || data.topic_name, data.description || null)
       .run();
 
     if (!result.success) {
@@ -289,8 +289,10 @@ app.post("/api/research-topics", zValidator("json", ResearchTopicSchema), async 
       success: true,
       topic: {
         id,
-        name: data.name,
-        description: data.description || null
+        topic_name: data.name || data.topic_name,
+        name: data.name || data.topic_name, // Include both for backward compatibility
+        description: data.description || null,
+        user_id: '1'
       }
     }, 201);
   } catch (error) {
@@ -323,9 +325,9 @@ app.put("/api/research-topics/:id", zValidator("json", ResearchTopicSchema), asy
     }
 
     const result = await c.env.DB.prepare(
-      "UPDATE research_topic SET name = ?, description = ? WHERE id = ?"
+      "UPDATE research_topic SET topic_name = ?, description = ? WHERE id = ?"
     )
-      .bind(data.name, data.description || null, id)
+      .bind(data.name || data.topic_name, data.description || null, id)
       .run();
 
     if (!result.success) {
@@ -336,8 +338,10 @@ app.put("/api/research-topics/:id", zValidator("json", ResearchTopicSchema), asy
       success: true,
       topic: {
         id,
-        name: data.name,
-        description: data.description || null
+        topic_name: data.name || data.topic_name,
+        name: data.name || data.topic_name, // Include both for backward compatibility
+        description: data.description || null,
+        user_id: '1'
       }
     });
   } catch (error) {

@@ -30,16 +30,40 @@ export function ConferenceForm({
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
+    // Fix date format issues by ensuring they are in YYYY-MM-DD format
+    const fixDateFormat = (dateStr: string) => {
+      if (!dateStr) return null;
+      // If the date is already in YYYY-MM-DD format, return it as is
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        return dateStr;
+      }
+      // Otherwise, try to parse and format it
+      try {
+        const date = new Date(dateStr);
+        return date.toISOString().split('T')[0];
+      } catch (err) {
+        console.error('Error parsing date:', err);
+        return null;
+      }
+    };
+
     // Prepare the data for submission
     const submissionData: Partial<Conference> = {
       name: formData.name,
-      start_date: formData.start_date || null,
-      paper_deadline: formData.paper_deadline || null,
+      start_date: fixDateFormat(formData.start_date),
+      paper_deadline: fixDateFormat(formData.paper_deadline),
+      location: formData.location || null,
+      website_url: formData.website || null,
       metadata: {
         location: formData.location,
         website: formData.website,
       },
     };
+
+    // Add id if it exists in initialData
+    if (initialData?.id) {
+      submissionData.id = initialData.id;
+    }
 
     onSubmit(submissionData);
   };
@@ -72,7 +96,11 @@ export function ConferenceForm({
             id="start_date"
             name="start_date"
             value={formData.start_date}
-            onChange={handleChange}
+            onChange={(e) => {
+              // Ensure the date is in YYYY-MM-DD format
+              const date = e.target.value;
+              setFormData(prev => ({ ...prev, start_date: date }));
+            }}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
@@ -86,7 +114,11 @@ export function ConferenceForm({
             id="paper_deadline"
             name="paper_deadline"
             value={formData.paper_deadline}
-            onChange={handleChange}
+            onChange={(e) => {
+              // Ensure the date is in YYYY-MM-DD format
+              const date = e.target.value;
+              setFormData(prev => ({ ...prev, paper_deadline: date }));
+            }}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
         </div>

@@ -8,13 +8,13 @@ interface ConferenceCardProps {
 
 export function ConferenceCard({ conference, onEdit, onDelete }: ConferenceCardProps) {
   const {
-    id,
     name,
     start_date,
     website_url,
     paper_deadline,
     metadata
   } = conference;
+  const id = conference.id || ''; // Provide a default empty string for id
 
   // Format dates for display
   const formatDate = (dateString: string | null) => {

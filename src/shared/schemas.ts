@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const ConferenceSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(), // Make id optional for creation
   name: z.string(),
   start_date: z.string().nullable(),
   end_date: z.string().nullable(),
@@ -10,6 +10,7 @@ export const ConferenceSchema = z.object({
   abstract_deadline: z.string().nullable(),
   paper_deadline: z.string().nullable(),
   metadata: z.record(z.any()).nullable(),
+  user_id: z.string().optional(), // Make user_id optional for creation
 });
 
 export const UserLabelSchema = z.object({
@@ -18,10 +19,11 @@ export const UserLabelSchema = z.object({
 });
 
 export const ResearchTopicSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(), // Make id optional for creation
   name: z.string(),
   topic_name: z.string().optional(), // Add optional topic_name property for database compatibility
   description: z.string().nullable(),
+  user_id: z.string().optional(), // Make user_id optional for creation
 });
 
 export const TopicNoteSchema = z.object({

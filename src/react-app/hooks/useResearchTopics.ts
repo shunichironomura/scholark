@@ -30,6 +30,15 @@ const ResearchTopicDetailResponseSchema = ApiResponseSchema.extend({
       github_link: z.string().nullable(),
       submission_status: z.string(),
       notes: z.string().nullable(),
+      conference: z.object({
+        id: z.string().optional(),
+        name: z.string(),
+        start_date: z.string().nullable(),
+        paper_deadline: z.string().nullable(),
+        location: z.string().nullable(),
+        website_url: z.string().nullable(),
+        metadata: z.record(z.any()).nullable(),
+      }).optional(),
     })),
   }),
 });
@@ -45,10 +54,12 @@ const UserConferencePlansResponseSchema = ApiResponseSchema.extend({
     submission_status: z.string(),
     notes: z.string().nullable(),
     conference: z.object({
-      id: z.string(),
+      id: z.string().optional(),
       name: z.string(),
       start_date: z.string().nullable(),
       paper_deadline: z.string().nullable(),
+      location: z.string().nullable(),
+      website_url: z.string().nullable(),
       metadata: z.record(z.any()).nullable(),
     }).optional(),
   })),
@@ -64,6 +75,15 @@ const UserConferencePlanResponseSchema = ApiResponseSchema.extend({
     github_link: z.string().nullable(),
     submission_status: z.string(),
     notes: z.string().nullable(),
+    conference: z.object({
+      id: z.string().optional(),
+      name: z.string(),
+      start_date: z.string().nullable(),
+      paper_deadline: z.string().nullable(),
+      location: z.string().nullable(),
+      website_url: z.string().nullable(),
+      metadata: z.record(z.any()).nullable(),
+    }).optional(),
   }),
 });
 
