@@ -35,7 +35,7 @@ const ResearchTopicDetailResponseSchema = ApiResponseSchema.extend({
 });
 
 const UserConferencePlansResponseSchema = ApiResponseSchema.extend({
-  plans: z.array(z.object({
+  topicConferences: z.array(z.object({
     id: z.string(),
     conference_id: z.string(),
     topic_id: z.string().nullable(),
@@ -44,6 +44,13 @@ const UserConferencePlansResponseSchema = ApiResponseSchema.extend({
     github_link: z.string().nullable(),
     submission_status: z.string(),
     notes: z.string().nullable(),
+    conference: z.object({
+      id: z.string(),
+      name: z.string(),
+      start_date: z.string().nullable(),
+      paper_deadline: z.string().nullable(),
+      metadata: z.record(z.any()).nullable(),
+    }).optional(),
   })),
 });
 
@@ -349,16 +356,22 @@ export function useResearchTopics() {
     setLoading(true);
     setError(null);
     try {
+      console.log(`Fetching conferences for topic ID: ${topicId}`);
       const response = await fetch(`/api/research-topics/${topicId}/conferences`);
+      console.log(`Response status: ${response.status}`);
       const data = await response.json() as UserConferencePlansResponse;
+      console.log(`Response data:`, data);
 
       if (data.success) {
-        return data.plans;
+        console.log(`Found ${data.topicConferences?.length || 0} linked conferences`);
+        return data.topicConferences;
       } else {
+        console.log(`Error fetching topic conferences: ${data.error}`);
         setError(data.error || 'Failed to fetch topic conferences');
         return null;
       }
     } catch (err) {
+      console.log(`Exception in fetchTopicConferences:`, err);
       setError('Error fetching topic conferences');
       console.error(err);
       return null;
