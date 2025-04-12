@@ -3,6 +3,10 @@ export interface Conference {
   id: string;
   name: string;
   start_date: string | null;
+  end_date: string | null;
+  location: string | null;
+  website_url: string | null;
+  abstract_deadline: string | null;
   paper_deadline: string | null;
   metadata: Record<string, any> | null;
 }
