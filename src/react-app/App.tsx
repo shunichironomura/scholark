@@ -1,15 +1,50 @@
 // src/App.tsx
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import cloudflareLogo from "./assets/Cloudflare_Logo.svg";
 import honoLogo from "./assets/hono.svg";
 import "./App.css";
 
+// Define the Conference type
+interface Conference {
+  id: string;
+  name: string;
+  start_date: string;
+  paper_deadline: string;
+  metadata: {
+    location: string;
+    website: string;
+  } | null;
+}
+
 function App() {
   const [count, setCount] = useState(0);
   const [name, setName] = useState("unknown");
+  const [conferences, setConferences] = useState<Conference[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Function to fetch conferences
+  const fetchConferences = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/conferences");
+      const data = await response.json();
+      if (data.success) {
+        setConferences(data.conferences);
+      } else {
+        setError(data.error || "Failed to fetch conferences");
+      }
+    } catch (err) {
+      setError("Error fetching conferences");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -57,6 +92,37 @@ function App() {
         <p>
           Edit <code>worker/index.ts</code> to change the name
         </p>
+      </div>
+      <div className="card">
+        <h2>Conferences</h2>
+        <button onClick={fetchConferences} disabled={loading}>
+          {loading ? "Loading..." : "Fetch Conferences"}
+        </button>
+        {error && <p className="error">{error}</p>}
+        {conferences.length > 0 ? (
+          <div className="conferences-list">
+            {conferences.map((conf) => (
+              <div key={conf.id} className="conference-item">
+                <h3>{conf.name}</h3>
+                <p>Start Date: {conf.start_date}</p>
+                <p>Paper Deadline: {conf.paper_deadline}</p>
+                {conf.metadata && (
+                  <div className="metadata">
+                    <p>Location: {conf.metadata.location}</p>
+                    <p>
+                      Website:{" "}
+                      <a href={conf.metadata.website} target="_blank" rel="noopener noreferrer">
+                        {conf.metadata.website}
+                      </a>
+                    </p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>No conferences found. Click the button to fetch conferences.</p>
+        )}
       </div>
       <p className="read-the-docs">Click on the logos to learn more</p>
     </>

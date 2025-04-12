@@ -11,12 +11,15 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
+
 .logo.cloudflare:hover {
   filter: drop-shadow(0 0 2em #f6821faa);
 }
@@ -25,6 +28,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -42,4 +46,52 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Conferences styles */
+.conferences-list {
+  margin-top: 1.5em;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.conference-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1em;
+  text-align: left;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.conference-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.conference-item h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 1.4em;
+}
+
+.metadata {
+  margin-top: 1em;
+  padding-top: 1em;
+  border-top: 1px solid #eee;
+}
+
+.error {
+  color: #e53935;
+  margin-top: 1em;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
