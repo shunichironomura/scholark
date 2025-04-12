@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useResearchTopics } from '../hooks/useResearchTopics';
 import { useConferences } from '../hooks/useConferences';
-import { ResearchTopicDetail, TopicNote, Conference } from '../types';
+import { ResearchTopicDetail, TopicNote, Conference, UserConferencePlan } from '../types';
 import { Modal } from '../components/Modal';
 
 export function ResearchTopicDetailPage() {
@@ -201,7 +201,7 @@ export function ResearchTopicDetailPage() {
         </div>
         {topic.notes && topic.notes.length > 0 ? (
           <div className="space-y-4">
-            {topic.notes.map((note) => (
+            {topic.notes.map((note: TopicNote) => (
               <div key={note.id} className="p-4 bg-white border rounded-md shadow-sm">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
@@ -252,7 +252,7 @@ export function ResearchTopicDetailPage() {
         </div>
         {topic.conferences && topic.conferences.length > 0 ? (
           <div className="space-y-4">
-            {topic.conferences.map((link) => (
+            {topic.conferences.map((link: UserConferencePlan & { conference: Conference }) => (
               <div key={link.id} className="p-4 bg-white border rounded-md shadow-sm">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">

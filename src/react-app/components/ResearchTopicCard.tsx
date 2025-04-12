@@ -1,4 +1,4 @@
-import { ResearchTopic } from '../types';
+import { ResearchTopic } from '../../shared/schemas';
 import { Link } from 'react-router-dom';
 
 interface ResearchTopicCardProps {

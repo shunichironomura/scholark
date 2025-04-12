@@ -1,5 +1,5 @@
 import { useState, FormEvent } from 'react';
-import { Conference } from '../types';
+import { Conference } from '../../shared/schemas';
 
 interface ConferenceFormProps {
   initialData?: Partial<Conference>;

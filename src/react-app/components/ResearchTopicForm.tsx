@@ -1,5 +1,5 @@
 import { useState, FormEvent } from 'react';
-import { ResearchTopic } from '../types';
+import { ResearchTopic } from '../../shared/schemas';
 
 interface ResearchTopicFormProps {
   initialData?: ResearchTopic;
