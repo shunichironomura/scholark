@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ResearchTopic } from '../types';
+import { ResearchTopic } from '../../shared/schemas';
 import { useResearchTopics } from '../hooks/useResearchTopics';
 import { ResearchTopicCard } from '../components/ResearchTopicCard';
 import { ResearchTopicForm } from '../components/ResearchTopicForm';
