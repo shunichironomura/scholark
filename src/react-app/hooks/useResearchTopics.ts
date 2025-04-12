@@ -1,17 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
   ResearchTopic,
-  ResearchTopicDetail,
-  TopicNote,
-  TopicConference,
   ResearchTopicsResponse,
   ResearchTopicResponse,
-  ResearchTopicDetailResponse,
   TopicNotesResponse,
   TopicNoteResponse,
-  TopicConferencesResponse,
-  TopicConferenceResponse
-} from '../types';
+} from '../../shared/schemas';
 
 export function useResearchTopics() {
   const [topics, setTopics] = useState<ResearchTopic[]>([]);
