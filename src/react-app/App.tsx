@@ -13,10 +13,7 @@ interface Conference {
   name: string;
   start_date: string;
   paper_deadline: string;
-  metadata: {
-    location: string;
-    website: string;
-  } | null;
+  metadata: Record<string, any> | null;
 }
 
 function App() {
@@ -108,13 +105,19 @@ function App() {
                 <p>Paper Deadline: {conf.paper_deadline}</p>
                 {conf.metadata && (
                   <div className="metadata">
-                    <p>Location: {conf.metadata.location}</p>
-                    <p>
-                      Website:{" "}
-                      <a href={conf.metadata.website} target="_blank" rel="noopener noreferrer">
-                        {conf.metadata.website}
-                      </a>
-                    </p>
+                    <h4>Metadata:</h4>
+                    {Object.entries(conf.metadata).map(([key, value]) => (
+                      <p key={key}>
+                        <strong>{key}:</strong>{" "}
+                        {typeof value === "string" && value.startsWith("http") ? (
+                          <a href={value} target="_blank" rel="noopener noreferrer">
+                            {value}
+                          </a>
+                        ) : (
+                          JSON.stringify(value)
+                        )}
+                      </p>
+                    ))}
                   </div>
                 )}
               </div>
