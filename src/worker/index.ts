@@ -22,12 +22,25 @@ interface Conference {
   metadata: string | Record<string, any> | null;
 }
 
+// Define the ResearchTopic interface
+interface ResearchTopic {
+  id: string;
+  name: string;
+  description: string | null;
+}
+
 // Define the validation schema for creating/updating a conference
 const conferenceSchema = z.object({
   name: z.string().min(1, "Conference name is required"),
   start_date: z.string().nullable().optional(),
   paper_deadline: z.string().nullable().optional(),
   metadata: z.record(z.string(), z.any()).nullable().optional(),
+});
+
+// Define the validation schema for creating/updating a research topic
+const researchTopicSchema = z.object({
+  name: z.string().min(1, "Topic name is required"),
+  description: z.string().nullable().optional(),
 });
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
@@ -230,6 +243,180 @@ app.delete("/api/conferences/:id", async (c) => {
     return c.json({
       success: false,
       error: error instanceof Error ? error.message : "Failed to delete conference"
+    }, 500);
+  }
+});
+
+// GET all research topics
+app.get("/api/research-topics", async (c) => {
+  try {
+    // Query all research topics from the database
+    const { results } = await c.env.DB.prepare(
+      "SELECT * FROM research_topics"
+    ).all();
+
+    return c.json({
+      success: true,
+      topics: results
+    });
+  } catch (error) {
+    console.error("Error fetching research topics:", error);
+    return c.json({
+      success: false,
+      error: "Failed to fetch research topics"
+    }, 500);
+  }
+});
+
+// GET a specific research topic by ID
+app.get("/api/research-topics/:id", async (c) => {
+  try {
+    const id = c.req.param('id');
+
+    const { results } = await c.env.DB.prepare(
+      "SELECT * FROM research_topics WHERE id = ?"
+    )
+      .bind(id)
+      .all();
+
+    if (results.length === 0) {
+      return c.json({
+        success: false,
+        error: "Research topic not found"
+      }, 404);
+    }
+
+    return c.json({
+      success: true,
+      topic: results[0]
+    });
+  } catch (error) {
+    console.error("Error fetching research topic:", error);
+    return c.json({
+      success: false,
+      error: "Failed to fetch research topic"
+    }, 500);
+  }
+});
+
+// CREATE a new research topic
+app.post("/api/research-topics", zValidator("json", researchTopicSchema), async (c) => {
+  try {
+    const data = c.req.valid('json');
+    const id = uuidv4();
+
+    const result = await c.env.DB.prepare(
+      "INSERT INTO research_topics (id, name, description) VALUES (?, ?, ?)"
+    )
+      .bind(id, data.name, data.description || null)
+      .run();
+
+    if (!result.success) {
+      throw new Error("Failed to insert research topic");
+    }
+
+    return c.json({
+      success: true,
+      topic: {
+        id,
+        name: data.name,
+        description: data.description || null
+      }
+    }, 201);
+  } catch (error) {
+    console.error("Error creating research topic:", error);
+    return c.json({
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to create research topic"
+    }, 500);
+  }
+});
+
+// UPDATE an existing research topic
+app.put("/api/research-topics/:id", zValidator("json", researchTopicSchema), async (c) => {
+  try {
+    const id = c.req.param('id');
+    const data = c.req.valid('json');
+
+    // Check if research topic exists
+    const { results } = await c.env.DB.prepare(
+      "SELECT * FROM research_topics WHERE id = ?"
+    )
+      .bind(id)
+      .all();
+
+    if (results.length === 0) {
+      return c.json({
+        success: false,
+        error: "Research topic not found"
+      }, 404);
+    }
+
+    const result = await c.env.DB.prepare(
+      "UPDATE research_topics SET name = ?, description = ? WHERE id = ?"
+    )
+      .bind(data.name, data.description || null, id)
+      .run();
+
+    if (!result.success) {
+      throw new Error("Failed to update research topic");
+    }
+
+    return c.json({
+      success: true,
+      topic: {
+        id,
+        name: data.name,
+        description: data.description || null
+      }
+    });
+  } catch (error) {
+    console.error("Error updating research topic:", error);
+    return c.json({
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to update research topic"
+    }, 500);
+  }
+});
+
+// DELETE a research topic
+app.delete("/api/research-topics/:id", async (c) => {
+  try {
+    const id = c.req.param('id');
+
+    // Check if research topic exists
+    const { results } = await c.env.DB.prepare(
+      "SELECT * FROM research_topics WHERE id = ?"
+    )
+      .bind(id)
+      .all();
+
+    if (results.length === 0) {
+      return c.json({
+        success: false,
+        error: "Research topic not found"
+      }, 404);
+    }
+
+    const result = await c.env.DB.prepare(
+      "DELETE FROM research_topics WHERE id = ?"
+    )
+      .bind(id)
+      .run();
+
+    if (!result.success) {
+      throw new Error("Failed to delete research topic");
+    }
+
+    return c.json({
+      success: true,
+      message: "Research topic deleted successfully"
+    });
+  } catch (error) {
+    console.error("Error deleting research topic:", error);
+    return c.json({
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to delete research topic"
     }, 500);
   }
 });

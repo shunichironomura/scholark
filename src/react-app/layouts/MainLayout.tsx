@@ -1,28 +1,50 @@
 import { ReactNode } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 interface MainLayoutProps {
   children: ReactNode;
 }
 
 export function MainLayout({ children }: MainLayoutProps) {
+  const location = useLocation();
+
+  // Helper function to determine if a link is active
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/' || location.pathname === '/conferences';
+    }
+    return location.pathname === path;
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-blue-600">Scholark</h1>
+              <Link to="/" className="text-2xl font-bold text-blue-600">Scholark</Link>
             </div>
             <nav className="flex space-x-4">
-              <a href="#" className="text-zinc-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
+              <Link
+                to="/conferences"
+                className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/') ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'
+                  }`}
+              >
                 Conferences
-              </a>
-              <a href="#" className="text-zinc-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
+              </Link>
+              <Link
+                to="/research-topics"
+                className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/research-topics') ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'
+                  }`}
+              >
                 Research Topics
-              </a>
-              <a href="#" className="text-zinc-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
+              </Link>
+              <Link
+                to="#"
+                className="text-zinc-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+              >
                 Calendar
-              </a>
+              </Link>
             </nav>
           </div>
         </div>
