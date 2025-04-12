@@ -40,6 +40,7 @@ The goal of Scholark is to fill the gap between traditional calendar tools and a
 - **Wrangler** — CLI for developing and deploying Cloudflare Workers and D1
 - **TypeScript** — safe, modern language for both backend and frontend
 - **GitHub** — source code + CI integration
+- **pnpm** — package manager in place of npm/yarn
 
 ---
 
