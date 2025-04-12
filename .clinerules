@@ -14,4 +14,5 @@ Check the following documents before executing any task:
 ## Python guidelines
 
 - Use `uv` for project management instead of `pip`, `pipenv`, or `poetry`.
+- Use `pyproject.toml` for project configuration instead of `setup.py` or `requirements.txt`.
 - Always use type hints in Python code.
