@@ -33,7 +33,7 @@ app.get("/api/conferences", async (c) => {
   try {
     // Query all conferences from the database
     const { results } = await c.env.DB.prepare(
-      "SELECT * FROM conferences"
+      "SELECT * FROM conference"
     ).all();
 
     // Process the results to parse the metadata JSON
@@ -58,7 +58,7 @@ app.get("/api/conferences/:id", async (c) => {
     const id = c.req.param('id');
 
     const { results } = await c.env.DB.prepare(
-      "SELECT * FROM conferences WHERE id = ?"
+      "SELECT * FROM conference WHERE id = ?"
     )
       .bind(id)
       .all();
@@ -95,7 +95,7 @@ app.post("/api/conferences", zValidator("json", ConferenceSchema), async (c) => 
     const metadataStr = data.metadata ? JSON.stringify(data.metadata) : null;
 
     const result = await c.env.DB.prepare(
-      "INSERT INTO conferences (id, name, start_date, paper_deadline, metadata) VALUES (?, ?, ?, ?, ?)"
+      "INSERT INTO conference (id, name, start_date, paper_deadline, metadata) VALUES (?, ?, ?, ?, ?)"
     )
       .bind(id, data.name, data.start_date || null, data.paper_deadline || null, metadataStr)
       .run();
@@ -131,7 +131,7 @@ app.put("/api/conferences/:id", zValidator("json", ConferenceSchema), async (c) 
 
     // Check if conference exists
     const { results } = await c.env.DB.prepare(
-      "SELECT * FROM conferences WHERE id = ?"
+      "SELECT * FROM conference WHERE id = ?"
     )
       .bind(id)
       .all();
@@ -147,7 +147,7 @@ app.put("/api/conferences/:id", zValidator("json", ConferenceSchema), async (c) 
     const metadataStr = data.metadata ? JSON.stringify(data.metadata) : null;
 
     const result = await c.env.DB.prepare(
-      "UPDATE conferences SET name = ?, start_date = ?, paper_deadline = ?, metadata = ? WHERE id = ?"
+      "UPDATE conference SET name = ?, start_date = ?, paper_deadline = ?, metadata = ? WHERE id = ?"
     )
       .bind(data.name, data.start_date || null, data.paper_deadline || null, metadataStr, id)
       .run();
@@ -182,7 +182,7 @@ app.delete("/api/conferences/:id", async (c) => {
 
     // Check if conference exists
     const { results } = await c.env.DB.prepare(
-      "SELECT * FROM conferences WHERE id = ?"
+      "SELECT * FROM conference WHERE id = ?"
     )
       .bind(id)
       .all();
@@ -195,7 +195,7 @@ app.delete("/api/conferences/:id", async (c) => {
     }
 
     const result = await c.env.DB.prepare(
-      "DELETE FROM conferences WHERE id = ?"
+      "DELETE FROM conference WHERE id = ?"
     )
       .bind(id)
       .run();
@@ -222,7 +222,7 @@ app.get("/api/research-topics", async (c) => {
   try {
     // Query all research topics from the database
     const { results } = await c.env.DB.prepare(
-      "SELECT * FROM research_topics"
+      "SELECT * FROM research_topic"
     ).all();
 
     return c.json({
@@ -244,7 +244,7 @@ app.get("/api/research-topics/:id", async (c) => {
     const id = c.req.param('id');
 
     const { results } = await c.env.DB.prepare(
-      "SELECT * FROM research_topics WHERE id = ?"
+      "SELECT * FROM research_topic WHERE id = ?"
     )
       .bind(id)
       .all();
@@ -276,7 +276,7 @@ app.post("/api/research-topics", zValidator("json", ResearchTopicSchema), async 
     const id = uuidv4();
 
     const result = await c.env.DB.prepare(
-      "INSERT INTO research_topics (id, name, description) VALUES (?, ?, ?)"
+      "INSERT INTO research_topic (id, name, description) VALUES (?, ?, ?)"
     )
       .bind(id, data.name, data.description || null)
       .run();
@@ -310,7 +310,7 @@ app.put("/api/research-topics/:id", zValidator("json", ResearchTopicSchema), asy
 
     // Check if research topic exists
     const { results } = await c.env.DB.prepare(
-      "SELECT * FROM research_topics WHERE id = ?"
+      "SELECT * FROM research_topic WHERE id = ?"
     )
       .bind(id)
       .all();
@@ -323,7 +323,7 @@ app.put("/api/research-topics/:id", zValidator("json", ResearchTopicSchema), asy
     }
 
     const result = await c.env.DB.prepare(
-      "UPDATE research_topics SET name = ?, description = ? WHERE id = ?"
+      "UPDATE research_topic SET name = ?, description = ? WHERE id = ?"
     )
       .bind(data.name, data.description || null, id)
       .run();
@@ -356,7 +356,7 @@ app.delete("/api/research-topics/:id", async (c) => {
 
     // Check if research topic exists
     const { results } = await c.env.DB.prepare(
-      "SELECT * FROM research_topics WHERE id = ?"
+      "SELECT * FROM research_topic WHERE id = ?"
     )
       .bind(id)
       .all();
@@ -369,7 +369,7 @@ app.delete("/api/research-topics/:id", async (c) => {
     }
 
     const result = await c.env.DB.prepare(
-      "DELETE FROM research_topics WHERE id = ?"
+      "DELETE FROM research_topic WHERE id = ?"
     )
       .bind(id)
       .run();
@@ -398,7 +398,7 @@ app.get("/api/research-topics/:id/detail", async (c) => {
 
     // Get the research topic
     const { results: topicResults } = await c.env.DB.prepare(
-      "SELECT * FROM research_topics WHERE id = ?"
+      "SELECT * FROM research_topic WHERE id = ?"
     )
       .bind(id)
       .all();
@@ -414,7 +414,7 @@ app.get("/api/research-topics/:id/detail", async (c) => {
 
     // Get the notes for this topic
     const { results: noteResults } = await c.env.DB.prepare(
-      "SELECT * FROM topic_notes WHERE topic_id = ? ORDER BY created_at DESC"
+      "SELECT * FROM topic_note WHERE topic_id = ? ORDER BY created_at DESC"
     )
       .bind(id)
       .all();
@@ -423,7 +423,7 @@ app.get("/api/research-topics/:id/detail", async (c) => {
     const { results: conferenceResults } = await c.env.DB.prepare(`
       SELECT tc.*, c.name, c.start_date, c.paper_deadline, c.metadata
       FROM user_conference_plan tc
-      JOIN conferences c ON tc.conference_id = c.id
+      JOIN conference c ON tc.conference_id = c.id
       WHERE tc.topic_id = ?
     `)
       .bind(id)
@@ -472,7 +472,7 @@ app.get("/api/research-topics/:id/notes", async (c) => {
 
     // Check if research topic exists
     const { results: topicResults } = await c.env.DB.prepare(
-      "SELECT * FROM research_topics WHERE id = ?"
+      "SELECT * FROM research_topic WHERE id = ?"
     )
       .bind(topicId)
       .all();
@@ -486,7 +486,7 @@ app.get("/api/research-topics/:id/notes", async (c) => {
 
     // Get all notes for this topic
     const { results } = await c.env.DB.prepare(
-      "SELECT * FROM topic_notes WHERE topic_id = ? ORDER BY created_at DESC"
+      "SELECT * FROM topic_note WHERE topic_id = ? ORDER BY created_at DESC"
     )
       .bind(topicId)
       .all();
@@ -514,7 +514,7 @@ app.post("/api/research-topics/:id/notes", zValidator("json", TopicNoteSchema), 
 
     // Check if research topic exists
     const { results: topicResults } = await c.env.DB.prepare(
-      "SELECT * FROM research_topics WHERE id = ?"
+      "SELECT * FROM research_topic WHERE id = ?"
     )
       .bind(topicId)
       .all();
@@ -527,7 +527,7 @@ app.post("/api/research-topics/:id/notes", zValidator("json", TopicNoteSchema), 
     }
 
     const result = await c.env.DB.prepare(
-      "INSERT INTO topic_notes (id, topic_id, content, created_at) VALUES (?, ?, ?, ?)"
+      "INSERT INTO topic_note (id, topic_id, content, created_at) VALUES (?, ?, ?, ?)"
     )
       .bind(id, topicId, data.content, createdAt)
       .run();
@@ -562,7 +562,7 @@ app.put("/api/topic-notes/:id", zValidator("json", TopicNoteSchema), async (c) =
 
     // Check if note exists
     const { results } = await c.env.DB.prepare(
-      "SELECT * FROM topic_notes WHERE id = ?"
+      "SELECT * FROM topic_note WHERE id = ?"
     )
       .bind(id)
       .all();
@@ -575,7 +575,7 @@ app.put("/api/topic-notes/:id", zValidator("json", TopicNoteSchema), async (c) =
     }
 
     const result = await c.env.DB.prepare(
-      "UPDATE topic_notes SET content = ? WHERE id = ?"
+      "UPDATE topic_note SET content = ? WHERE id = ?"
     )
       .bind(data.content, id)
       .run();
@@ -607,7 +607,7 @@ app.delete("/api/topic-notes/:id", async (c) => {
 
     // Check if note exists
     const { results } = await c.env.DB.prepare(
-      "SELECT * FROM topic_notes WHERE id = ?"
+      "SELECT * FROM topic_note WHERE id = ?"
     )
       .bind(id)
       .all();
@@ -620,7 +620,7 @@ app.delete("/api/topic-notes/:id", async (c) => {
     }
 
     const result = await c.env.DB.prepare(
-      "DELETE FROM topic_notes WHERE id = ?"
+      "DELETE FROM topic_note WHERE id = ?"
     )
       .bind(id)
       .run();
@@ -649,7 +649,7 @@ app.get("/api/research-topics/:id/conferences", async (c) => {
 
     // Check if research topic exists
     const { results: topicResults } = await c.env.DB.prepare(
-      "SELECT * FROM research_topics WHERE id = ?"
+      "SELECT * FROM research_topic WHERE id = ?"
     )
       .bind(topicId)
       .all();
@@ -665,7 +665,7 @@ app.get("/api/research-topics/:id/conferences", async (c) => {
     const { results } = await c.env.DB.prepare(`
       SELECT tc.*, c.name, c.start_date, c.paper_deadline, c.metadata
       FROM user_conference_plan tc
-      JOIN conferences c ON tc.conference_id = c.id
+      JOIN conference c ON tc.conference_id = c.id
       WHERE tc.topic_id = ?
     `)
       .bind(topicId)
@@ -712,7 +712,7 @@ app.post("/api/research-topics/:id/conferences", zValidator("json", UserConferen
 
     // Check if research topic exists
     const { results: topicResults } = await c.env.DB.prepare(
-      "SELECT * FROM research_topics WHERE id = ?"
+      "SELECT * FROM research_topic WHERE id = ?"
     )
       .bind(topicId)
       .all();
@@ -726,7 +726,7 @@ app.post("/api/research-topics/:id/conferences", zValidator("json", UserConferen
 
     // Check if conference exists
     const { results: conferenceResults } = await c.env.DB.prepare(
-      "SELECT * FROM conferences WHERE id = ?"
+      "SELECT * FROM conference WHERE id = ?"
     )
       .bind(data.conference_id)
       .all();
@@ -803,7 +803,7 @@ app.put("/api/topic-conferences/:id", zValidator("json", UserConferencePlanSchem
 
     // Check if conference exists
     const { results: conferenceResults } = await c.env.DB.prepare(
-      "SELECT * FROM conferences WHERE id = ?"
+      "SELECT * FROM conference WHERE id = ?"
     )
       .bind(data.conference_id)
       .all();
