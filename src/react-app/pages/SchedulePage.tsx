@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useConferences } from '../hooks/useConferences';
 import { useResearchTopics } from '../hooks/useResearchTopics';
-import { Conference, UserConferencePlan } from '../../shared/schemas';
+import { UserConferencePlan } from '../../shared/schemas';
 
 // Define the schedule item interface
 interface ScheduleItem {
@@ -14,39 +14,6 @@ interface ScheduleItem {
   description?: string;
 }
 
-// Helper function to format dates
-const formatDate = (dateString: string | null): string => {
-  if (!dateString) return 'Date not specified';
-
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-};
-
-// Helper function to format date ranges
-const formatDateRange = (startDate: string | null, endDate: string | null): string => {
-  if (!startDate) return 'Dates not specified';
-
-  const start = new Date(startDate);
-  const startFormatted = start.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric'
-  });
-
-  if (!endDate) return startFormatted;
-
-  const end = new Date(endDate);
-  const endFormatted = end.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric'
-  });
-
-  return `${startFormatted} - ${endFormatted}`;
-};
 
 // Helper function to get days remaining
 const getDaysRemaining = (dateString: string | null): string => {
@@ -87,7 +54,8 @@ export function SchedulePage() {
   } = useResearchTopics();
 
   const [linkedConferenceIds, setLinkedConferenceIds] = useState<Set<string>>(new Set());
-  const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
+  // Using underscore prefix to indicate intentionally unused variable
+  const [_scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
   const [groupedItems, setGroupedItems] = useState<Record<string, ScheduleItem[]>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

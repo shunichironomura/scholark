@@ -5,7 +5,6 @@ import {
   ResearchTopicResponse,
   TopicNotesResponse,
   TopicNoteResponse,
-  UserConferencePlan,
   ApiResponseSchema,
 } from '../../shared/schemas';
 import { z } from 'zod';

@@ -2,8 +2,14 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useResearchTopics } from '../hooks/useResearchTopics';
 import { useConferences } from '../hooks/useConferences';
-import { ResearchTopicDetail, TopicNote, Conference, UserConferencePlan } from '../types';
+import { ResearchTopic, TopicNote, UserConferencePlan } from '../../shared/schemas';
 import { Modal } from '../components/Modal';
+
+// Define the ResearchTopicDetail interface
+interface ResearchTopicDetail extends ResearchTopic {
+  notes: TopicNote[];
+  conferences: Array<UserConferencePlan>;
+}
 
 export function ResearchTopicDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -252,18 +258,13 @@ export function ResearchTopicDetailPage() {
         </div>
         {topic.conferences && topic.conferences.length > 0 ? (
           <div className="space-y-4">
-            {topic.conferences.map((link: UserConferencePlan & { conference: Conference }) => (
+            {topic.conferences.map((link: UserConferencePlan) => (
               <div key={link.id} className="p-4 bg-white border rounded-md shadow-sm">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-lg">{link.conference.name}</h3>
+                    <h3 className="font-semibold text-lg">Conference ID: {link.conference_id}</h3>
                     {link.paper_title && (
                       <p className="font-medium mt-1">Paper: {link.paper_title}</p>
-                    )}
-                    {link.conference.paper_deadline && (
-                      <p className="text-sm mt-1">
-                        Deadline: {new Date(link.conference.paper_deadline).toLocaleDateString()}
-                      </p>
                     )}
                     {link.notes && (
                       <div className="mt-2">

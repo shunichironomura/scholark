@@ -11,10 +11,7 @@ export function ConferenceCard({ conference, onEdit, onDelete }: ConferenceCardP
     id,
     name,
     start_date,
-    end_date,
-    location,
     website_url,
-    abstract_deadline,
     paper_deadline,
     metadata
   } = conference;
