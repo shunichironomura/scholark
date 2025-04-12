@@ -5,7 +5,16 @@ DROP TABLE IF EXISTS research_topic;
 DROP TABLE IF EXISTS user_conference_label;
 DROP TABLE IF EXISTS user_label;
 DROP TABLE IF EXISTS conference;
+DROP TABLE IF EXISTS whitelist;
 DROP TABLE IF EXISTS user;
+
+-- Create whitelist table for private beta
+CREATE TABLE whitelist (
+  id TEXT PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  added_at TEXT NOT NULL,
+  added_by TEXT
+);
 
 -- Create user table
 CREATE TABLE user (
@@ -126,3 +135,13 @@ VALUES ('1', '1', '1', '1', 'Advances in Deep Learning', '@article{user2025advan
 
 INSERT INTO user_conference_plan (id, user_id, conference_id, topic_id, paper_title, bibtex, github_link, submission_status, notes)
 VALUES ('2', '1', '2', '2', 'Novel NLP Approaches', '@article{user2025novel, title={Novel NLP Approaches}, author={user, Example}, year={2025}}', 'https://github.com/example/nlp-paper', 'Planning', 'Need to finalize the research question');
+
+-- Insert example whitelist entries for private beta
+INSERT INTO whitelist (id, email, added_at, added_by)
+VALUES ('1', 'user@example.com', '2025-04-01T00:00:00Z', 'admin');
+
+INSERT INTO whitelist (id, email, added_at, added_by)
+VALUES ('2', 'researcher@university.edu', '2025-04-01T00:00:00Z', 'admin');
+
+INSERT INTO whitelist (id, email, added_at, added_by)
+VALUES ('3', 'scientist@research.org', '2025-04-01T00:00:00Z', 'admin');

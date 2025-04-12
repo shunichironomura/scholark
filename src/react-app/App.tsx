@@ -4,21 +4,83 @@ import { ConferencesPage } from './pages/ConferencesPage';
 import { ResearchTopicsPage } from './pages/ResearchTopicsPage';
 import { ResearchTopicDetailPage } from './pages/ResearchTopicDetailPage';
 import { SchedulePage } from './pages/SchedulePage';
+import { LoginPage } from './pages/LoginPage';
+import { AuthProvider } from './contexts/AuthContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
   return (
-    <Router>
-      <MainLayout>
+    <AuthProvider>
+      <Router>
         <Routes>
-          <Route path="/" element={<ConferencesPage />} />
-          <Route path="/conferences" element={<ConferencesPage />} />
-          <Route path="/research-topics" element={<ResearchTopicsPage />} />
-          <Route path="/research-topics/:id" element={<ResearchTopicDetailPage />} />
-          <Route path="/schedule" element={<SchedulePage />} />
-          <Route path="*" element={<ConferencesPage />} />
+          <Route path="/login" element={<LoginPage />} />
+
+          {/* Protected routes */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <ConferencesPage />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/conferences"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <ConferencesPage />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/research-topics"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <ResearchTopicsPage />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/research-topics/:id"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <ResearchTopicDetailPage />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/schedule"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <SchedulePage />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Fallback route */}
+          <Route
+            path="*"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <ConferencesPage />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
         </Routes>
-      </MainLayout>
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 }
 

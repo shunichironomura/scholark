@@ -1,7 +1,12 @@
 import { Hono } from "hono";
 import { v4 as uuidv4 } from 'uuid';
 import { zValidator } from '@hono/zod-validator';
-import { ConferenceSchema, ResearchTopicSchema, TopicNoteSchema, UserConferencePlanSchema } from '../shared/schemas';
+import { ConferenceSchema, ResearchTopicSchema, TopicNoteSchema, UserConferencePlanSchema, WhitelistSchema } from '../shared/schemas';
+import { authMiddleware, whitelistMiddleware } from './middleware/auth';
+import { createToken } from '../shared/jwt';
+import { findOrCreateUser, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URL, isWhitelisted } from '../shared/auth';
+import { GoogleUserInfo } from '../shared/auth';
+import { getCookie, setCookie } from 'hono/cookie';
 
 // Define the environment interface with D1 database binding
 interface Env {
@@ -10,13 +15,254 @@ interface Env {
 
 // Define the Variables interface for request validation
 interface Variables {
-  // Add any variables needed for middleware
+  user?: {
+    id: string;
+    email: string;
+    name: string;
+  };
 }
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 // Original endpoint
 app.get("/api/", (c) => c.json({ name: "Cloudflare" }));
+
+// Authentication endpoints
+// Google OAuth login
+app.get("/api/auth/google", async (c) => {
+  // Generate a random state for CSRF protection
+  const state = crypto.randomUUID();
+
+  // Create the authorization URL
+  const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+  authUrl.searchParams.append("client_id", GOOGLE_CLIENT_ID);
+  authUrl.searchParams.append("redirect_uri", REDIRECT_URL);
+  authUrl.searchParams.append("response_type", "code");
+  authUrl.searchParams.append("scope", "openid email profile");
+  authUrl.searchParams.append("state", state);
+
+  // Set a cookie with the state for verification
+  c.header("Set-Cookie", `oauth_state=${state}; HttpOnly; Path=/; Max-Age=3600; SameSite=Lax`);
+
+  // Redirect to Google's authorization page
+  return c.redirect(authUrl.toString());
+});
+
+// Google OAuth callback
+app.get("/api/auth/callback/google", async (c) => {
+  try {
+    // Get the authorization code and state from the query parameters
+    const code = c.req.query("code");
+    const state = c.req.query("state");
+
+    // Get the state from the cookie
+    const cookieState = c.req.cookie("oauth_state");
+
+    // Verify the state to prevent CSRF attacks
+    if (!state || !cookieState || state !== cookieState) {
+      return c.json({
+        success: false,
+        error: "Invalid state parameter"
+      }, 400);
+    }
+
+    // Exchange the authorization code for an access token
+    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        code,
+        client_id: GOOGLE_CLIENT_ID,
+        client_secret: GOOGLE_CLIENT_SECRET,
+        redirect_uri: REDIRECT_URL,
+        grant_type: "authorization_code"
+      })
+    });
+
+    const tokenData = await tokenResponse.json();
+
+    if (!tokenResponse.ok) {
+      console.error("Error exchanging code for token:", tokenData);
+      return c.json({
+        success: false,
+        error: "Failed to exchange authorization code for token"
+      }, 500);
+    }
+
+    // Get the user's profile information
+    const userInfoResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+      headers: {
+        Authorization: `Bearer ${tokenData.access_token}`
+      }
+    });
+
+    const userInfo = await userInfoResponse.json();
+
+    if (!userInfoResponse.ok) {
+      console.error("Error fetching user info:", userInfo);
+      return c.json({
+        success: false,
+        error: "Failed to fetch user information"
+      }, 500);
+    }
+
+    // Check if the user's email is whitelisted
+    const isUserWhitelisted = await isWhitelisted(c.env.DB, userInfo.email);
+    if (!isUserWhitelisted) {
+      return c.json({
+        success: false,
+        error: "Your email is not whitelisted for this application"
+      }, 403);
+    }
+
+    // Find or create the user in the database
+    const user = await findOrCreateUser(c.env.DB, userInfo);
+
+    if (!user) {
+      return c.json({
+        success: false,
+        error: "Failed to create or find user"
+      }, 500);
+    }
+
+    // Create a JWT token for the user
+    const token = await createToken(user);
+
+    // Redirect to the frontend with the token
+    return c.redirect(`/?token=${token}`);
+  } catch (error) {
+    console.error("Error in OAuth callback:", error);
+    return c.json({
+      success: false,
+      error: "Authentication failed"
+    }, 500);
+  }
+});
+
+// Get current user
+app.get("/api/auth/me", authMiddleware, async (c) => {
+  const user = c.get('user');
+
+  return c.json({
+    success: true,
+    user
+  });
+});
+
+// Whitelist management endpoints
+// Get all whitelisted emails
+app.get("/api/whitelist", authMiddleware, whitelistMiddleware, async (c) => {
+  try {
+    const { results } = await c.env.DB.prepare(
+      "SELECT * FROM whitelist ORDER BY added_at DESC"
+    ).all();
+
+    return c.json({
+      success: true,
+      whitelist: results
+    });
+  } catch (error) {
+    console.error("Error fetching whitelist:", error);
+    return c.json({
+      success: false,
+      error: "Failed to fetch whitelist"
+    }, 500);
+  }
+});
+
+// Add an email to the whitelist
+app.post("/api/whitelist", authMiddleware, whitelistMiddleware, zValidator("json", WhitelistSchema), async (c) => {
+  try {
+    const data = c.req.valid('json');
+    const id = uuidv4();
+    const addedAt = new Date().toISOString();
+    const user = c.get('user');
+
+    // Check if email already exists in whitelist
+    const { results } = await c.env.DB.prepare(
+      "SELECT * FROM whitelist WHERE email = ?"
+    )
+      .bind(data.email)
+      .all();
+
+    if (results.length > 0) {
+      return c.json({
+        success: false,
+        error: "Email is already whitelisted"
+      }, 400);
+    }
+
+    const result = await c.env.DB.prepare(
+      "INSERT INTO whitelist (id, email, added_at, added_by) VALUES (?, ?, ?, ?)"
+    )
+      .bind(id, data.email, addedAt, user.id)
+      .run();
+
+    if (!result.success) {
+      throw new Error("Failed to add email to whitelist");
+    }
+
+    return c.json({
+      success: true,
+      whitelist: {
+        id,
+        email: data.email,
+        added_at: addedAt,
+        added_by: user.id
+      }
+    }, 201);
+  } catch (error) {
+    console.error("Error adding to whitelist:", error);
+    return c.json({
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to add email to whitelist"
+    }, 500);
+  }
+});
+
+// Remove an email from the whitelist
+app.delete("/api/whitelist/:id", authMiddleware, whitelistMiddleware, async (c) => {
+  try {
+    const id = c.req.param('id');
+
+    // Check if whitelist entry exists
+    const { results } = await c.env.DB.prepare(
+      "SELECT * FROM whitelist WHERE id = ?"
+    )
+      .bind(id)
+      .all();
+
+    if (results.length === 0) {
+      return c.json({
+        success: false,
+        error: "Whitelist entry not found"
+      }, 404);
+    }
+
+    const result = await c.env.DB.prepare(
+      "DELETE FROM whitelist WHERE id = ?"
+    )
+      .bind(id)
+      .run();
+
+    if (!result.success) {
+      throw new Error("Failed to remove email from whitelist");
+    }
+
+    return c.json({
+      success: true,
+      message: "Email removed from whitelist successfully"
+    });
+  } catch (error) {
+    console.error("Error removing from whitelist:", error);
+    return c.json({
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to remove email from whitelist"
+    }, 500);
+  }
+});
 
 // Helper function to parse metadata
 const parseMetadata = (conference: any): any => {

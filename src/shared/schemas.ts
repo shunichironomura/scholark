@@ -1,5 +1,29 @@
 import { z } from "zod";
 
+// User and Authentication Schemas
+export const UserSchema = z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  email: z.string().email(),
+  oauth_provider: z.string(),
+  oauth_provider_user_id: z.string(),
+  calendar_token: z.string().nullable(),
+});
+
+export const WhitelistSchema = z.object({
+  id: z.string().optional(),
+  email: z.string().email(),
+  added_at: z.string().optional(),
+  added_by: z.string().optional(),
+});
+
+export const AuthResponseSchema = z.object({
+  success: z.boolean(),
+  user: UserSchema.optional(),
+  error: z.string().optional(),
+  token: z.string().optional(),
+});
+
 export const ConferenceSchema = z.object({
   id: z.string().optional(), // Make id optional for creation
   name: z.string(),
@@ -77,6 +101,9 @@ export const TopicNoteResponseSchema = ApiResponseSchema.extend({
 });
 
 // Export inferred types
+export type User = z.infer<typeof UserSchema>;
+export type Whitelist = z.infer<typeof WhitelistSchema>;
+export type AuthResponse = z.infer<typeof AuthResponseSchema>;
 export type Conference = z.infer<typeof ConferenceSchema>;
 export type UserLabel = z.infer<typeof UserLabelSchema>;
 export type ResearchTopic = z.infer<typeof ResearchTopicSchema>;

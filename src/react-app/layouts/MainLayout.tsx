@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -7,6 +8,8 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   // Helper function to determine if a link is active
   const isActive = (path: string) => {
@@ -24,29 +27,47 @@ export function MainLayout({ children }: MainLayoutProps) {
             <div className="flex items-center">
               <Link to="/" className="text-2xl font-bold text-blue-600">Scholark</Link>
             </div>
-            <nav className="flex space-x-4">
-              <Link
-                to="/conferences"
-                className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/') ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'
-                  }`}
-              >
-                Conferences
-              </Link>
-              <Link
-                to="/research-topics"
-                className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/research-topics') ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'
-                  }`}
-              >
-                Research Topics
-              </Link>
-              <Link
-                to="/schedule"
-                className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/schedule') ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'
-                  }`}
-              >
-                My Schedule
-              </Link>
-            </nav>
+            <div className="flex items-center">
+              <nav className="flex space-x-4 mr-4">
+                <Link
+                  to="/conferences"
+                  className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/') ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'
+                    }`}
+                >
+                  Conferences
+                </Link>
+                <Link
+                  to="/research-topics"
+                  className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/research-topics') ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'
+                    }`}
+                >
+                  Research Topics
+                </Link>
+                <Link
+                  to="/schedule"
+                  className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/schedule') ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'
+                    }`}
+                >
+                  My Schedule
+                </Link>
+              </nav>
+
+              {/* User profile and logout */}
+              <div className="relative">
+                <div className="flex items-center">
+                  <span className="text-sm text-gray-700 mr-2">{user?.name}</span>
+                  <button
+                    onClick={() => {
+                      logout();
+                      navigate('/login');
+                    }}
+                    className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-md"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </header>

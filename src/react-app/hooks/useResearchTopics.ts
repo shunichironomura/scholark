@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import {
   ResearchTopic,
   ResearchTopicsResponse,
@@ -93,16 +94,32 @@ type UserConferencePlansResponse = z.infer<typeof UserConferencePlansResponseSch
 type UserConferencePlanResponse = z.infer<typeof UserConferencePlanResponseSchema>;
 
 export function useResearchTopics() {
+  const { token, user } = useAuth();
   const [topics, setTopics] = useState<ResearchTopic[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Helper function to create headers with auth token
+  const getAuthHeaders = useCallback(() => {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return headers;
+  }, [token]);
 
   // Fetch all research topics
   const fetchTopics = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/research-topics');
+      const response = await fetch('/api/research-topics', {
+        headers: getAuthHeaders()
+      });
       const data = await response.json() as ResearchTopicsResponse;
 
       if (data.success) {
@@ -123,7 +140,9 @@ export function useResearchTopics() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/research-topics/${id}`);
+      const response = await fetch(`/api/research-topics/${id}`, {
+        headers: getAuthHeaders()
+      });
       const data = await response.json() as ResearchTopicResponse;
 
       if (data.success) {
@@ -148,7 +167,9 @@ export function useResearchTopics() {
     setError(null);
     try {
       console.log("Fetching from URL:", `/api/research-topics/${id}/detail`);
-      const response = await fetch(`/api/research-topics/${id}/detail`);
+      const response = await fetch(`/api/research-topics/${id}/detail`, {
+        headers: getAuthHeaders()
+      });
       console.log("Response status:", response.status);
       const data = await response.json() as ResearchTopicDetailResponse;
       console.log("Response data:", data);
@@ -178,9 +199,7 @@ export function useResearchTopics() {
     try {
       const response = await fetch('/api/research-topics', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(topic),
       });
 
@@ -209,9 +228,7 @@ export function useResearchTopics() {
     try {
       const response = await fetch(`/api/research-topics/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(topic),
       });
 
@@ -242,6 +259,7 @@ export function useResearchTopics() {
     try {
       const response = await fetch(`/api/research-topics/${id}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(),
       });
 
       const data = await response.json();
@@ -267,7 +285,9 @@ export function useResearchTopics() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/research-topics/${topicId}/notes`);
+      const response = await fetch(`/api/research-topics/${topicId}/notes`, {
+        headers: getAuthHeaders()
+      });
       const data = await response.json() as TopicNotesResponse;
 
       if (data.success) {
@@ -292,9 +312,7 @@ export function useResearchTopics() {
     try {
       const response = await fetch(`/api/research-topics/${topicId}/notes`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ content }),
       });
 
@@ -322,9 +340,7 @@ export function useResearchTopics() {
     try {
       const response = await fetch(`/api/topic-notes/${noteId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ content }),
       });
 
@@ -352,6 +368,7 @@ export function useResearchTopics() {
     try {
       const response = await fetch(`/api/topic-notes/${noteId}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(),
       });
 
       const data = await response.json();
@@ -377,7 +394,9 @@ export function useResearchTopics() {
     setError(null);
     try {
       console.log(`Fetching conferences for topic ID: ${topicId}`);
-      const response = await fetch(`/api/research-topics/${topicId}/conferences`);
+      const response = await fetch(`/api/research-topics/${topicId}/conferences`, {
+        headers: getAuthHeaders()
+      });
       console.log(`Response status: ${response.status}`);
       const data = await response.json() as UserConferencePlansResponse;
       console.log(`Response data:`, data);
@@ -412,9 +431,7 @@ export function useResearchTopics() {
     try {
       const response = await fetch(`/api/research-topics/${topicId}/conferences`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           conference_id: conferenceId,
           paper_title: paperTitle || null,
@@ -451,9 +468,7 @@ export function useResearchTopics() {
     try {
       const response = await fetch(`/api/topic-conferences/${linkId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           conference_id: conferenceId,
           paper_title: paperTitle || null,
@@ -485,6 +500,7 @@ export function useResearchTopics() {
     try {
       const response = await fetch(`/api/topic-conferences/${linkId}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(),
       });
 
       const data = await response.json();

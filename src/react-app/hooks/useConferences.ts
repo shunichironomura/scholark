@@ -1,17 +1,34 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import { Conference, ConferencesResponse, ConferenceResponse } from '../../shared/schemas';
 
 export function useConferences() {
+  const { token } = useAuth();
   const [conferences, setConferences] = useState<Conference[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Helper function to create headers with auth token
+  const getAuthHeaders = useCallback(() => {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return headers;
+  }, [token]);
 
   // Fetch all conferences
   const fetchConferences = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/conferences');
+      const response = await fetch('/api/conferences', {
+        headers: getAuthHeaders()
+      });
       const data = await response.json() as ConferencesResponse;
 
       if (data.success) {
@@ -25,14 +42,16 @@ export function useConferences() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [getAuthHeaders]);
 
   // Fetch a single conference by ID
   const fetchConference = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/conferences/${id}`);
+      const response = await fetch(`/api/conferences/${id}`, {
+        headers: getAuthHeaders()
+      });
       const data = await response.json() as ConferenceResponse;
 
       if (data.success) {
@@ -48,7 +67,7 @@ export function useConferences() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [getAuthHeaders]);
 
   // Create a new conference
   const createConference = useCallback(async (conference: Omit<Conference, 'id'>) => {
@@ -57,9 +76,7 @@ export function useConferences() {
     try {
       const response = await fetch('/api/conferences', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(conference),
       });
 
@@ -79,7 +96,7 @@ export function useConferences() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [getAuthHeaders]);
 
   // Update an existing conference
   const updateConference = useCallback(async (id: string, conference: Partial<Conference>) => {
@@ -88,9 +105,7 @@ export function useConferences() {
     try {
       const response = await fetch(`/api/conferences/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(conference),
       });
 
@@ -112,7 +127,7 @@ export function useConferences() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [getAuthHeaders]);
 
   // Delete a conference
   const deleteConference = useCallback(async (id: string) => {
@@ -121,6 +136,7 @@ export function useConferences() {
     try {
       const response = await fetch(`/api/conferences/${id}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(),
       });
 
       const data = await response.json();
@@ -139,7 +155,7 @@ export function useConferences() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [getAuthHeaders]);
 
   // Load conferences on initial mount
   useEffect(() => {
