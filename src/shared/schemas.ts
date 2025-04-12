@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Core schemas
 export const ConferenceSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -31,14 +30,6 @@ export const TopicNoteSchema = z.object({
   created_at: z.string(),
 });
 
-export const TopicConferenceSchema = z.object({
-  id: z.string(),
-  topic_id: z.string(),
-  conference_id: z.string(),
-  paper_title: z.string().nullable(),
-  notes: z.string().nullable(),
-});
-
 export const UserConferencePlanSchema = z.object({
   id: z.string(),
   conference_id: z.string(),
@@ -50,21 +41,10 @@ export const UserConferencePlanSchema = z.object({
   notes: z.string().nullable(),
 });
 
-// Extended/composite schemas
-export const ConferenceWithLabelsSchema = ConferenceSchema.extend({
-  labels: z.array(UserLabelSchema).optional(),
-  plan: UserConferencePlanSchema.optional(),
-});
-
-export const ResearchTopicDetailSchema = ResearchTopicSchema.extend({
-  notes: z.array(TopicNoteSchema).optional(),
-  conferences: z
-    .array(
-      TopicConferenceSchema.extend({
-        conference: ConferenceSchema,
-      })
-    )
-    .optional(),
+export const UserConferenceLabelSchema = z.object({
+  id: z.string(),
+  conference_id: z.string(),
+  label_id: z.string(),
 });
 
 // Generic API response schema
@@ -86,20 +66,11 @@ export const ResearchTopicsResponseSchema = ApiResponseSchema.extend({
 export const ResearchTopicResponseSchema = ApiResponseSchema.extend({
   topic: ResearchTopicSchema,
 });
-export const ResearchTopicDetailResponseSchema = ApiResponseSchema.extend({
-  topic: ResearchTopicDetailSchema,
-});
 export const TopicNotesResponseSchema = ApiResponseSchema.extend({
   notes: z.array(TopicNoteSchema),
 });
 export const TopicNoteResponseSchema = ApiResponseSchema.extend({
   note: TopicNoteSchema,
-});
-export const TopicConferencesResponseSchema = ApiResponseSchema.extend({
-  topicConferences: z.array(TopicConferenceSchema),
-});
-export const TopicConferenceResponseSchema = ApiResponseSchema.extend({
-  topicConference: TopicConferenceSchema,
 });
 
 // Export inferred types
@@ -107,17 +78,11 @@ export type Conference = z.infer<typeof ConferenceSchema>;
 export type UserLabel = z.infer<typeof UserLabelSchema>;
 export type ResearchTopic = z.infer<typeof ResearchTopicSchema>;
 export type TopicNote = z.infer<typeof TopicNoteSchema>;
-export type TopicConference = z.infer<typeof TopicConferenceSchema>;
 export type UserConferencePlan = z.infer<typeof UserConferencePlanSchema>;
-export type ConferenceWithLabels = z.infer<typeof ConferenceWithLabelsSchema>;
-export type ResearchTopicDetail = z.infer<typeof ResearchTopicDetailSchema>;
 
 export type ConferencesResponse = z.infer<typeof ConferencesResponseSchema>;
 export type ConferenceResponse = z.infer<typeof ConferenceResponseSchema>;
 export type ResearchTopicsResponse = z.infer<typeof ResearchTopicsResponseSchema>;
 export type ResearchTopicResponse = z.infer<typeof ResearchTopicResponseSchema>;
-export type ResearchTopicDetailResponse = z.infer<typeof ResearchTopicDetailResponseSchema>;
 export type TopicNotesResponse = z.infer<typeof TopicNotesResponseSchema>;
 export type TopicNoteResponse = z.infer<typeof TopicNoteResponseSchema>;
-export type TopicConferencesResponse = z.infer<typeof TopicConferencesResponseSchema>;
-export type TopicConferenceResponse = z.infer<typeof TopicConferenceResponseSchema>;

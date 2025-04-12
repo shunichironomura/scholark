@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { v4 as uuidv4 } from 'uuid';
 import { zValidator } from '@hono/zod-validator';
-import { ConferenceSchema, ResearchTopicSchema, TopicConferenceSchema, TopicNoteSchema } from '../shared/schemas';
+import { ConferenceSchema, ResearchTopicSchema, TopicNoteSchema, UserConferencePlanSchema } from '../shared/schemas';
 
 // Define the environment interface with D1 database binding
 interface Env {
@@ -422,7 +422,7 @@ app.get("/api/research-topics/:id/detail", async (c) => {
     // Get the linked conferences for this topic
     const { results: conferenceResults } = await c.env.DB.prepare(`
       SELECT tc.*, c.name, c.start_date, c.paper_deadline, c.metadata
-      FROM topic_conferences tc
+      FROM user_conference_plan tc
       JOIN conferences c ON tc.conference_id = c.id
       WHERE tc.topic_id = ?
     `)
@@ -664,7 +664,7 @@ app.get("/api/research-topics/:id/conferences", async (c) => {
     // Get all linked conferences for this topic
     const { results } = await c.env.DB.prepare(`
       SELECT tc.*, c.name, c.start_date, c.paper_deadline, c.metadata
-      FROM topic_conferences tc
+      FROM user_conference_plan tc
       JOIN conferences c ON tc.conference_id = c.id
       WHERE tc.topic_id = ?
     `)
@@ -704,7 +704,7 @@ app.get("/api/research-topics/:id/conferences", async (c) => {
 });
 
 // LINK a conference to a research topic
-app.post("/api/research-topics/:id/conferences", zValidator("json", TopicConferenceSchema), async (c) => {
+app.post("/api/research-topics/:id/conferences", zValidator("json", UserConferencePlanSchema), async (c) => {
   try {
     const topicId = c.req.param('id');
     const data = c.req.valid('json');
@@ -740,7 +740,7 @@ app.post("/api/research-topics/:id/conferences", zValidator("json", TopicConfere
 
     // Check if the link already exists
     const { results: existingResults } = await c.env.DB.prepare(
-      "SELECT * FROM topic_conferences WHERE topic_id = ? AND conference_id = ?"
+      "SELECT * FROM user_conference_plan WHERE topic_id = ? AND conference_id = ?"
     )
       .bind(topicId, data.conference_id)
       .all();
@@ -753,7 +753,7 @@ app.post("/api/research-topics/:id/conferences", zValidator("json", TopicConfere
     }
 
     const result = await c.env.DB.prepare(
-      "INSERT INTO topic_conferences (id, topic_id, conference_id, paper_title, notes) VALUES (?, ?, ?, ?, ?)"
+      "INSERT INTO user_conference_plan (id, topic_id, conference_id, paper_title, notes) VALUES (?, ?, ?, ?, ?)"
     )
       .bind(id, topicId, data.conference_id, data.paper_title || null, data.notes || null)
       .run();
@@ -782,14 +782,14 @@ app.post("/api/research-topics/:id/conferences", zValidator("json", TopicConfere
 });
 
 // UPDATE a topic-conference link
-app.put("/api/topic-conferences/:id", zValidator("json", TopicConferenceSchema), async (c) => {
+app.put("/api/topic-conferences/:id", zValidator("json", UserConferencePlanSchema), async (c) => {
   try {
     const id = c.req.param('id');
     const data = c.req.valid('json');
 
     // Check if topic-conference link exists
     const { results } = await c.env.DB.prepare(
-      "SELECT * FROM topic_conferences WHERE id = ?"
+      "SELECT * FROM user_conference_plan WHERE id = ?"
     )
       .bind(id)
       .all();
@@ -816,7 +816,7 @@ app.put("/api/topic-conferences/:id", zValidator("json", TopicConferenceSchema),
     }
 
     const result = await c.env.DB.prepare(
-      "UPDATE topic_conferences SET conference_id = ?, paper_title = ?, notes = ? WHERE id = ?"
+      "UPDATE user_conference_plan SET conference_id = ?, paper_title = ?, notes = ? WHERE id = ?"
     )
       .bind(data.conference_id, data.paper_title || null, data.notes || null, id)
       .run();
@@ -851,7 +851,7 @@ app.delete("/api/topic-conferences/:id", async (c) => {
 
     // Check if topic-conference link exists
     const { results } = await c.env.DB.prepare(
-      "SELECT * FROM topic_conferences WHERE id = ?"
+      "SELECT * FROM user_conference_plan WHERE id = ?"
     )
       .bind(id)
       .all();
@@ -864,7 +864,7 @@ app.delete("/api/topic-conferences/:id", async (c) => {
     }
 
     const result = await c.env.DB.prepare(
-      "DELETE FROM topic_conferences WHERE id = ?"
+      "DELETE FROM user_conference_plan WHERE id = ?"
     )
       .bind(id)
       .run();
