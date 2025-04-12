@@ -116,19 +116,26 @@ export function useResearchTopics() {
 
   // Fetch detailed information about a research topic, including notes and linked conferences
   const fetchTopicDetail = useCallback(async (id: string) => {
+    console.log("fetchTopicDetail called with ID:", id);
     setLoading(true);
     setError(null);
     try {
+      console.log("Fetching from URL:", `/api/research-topics/${id}/detail`);
       const response = await fetch(`/api/research-topics/${id}/detail`);
+      console.log("Response status:", response.status);
       const data = await response.json() as ResearchTopicDetailResponse;
+      console.log("Response data:", data);
 
       if (data.success) {
+        console.log("Topic detail fetch successful, returning topic:", data.topic);
         return data.topic;
       } else {
+        console.log("Topic detail fetch failed with error:", data.error);
         setError(data.error || 'Failed to fetch research topic details');
         return null;
       }
     } catch (err) {
+      console.log("Exception in fetchTopicDetail:", err);
       setError('Error fetching research topic details');
       console.error(err);
       return null;

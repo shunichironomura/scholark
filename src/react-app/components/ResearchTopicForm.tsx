@@ -21,6 +21,7 @@ export function ResearchTopicForm({
     e.preventDefault();
     onSubmit({
       name,
+      topic_name: name, // Add topic_name property for database compatibility
       description: description || null,
     });
   };

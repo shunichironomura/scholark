@@ -8,13 +8,15 @@ interface ResearchTopicCardProps {
 }
 
 export function ResearchTopicCard({ topic, onEdit, onDelete }: ResearchTopicCardProps) {
-  const { id, name, description } = topic;
+  // Get the display name from either name or topic_name property
+  const { id, description } = topic;
+  const displayName = topic.name || (topic as any).topic_name || "Research Topic";
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <Link to={`/research-topics/${id}`} className="block p-6">
         <div className="flex justify-between items-start">
-          <h3 className="text-xl font-semibold text-zinc-900 mb-2">{name}</h3>
+          <h3 className="text-xl font-semibold text-zinc-900 mb-2">{displayName}</h3>
           {(onEdit || onDelete) && (
             <div className="flex space-x-2">
               {onEdit && (

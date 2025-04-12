@@ -20,6 +20,7 @@ export const UserLabelSchema = z.object({
 export const ResearchTopicSchema = z.object({
   id: z.string(),
   name: z.string(),
+  topic_name: z.string().optional(), // Add optional topic_name property for database compatibility
   description: z.string().nullable(),
 });
 

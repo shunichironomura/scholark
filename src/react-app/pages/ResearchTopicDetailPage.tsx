@@ -9,6 +9,7 @@ import { Modal } from '../components/Modal';
 interface ResearchTopicDetail extends ResearchTopic {
   notes: TopicNote[];
   conferences: Array<UserConferencePlan>;
+  topic_name?: string; // Add optional topic_name property for database compatibility
 }
 
 export function ResearchTopicDetailPage() {
@@ -50,10 +51,17 @@ export function ResearchTopicDetailPage() {
   // Load topic detail
   const loadTopicDetail = async () => {
     if (id) {
+      console.log("Fetching topic detail for ID:", id);
       const topicDetail = await fetchTopicDetail(id);
+      console.log("Topic detail response:", topicDetail);
       if (topicDetail) {
         setTopic(topicDetail);
+        console.log("Topic state set:", topicDetail);
+      } else {
+        console.log("Topic detail is null or undefined");
       }
+    } else {
+      console.log("No ID provided");
     }
   };
 
@@ -173,10 +181,25 @@ export function ResearchTopicDetailPage() {
     return <div className="p-4">Research topic not found</div>;
   }
 
+  // Log when component renders
+  console.log("Rendering ResearchTopicDetailPage, topic:", topic);
+  console.log("Topic name:", topic?.name);
+  console.log("Topic ID:", topic?.id);
+
+  // Access topic_name using type assertion to avoid TypeScript errors
+  const topicName = (topic as any).topic_name;
+  console.log("Topic topic_name:", topicName);
+
+  // Get the display name from either name or topic_name property
+  const displayName = topic?.name || topicName || "Research Topic";
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">{topic.name}</h1>
+        <h1 className="text-3xl font-bold text-blue-700">
+          {displayName}
+          <span className="ml-2">({topic.id})</span>
+        </h1>
         <button
           onClick={() => navigate('/research-topics')}
           className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"

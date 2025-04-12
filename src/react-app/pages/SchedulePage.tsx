@@ -63,24 +63,35 @@ export function SchedulePage() {
   // Fetch linked conferences for all research topics
   useEffect(() => {
     const fetchLinkedConferences = async () => {
-      if (topics.length === 0) return;
+      console.log("fetchLinkedConferences called, topics:", topics);
+      if (topics.length === 0) {
+        console.log("No topics found, returning early");
+        return;
+      }
 
       try {
         const conferenceIds = new Set<string>();
 
         // For each topic, fetch linked conferences
         for (const topic of topics) {
+          // Get the display name from either name or topic_name property
+          const displayName = topic.name || (topic as any).topic_name || "Research Topic";
+          console.log("Fetching conferences for topic:", topic.id, displayName);
           const topicConferences = await fetchTopicConferences(topic.id);
+          console.log("Topic conferences result:", topicConferences);
           if (topicConferences) {
             // Add conference IDs to the set
             topicConferences.forEach((tc: UserConferencePlan) => {
+              console.log("Adding conference ID to set:", tc.conference_id);
               conferenceIds.add(tc.conference_id);
             });
           }
         }
 
+        console.log("Final linked conference IDs:", Array.from(conferenceIds));
         setLinkedConferenceIds(conferenceIds);
       } catch (err) {
+        console.log("Error in fetchLinkedConferences:", err);
         setError('Error fetching linked conferences');
         console.error(err);
       }
@@ -91,23 +102,38 @@ export function SchedulePage() {
 
   // Process conferences into schedule items
   useEffect(() => {
+    console.log("Processing conferences effect triggered");
+    console.log("Conferences:", conferences);
+    console.log("Linked conference IDs:", Array.from(linkedConferenceIds));
+    console.log("Loading states:", { conferencesLoading, topicsLoading });
+
     setLoading(conferencesLoading || topicsLoading);
 
-    if (conferencesError) setError(conferencesError);
-    if (topicsError) setError(topicsError);
+    if (conferencesError) {
+      console.log("Conferences error:", conferencesError);
+      setError(conferencesError);
+    }
+    if (topicsError) {
+      console.log("Topics error:", topicsError);
+      setError(topicsError);
+    }
 
     if (conferences.length > 0 && linkedConferenceIds.size > 0) {
+      console.log("Processing conferences and linked IDs");
       const items: ScheduleItem[] = [];
 
       // Filter conferences to only include those linked to research topics
       const filteredConferences = conferences.filter(conf =>
         linkedConferenceIds.has(conf.id)
       );
+      console.log("Filtered conferences:", filteredConferences);
 
       filteredConferences.forEach(conference => {
+        console.log("Processing conference:", conference.id, conference.name);
 
         // Add conference start date
         if (conference.start_date) {
+          console.log("Adding start date item:", conference.start_date);
           items.push({
             id: `${conference.id}-start`,
             date: new Date(conference.start_date),
@@ -121,6 +147,7 @@ export function SchedulePage() {
 
         // Add conference end date if available in metadata
         if (conference.metadata?.end_date) {
+          console.log("Adding end date item:", conference.metadata.end_date);
           items.push({
             id: `${conference.id}-end`,
             date: new Date(conference.metadata.end_date),
@@ -133,6 +160,7 @@ export function SchedulePage() {
 
         // Add paper deadline
         if (conference.paper_deadline) {
+          console.log("Adding paper deadline item:", conference.paper_deadline);
           items.push({
             id: `${conference.id}-paper`,
             date: new Date(conference.paper_deadline),
@@ -145,6 +173,7 @@ export function SchedulePage() {
 
         // Add abstract deadline if available in metadata
         if (conference.metadata?.abstract_deadline) {
+          console.log("Adding abstract deadline item:", conference.metadata.abstract_deadline);
           items.push({
             id: `${conference.id}-abstract`,
             date: new Date(conference.metadata.abstract_deadline),
@@ -156,8 +185,11 @@ export function SchedulePage() {
         }
       });
 
+      console.log("All schedule items before sorting:", items);
+
       // Sort items by date
       const sortedItems = items.sort((a, b) => a.date.getTime() - b.date.getTime());
+      console.log("Sorted schedule items:", sortedItems);
       setScheduleItems(sortedItems);
 
       // Group items by month and year
@@ -170,9 +202,11 @@ export function SchedulePage() {
         grouped[monthYear].push(item);
       });
 
+      console.log("Grouped items by month/year:", grouped);
       setGroupedItems(grouped);
       setLoading(false);
     } else if (!conferencesLoading && !topicsLoading) {
+      console.log("No items to process, setting loading to false");
       // If we're done loading but have no items, make sure we're not showing loading state
       setLoading(false);
     }
