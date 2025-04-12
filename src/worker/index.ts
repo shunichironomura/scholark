@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { v4 as uuidv4 } from 'uuid';
 import { zValidator } from '@hono/zod-validator';
-import { z } from 'zod';
+import { ConferenceSchema, ResearchTopicSchema, TopicConferenceSchema, TopicNoteSchema } from '../shared/schemas';
 
 // Define the environment interface with D1 database binding
 interface Env {
@@ -12,48 +12,6 @@ interface Env {
 interface Variables {
   // Add any variables needed for middleware
 }
-
-// Define the Conference interface
-interface Conference {
-  id: string;
-  name: string;
-  start_date: string | null;
-  paper_deadline: string | null;
-  metadata: string | Record<string, any> | null;
-}
-
-// Define the ResearchTopic interface
-interface ResearchTopic {
-  id: string;
-  name: string;
-  description: string | null;
-}
-
-// Define the validation schema for creating/updating a conference
-const conferenceSchema = z.object({
-  name: z.string().min(1, "Conference name is required"),
-  start_date: z.string().nullable().optional(),
-  paper_deadline: z.string().nullable().optional(),
-  metadata: z.record(z.string(), z.any()).nullable().optional(),
-});
-
-// Define the validation schema for creating/updating a research topic
-const researchTopicSchema = z.object({
-  name: z.string().min(1, "Topic name is required"),
-  description: z.string().nullable().optional(),
-});
-
-// Define the validation schema for creating/updating a topic note
-const topicNoteSchema = z.object({
-  content: z.string().min(1, "Note content is required"),
-});
-
-// Define the validation schema for linking a conference to a topic
-const topicConferenceSchema = z.object({
-  conference_id: z.string().min(1, "Conference ID is required"),
-  paper_title: z.string().nullable().optional(),
-  notes: z.string().nullable().optional(),
-});
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
@@ -128,7 +86,7 @@ app.get("/api/conferences/:id", async (c) => {
 });
 
 // CREATE a new conference
-app.post("/api/conferences", zValidator("json", conferenceSchema), async (c) => {
+app.post("/api/conferences", zValidator("json", ConferenceSchema), async (c) => {
   try {
     const data = c.req.valid('json');
     const id = uuidv4();
@@ -166,7 +124,7 @@ app.post("/api/conferences", zValidator("json", conferenceSchema), async (c) => 
 });
 
 // UPDATE an existing conference
-app.put("/api/conferences/:id", zValidator("json", conferenceSchema), async (c) => {
+app.put("/api/conferences/:id", zValidator("json", ConferenceSchema), async (c) => {
   try {
     const id = c.req.param('id');
     const data = c.req.valid('json');
@@ -312,7 +270,7 @@ app.get("/api/research-topics/:id", async (c) => {
 });
 
 // CREATE a new research topic
-app.post("/api/research-topics", zValidator("json", researchTopicSchema), async (c) => {
+app.post("/api/research-topics", zValidator("json", ResearchTopicSchema), async (c) => {
   try {
     const data = c.req.valid('json');
     const id = uuidv4();
@@ -345,7 +303,7 @@ app.post("/api/research-topics", zValidator("json", researchTopicSchema), async 
 });
 
 // UPDATE an existing research topic
-app.put("/api/research-topics/:id", zValidator("json", researchTopicSchema), async (c) => {
+app.put("/api/research-topics/:id", zValidator("json", ResearchTopicSchema), async (c) => {
   try {
     const id = c.req.param('id');
     const data = c.req.valid('json');
@@ -547,7 +505,7 @@ app.get("/api/research-topics/:id/notes", async (c) => {
 });
 
 // CREATE a new note for a research topic
-app.post("/api/research-topics/:id/notes", zValidator("json", topicNoteSchema), async (c) => {
+app.post("/api/research-topics/:id/notes", zValidator("json", TopicNoteSchema), async (c) => {
   try {
     const topicId = c.req.param('id');
     const data = c.req.valid('json');
@@ -597,7 +555,7 @@ app.post("/api/research-topics/:id/notes", zValidator("json", topicNoteSchema), 
 });
 
 // UPDATE a note
-app.put("/api/topic-notes/:id", zValidator("json", topicNoteSchema), async (c) => {
+app.put("/api/topic-notes/:id", zValidator("json", TopicNoteSchema), async (c) => {
   try {
     const id = c.req.param('id');
     const data = c.req.valid('json');
@@ -746,7 +704,7 @@ app.get("/api/research-topics/:id/conferences", async (c) => {
 });
 
 // LINK a conference to a research topic
-app.post("/api/research-topics/:id/conferences", zValidator("json", topicConferenceSchema), async (c) => {
+app.post("/api/research-topics/:id/conferences", zValidator("json", TopicConferenceSchema), async (c) => {
   try {
     const topicId = c.req.param('id');
     const data = c.req.valid('json');
@@ -824,7 +782,7 @@ app.post("/api/research-topics/:id/conferences", zValidator("json", topicConfere
 });
 
 // UPDATE a topic-conference link
-app.put("/api/topic-conferences/:id", zValidator("json", topicConferenceSchema), async (c) => {
+app.put("/api/topic-conferences/:id", zValidator("json", TopicConferenceSchema), async (c) => {
   try {
     const id = c.req.param('id');
     const data = c.req.valid('json');

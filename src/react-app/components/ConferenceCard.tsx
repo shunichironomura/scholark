@@ -1,4 +1,4 @@
-import { Conference } from '../types';
+import { Conference } from '../../shared/schemas';
 
 interface ConferenceCardProps {
   conference: Conference;

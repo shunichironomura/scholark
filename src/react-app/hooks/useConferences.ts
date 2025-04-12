@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Conference, ConferencesResponse, ConferenceResponse } from '../types';
+import { Conference, ConferencesResponse, ConferenceResponse } from '../../shared/schemas';
 
 export function useConferences() {
   const [conferences, setConferences] = useState<Conference[]>([]);

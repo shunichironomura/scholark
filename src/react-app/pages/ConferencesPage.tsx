@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Conference } from '../types';
+import { Conference } from '../../shared/schemas';
 import { useConferences } from '../hooks/useConferences';
 import { ConferenceCard } from '../components/ConferenceCard';
 import { ConferenceForm } from '../components/ConferenceForm';
