@@ -138,10 +138,10 @@ VALUES ('2', '1', '2', '2', 'Novel NLP Approaches', '@article{user2025novel, tit
 
 -- Insert example whitelist entries for private beta
 INSERT INTO whitelist (id, email, added_at, added_by)
-VALUES ('1', 'user@example.com', '2025-04-01T00:00:00Z', 'admin');
+VALUES ('1', 'shun.nm@gmail.com', '2025-04-01T00:00:00Z', 'admin');
 
 INSERT INTO whitelist (id, email, added_at, added_by)
-VALUES ('2', 'researcher@university.edu', '2025-04-01T00:00:00Z', 'admin');
+VALUES ('2', 'shunichiro.nomura.1035@gmail.com', '2025-04-01T00:00:00Z', 'admin');
 
 INSERT INTO whitelist (id, email, added_at, added_by)
 VALUES ('3', 'scientist@research.org', '2025-04-01T00:00:00Z', 'admin');
