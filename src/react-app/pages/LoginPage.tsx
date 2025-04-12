@@ -53,8 +53,8 @@ export function LoginPage() {
         </p>
 
         <div className="space-y-4">
-          <button
-            onClick={handleLogin}
+          <a
+            href="https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fapi%2Fauth%2Fcallback%2Fgoogle&client_id=652323395312-4ckve4tocnf6248d8cr072r0klt2k7k2.apps.googleusercontent.com&include_granted_scopes=true&scope=openid+email+profile&state=atu798nze0q-weiky2o163h-ypzk7rm1nx9"
             className="w-full flex items-center justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
@@ -77,7 +77,7 @@ export function LoginPage() {
               <path d="M1 1h22v22H1z" fill="none" />
             </svg>
             Sign in with Google
-          </button>
+          </a>
         </div>
 
         <div className="mt-8 text-sm text-center text-gray-500">
