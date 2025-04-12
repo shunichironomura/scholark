@@ -94,7 +94,7 @@ type UserConferencePlansResponse = z.infer<typeof UserConferencePlansResponseSch
 type UserConferencePlanResponse = z.infer<typeof UserConferencePlanResponseSchema>;
 
 export function useResearchTopics() {
-  const { token, user } = useAuth();
+  const { token } = useAuth();
   const [topics, setTopics] = useState<ResearchTopic[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

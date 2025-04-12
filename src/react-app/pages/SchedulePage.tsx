@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useConferences } from '../hooks/useConferences';
 import { useResearchTopics } from '../hooks/useResearchTopics';
-import { UserConferencePlan, Conference, ResearchTopic } from '../../shared/schemas';
+import { UserConferencePlan } from '../../shared/schemas';
 
 // Define the schedule item interface
 interface ScheduleItem {
