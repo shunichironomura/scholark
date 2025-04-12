@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useConferences } from '../hooks/useConferences';
 import { useResearchTopics } from '../hooks/useResearchTopics';
-import { UserConferencePlan } from '../../shared/schemas';
+// No need to import UserConferencePlan as we're using the local TopicConference interface
 
 // Define the schedule item interface
 interface ScheduleItem {
@@ -12,6 +12,26 @@ interface ScheduleItem {
   conferenceId: string;
   conferenceName: string;
   description?: string;
+}
+
+// Define a type for the conference data we receive from the API
+interface TopicConference {
+  id: string;
+  conference_id: string;
+  topic_id: string | null;
+  paper_title: string | null;
+  notes: string | null;
+  conference?: {
+    id?: string;
+    name: string;
+    start_date: string | null;
+    end_date: string | null;
+    location: string | null;
+    website_url: string | null;
+    abstract_deadline: string | null;
+    paper_deadline: string | null;
+    metadata: Record<string, any> | null;
+  };
 }
 
 
@@ -82,7 +102,7 @@ export function SchedulePage() {
           console.log("Topic conferences result:", topicConferences);
           if (topicConferences) {
             // Add conference IDs to the set
-            topicConferences.forEach((tc: UserConferencePlan) => {
+            topicConferences.forEach((tc: TopicConference) => {
               console.log("Adding conference ID to set:", tc.conference_id);
               conferenceIds.add(tc.conference_id);
             });

@@ -2,14 +2,37 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useResearchTopics } from '../hooks/useResearchTopics';
 import { useConferences } from '../hooks/useConferences';
-import { ResearchTopic, TopicNote, UserConferencePlan } from '../../shared/schemas';
+import { TopicNote } from '../../shared/schemas';
 import { Modal } from '../components/Modal';
 
+// Define the TopicConference interface to match the API response
+interface TopicConference {
+  id: string;
+  conference_id: string;
+  topic_id: string | null;
+  paper_title: string | null;
+  notes: string | null;
+  conference?: {
+    id?: string;
+    name: string;
+    start_date: string | null;
+    end_date: string | null;
+    location: string | null;
+    website_url: string | null;
+    abstract_deadline: string | null;
+    paper_deadline: string | null;
+    metadata: Record<string, any> | null;
+  };
+}
+
 // Define the ResearchTopicDetail interface
-interface ResearchTopicDetail extends ResearchTopic {
+interface ResearchTopicDetail {
+  id: string;
+  name?: string;
+  topic_name?: string;
+  description: string | null;
   notes: TopicNote[];
-  conferences: Array<UserConferencePlan>;
-  topic_name?: string; // Add optional topic_name property for database compatibility
+  conferences: Array<TopicConference>;
 }
 
 export function ResearchTopicDetailPage() {
@@ -281,11 +304,13 @@ export function ResearchTopicDetailPage() {
         </div>
         {topic.conferences && topic.conferences.length > 0 ? (
           <div className="space-y-4">
-            {topic.conferences.map((link: UserConferencePlan) => (
+            {topic.conferences.map((link: TopicConference) => (
               <div key={link.id} className="p-4 bg-white border rounded-md shadow-sm">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-lg">Conference ID: {link.conference_id}</h3>
+                    <h3 className="font-semibold text-lg">
+                      {link.conference ? link.conference.name : `Conference ID: ${link.conference_id}`}
+                    </h3>
                     {link.paper_title && (
                       <p className="font-medium mt-1">Paper: {link.paper_title}</p>
                     )}

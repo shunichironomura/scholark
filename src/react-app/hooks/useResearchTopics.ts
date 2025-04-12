@@ -14,7 +14,8 @@ import { z } from 'zod';
 const ResearchTopicDetailResponseSchema = ApiResponseSchema.extend({
   topic: z.object({
     id: z.string(),
-    name: z.string(),
+    name: z.string().optional(),
+    topic_name: z.string().optional(),
     description: z.string().nullable(),
     notes: z.array(z.object({
       id: z.string(),
@@ -27,17 +28,16 @@ const ResearchTopicDetailResponseSchema = ApiResponseSchema.extend({
       conference_id: z.string(),
       topic_id: z.string().nullable(),
       paper_title: z.string().nullable(),
-      bibtex: z.string().nullable(),
-      github_link: z.string().nullable(),
-      submission_status: z.string(),
       notes: z.string().nullable(),
       conference: z.object({
         id: z.string().optional(),
         name: z.string(),
         start_date: z.string().nullable(),
-        paper_deadline: z.string().nullable(),
+        end_date: z.string().nullable(),
         location: z.string().nullable(),
         website_url: z.string().nullable(),
+        abstract_deadline: z.string().nullable(),
+        paper_deadline: z.string().nullable(),
         metadata: z.record(z.any()).nullable(),
       }).optional(),
     })),
@@ -50,41 +50,28 @@ const UserConferencePlansResponseSchema = ApiResponseSchema.extend({
     conference_id: z.string(),
     topic_id: z.string().nullable(),
     paper_title: z.string().nullable(),
-    bibtex: z.string().nullable(),
-    github_link: z.string().nullable(),
-    submission_status: z.string(),
     notes: z.string().nullable(),
     conference: z.object({
       id: z.string().optional(),
       name: z.string(),
       start_date: z.string().nullable(),
-      paper_deadline: z.string().nullable(),
+      end_date: z.string().nullable(),
       location: z.string().nullable(),
       website_url: z.string().nullable(),
+      abstract_deadline: z.string().nullable(),
+      paper_deadline: z.string().nullable(),
       metadata: z.record(z.any()).nullable(),
     }).optional(),
   })),
 });
 
 const UserConferencePlanResponseSchema = ApiResponseSchema.extend({
-  plan: z.object({
+  topicConference: z.object({
     id: z.string(),
     conference_id: z.string(),
     topic_id: z.string().nullable(),
     paper_title: z.string().nullable(),
-    bibtex: z.string().nullable(),
-    github_link: z.string().nullable(),
-    submission_status: z.string(),
     notes: z.string().nullable(),
-    conference: z.object({
-      id: z.string().optional(),
-      name: z.string(),
-      start_date: z.string().nullable(),
-      paper_deadline: z.string().nullable(),
-      location: z.string().nullable(),
-      website_url: z.string().nullable(),
-      metadata: z.record(z.any()).nullable(),
-    }).optional(),
   }),
 });
 
