@@ -4,7 +4,7 @@ import { zValidator } from '@hono/zod-validator';
 import { ConferenceSchema, ResearchTopicSchema, TopicNoteSchema, UserConferencePlanSchema, WhitelistSchema } from '../shared/schemas';
 import { authMiddleware, whitelistMiddleware } from './middleware/auth';
 import { createToken } from '../shared/jwt';
-import { findOrCreateUser, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, isWhitelisted, GoogleUserInfo } from '../shared/auth';
+import { findOrCreateUser, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URL, isWhitelisted, GoogleUserInfo } from '../shared/auth';
 import { googleAuth } from '@hono/oauth-providers/google';
 
 // Define the environment interface with D1 database binding
@@ -26,6 +26,21 @@ const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 // Original endpoint
 app.get("/api/", (c) => c.json({ name: "Cloudflare" }));
 
+// Test endpoint for debugging
+app.get("/api/test", (c) => {
+  console.log("Test endpoint called");
+  return c.json({
+    success: true,
+    message: "API is working",
+    googleCredentials: {
+      clientIdExists: !!GOOGLE_CLIENT_ID,
+      clientIdLength: GOOGLE_CLIENT_ID.length,
+      clientSecretExists: !!GOOGLE_CLIENT_SECRET,
+      clientSecretLength: GOOGLE_CLIENT_SECRET.length
+    }
+  });
+});
+
 // Authentication endpoints
 // Google OAuth
 app.use("/api/auth/google",
@@ -33,10 +48,14 @@ app.use("/api/auth/google",
     client_id: GOOGLE_CLIENT_ID,
     client_secret: GOOGLE_CLIENT_SECRET,
     scope: ['openid', 'email', 'profile'],
+    redirect_uri: REDIRECT_URL,
   })
 );
 
 app.get("/api/auth/google", async (c) => {
+  console.log("Google OAuth callback triggered");
+  console.log("Client ID:", GOOGLE_CLIENT_ID);
+  console.log("Client Secret length:", GOOGLE_CLIENT_SECRET ? GOOGLE_CLIENT_SECRET.length : 0);
   try {
     // Get the Google user info from the middleware
     const googleUser = c.get('user-google');

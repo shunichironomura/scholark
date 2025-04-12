@@ -27,7 +27,11 @@ export function LoginPage() {
   }, [isAuthenticated, isLoading, navigate]);
 
   const handleLogin = () => {
-    window.location.href = '/api/auth/google';
+    console.log('Login button clicked');
+    const authUrl = 'http://localhost:8787/api/auth/google';
+    console.log('Redirecting to:', authUrl);
+    // Try to open the URL in a new window
+    window.open(authUrl, '_self');
   };
 
   if (isLoading) {
