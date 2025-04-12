@@ -2,12 +2,12 @@ import { User } from './schemas';
 import type { D1Database } from '@cloudflare/workers-types';
 
 // Environment variables for Google OAuth
-export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
-export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
-export const REDIRECT_URL = process.env.REDIRECT_URL || 'http://localhost:5173/api/auth/callback/google';
+export const GOOGLE_CLIENT_ID = '';
+export const GOOGLE_CLIENT_SECRET = '';
+export const REDIRECT_URL = 'http://localhost:5173/api/auth/callback/google';
 
 // JWT secret for token signing
-export const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-for-development-only';
+export const JWT_SECRET = 'your-secret-key-for-development-only';
 
 // Token expiration time (1 day)
 export const TOKEN_EXPIRATION = 60 * 60 * 24;

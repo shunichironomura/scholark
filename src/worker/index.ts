@@ -4,9 +4,8 @@ import { zValidator } from '@hono/zod-validator';
 import { ConferenceSchema, ResearchTopicSchema, TopicNoteSchema, UserConferencePlanSchema, WhitelistSchema } from '../shared/schemas';
 import { authMiddleware, whitelistMiddleware } from './middleware/auth';
 import { createToken } from '../shared/jwt';
-import { findOrCreateUser, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URL, isWhitelisted } from '../shared/auth';
-import { GoogleUserInfo } from '../shared/auth';
-import { getCookie, setCookie } from 'hono/cookie';
+import { findOrCreateUser, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, isWhitelisted, GoogleUserInfo } from '../shared/auth';
+import { googleAuth } from '@hono/oauth-providers/google';
 
 // Define the environment interface with D1 database binding
 interface Env {
@@ -28,88 +27,29 @@ const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 app.get("/api/", (c) => c.json({ name: "Cloudflare" }));
 
 // Authentication endpoints
-// Google OAuth login
+// Google OAuth
+app.use("/api/auth/google",
+  googleAuth({
+    client_id: GOOGLE_CLIENT_ID,
+    client_secret: GOOGLE_CLIENT_SECRET,
+    scope: ['openid', 'email', 'profile'],
+  })
+);
+
 app.get("/api/auth/google", async (c) => {
-  // Generate a random state for CSRF protection
-  const state = crypto.randomUUID();
-
-  // Create the authorization URL
-  const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
-  authUrl.searchParams.append("client_id", GOOGLE_CLIENT_ID);
-  authUrl.searchParams.append("redirect_uri", REDIRECT_URL);
-  authUrl.searchParams.append("response_type", "code");
-  authUrl.searchParams.append("scope", "openid email profile");
-  authUrl.searchParams.append("state", state);
-
-  // Set a cookie with the state for verification
-  c.header("Set-Cookie", `oauth_state=${state}; HttpOnly; Path=/; Max-Age=3600; SameSite=Lax`);
-
-  // Redirect to Google's authorization page
-  return c.redirect(authUrl.toString());
-});
-
-// Google OAuth callback
-app.get("/api/auth/callback/google", async (c) => {
   try {
-    // Get the authorization code and state from the query parameters
-    const code = c.req.query("code");
-    const state = c.req.query("state");
+    // Get the Google user info from the middleware
+    const googleUser = c.get('user-google');
 
-    // Get the state from the cookie
-    const cookieState = c.req.cookie("oauth_state");
-
-    // Verify the state to prevent CSRF attacks
-    if (!state || !cookieState || state !== cookieState) {
+    if (!googleUser || !googleUser.email) {
       return c.json({
         success: false,
-        error: "Invalid state parameter"
-      }, 400);
-    }
-
-    // Exchange the authorization code for an access token
-    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: new URLSearchParams({
-        code,
-        client_id: GOOGLE_CLIENT_ID,
-        client_secret: GOOGLE_CLIENT_SECRET,
-        redirect_uri: REDIRECT_URL,
-        grant_type: "authorization_code"
-      })
-    });
-
-    const tokenData = await tokenResponse.json();
-
-    if (!tokenResponse.ok) {
-      console.error("Error exchanging code for token:", tokenData);
-      return c.json({
-        success: false,
-        error: "Failed to exchange authorization code for token"
-      }, 500);
-    }
-
-    // Get the user's profile information
-    const userInfoResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
-      headers: {
-        Authorization: `Bearer ${tokenData.access_token}`
-      }
-    });
-
-    const userInfo = await userInfoResponse.json();
-
-    if (!userInfoResponse.ok) {
-      console.error("Error fetching user info:", userInfo);
-      return c.json({
-        success: false,
-        error: "Failed to fetch user information"
+        error: "Failed to get user information from Google"
       }, 500);
     }
 
     // Check if the user's email is whitelisted
-    const isUserWhitelisted = await isWhitelisted(c.env.DB, userInfo.email);
+    const isUserWhitelisted = await isWhitelisted(c.env.DB, googleUser.email);
     if (!isUserWhitelisted) {
       return c.json({
         success: false,
@@ -118,7 +58,7 @@ app.get("/api/auth/callback/google", async (c) => {
     }
 
     // Find or create the user in the database
-    const user = await findOrCreateUser(c.env.DB, userInfo);
+    const user = await findOrCreateUser(c.env.DB, googleUser as GoogleUserInfo);
 
     if (!user) {
       return c.json({
@@ -179,6 +119,13 @@ app.post("/api/whitelist", authMiddleware, whitelistMiddleware, zValidator("json
     const id = uuidv4();
     const addedAt = new Date().toISOString();
     const user = c.get('user');
+
+    if (!user || !user.id) {
+      return c.json({
+        success: false,
+        error: "User not authenticated"
+      }, 401);
+    }
 
     // Check if email already exists in whitelist
     const { results } = await c.env.DB.prepare(
