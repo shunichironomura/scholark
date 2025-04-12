@@ -11,3 +11,6 @@ Check the following documents before executing any task:
 ## TypeScript guidelines
 
 - Use `pnpm` for package management instead of `npm` or `yarn`.
+- Types should be defined in the `src/shared/schemas.ts` file.
+- Use `zod` for schema validation.
+- The types should be defined first as `zod` schemas, and then converted to TypeScript types using `z.infer`.
