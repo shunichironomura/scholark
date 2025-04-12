@@ -5,17 +5,17 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "scholark",
-	"main": "src/entry.py",
-	"compatibility_date": "2025-04-12",
+	"main": "./src/worker/index.ts",
+	"compatibility_date": "2025-04-01",
 	"compatibility_flags": [
-		"python_workers"
+		"nodejs_compat"
 	],
-	"assets": {
-		"binding": "ASSETS",
-		"directory": "./public"
-	},
 	"observability": {
 		"enabled": true
+	},
+	"upload_source_maps": true,
+	"assets": {
+		"not_found_handling": "single-page-application"
 	}
 	/**
 	 * Smart Placement
