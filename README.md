@@ -26,21 +26,22 @@ The goal of Scholark is to fill the gap between traditional calendar tools and a
 ### 🖥️ **Frontend**
 
 - **React** — modern, component-based UI
-- **Vite** — fast, lightweight build tool
+- **Cloudflare Pages** — globally-distributed static hosting for frontend
 - **shadcn/ui + Tailwind CSS** — minimalist, accessible component library and styling system
 
 ### 🧠 **Backend**
 
-- **FastAPI** — fast, modern web framework for building APIs
-- **SQLModel** — ORM for database interactions
-- **PostgreSQL** — relational database for structured data
+- **Cloudflare Workers** — serverless functions for handling API requests
+- **Cloudflare D1** — lightweight, serverless SQL database (SQLite-based)
+- **UUID-based IDs** — for globally unique entity references
 
 ### 🛠️ **Tooling**
 
+- **Wrangler** — CLI for developing and deploying Cloudflare Workers and D1
+  - `wrangler` CLI is installed, so you can directly run `wrangler` commands in the terminal
 - **TypeScript** — safe, modern language for both backend and frontend
 - **GitHub** — source code + CI integration
 - **pnpm** — package manager in place of npm/yarn
-- **uv** — Python project management in place of pip/pipenv/poetry
 
 ---
 
