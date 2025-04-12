@@ -2,8 +2,8 @@ import { User } from './schemas';
 import type { D1Database } from '@cloudflare/workers-types';
 
 // Environment variables for Google OAuth
-export const GOOGLE_CLIENT_ID = '';
-export const GOOGLE_CLIENT_SECRET = '';
+export const GOOGLE_CLIENT_ID = '652323395312-4ckve4tocnf6248d8cr072r0klt2k7k2.apps.googleusercontent.com';
+export const GOOGLE_CLIENT_SECRET = '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';
 export const REDIRECT_URL = 'http://localhost:5173/api/auth/callback/google';
 
 // JWT secret for token signing
