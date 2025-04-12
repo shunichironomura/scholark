@@ -40,10 +40,11 @@ export function MainLayout({ children }: MainLayoutProps) {
                 Research Topics
               </Link>
               <Link
-                to="#"
-                className="text-zinc-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+                to="/schedule"
+                className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/schedule') ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'
+                  }`}
               >
-                Calendar
+                My Schedule
               </Link>
             </nav>
           </div>
