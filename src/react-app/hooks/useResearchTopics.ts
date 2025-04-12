@@ -5,7 +5,66 @@ import {
   ResearchTopicResponse,
   TopicNotesResponse,
   TopicNoteResponse,
+  UserConferencePlan,
+  ApiResponseSchema,
 } from '../../shared/schemas';
+import { z } from 'zod';
+
+// Define missing response types based on the pattern in schemas.ts
+const ResearchTopicDetailResponseSchema = ApiResponseSchema.extend({
+  topic: z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string().nullable(),
+    notes: z.array(z.object({
+      id: z.string(),
+      topic_id: z.string(),
+      content: z.string(),
+      created_at: z.string(),
+    })),
+    conferences: z.array(z.object({
+      id: z.string(),
+      conference_id: z.string(),
+      topic_id: z.string().nullable(),
+      paper_title: z.string().nullable(),
+      bibtex: z.string().nullable(),
+      github_link: z.string().nullable(),
+      submission_status: z.string(),
+      notes: z.string().nullable(),
+    })),
+  }),
+});
+
+const UserConferencePlansResponseSchema = ApiResponseSchema.extend({
+  plans: z.array(z.object({
+    id: z.string(),
+    conference_id: z.string(),
+    topic_id: z.string().nullable(),
+    paper_title: z.string().nullable(),
+    bibtex: z.string().nullable(),
+    github_link: z.string().nullable(),
+    submission_status: z.string(),
+    notes: z.string().nullable(),
+  })),
+});
+
+const UserConferencePlanResponseSchema = ApiResponseSchema.extend({
+  plan: z.object({
+    id: z.string(),
+    conference_id: z.string(),
+    topic_id: z.string().nullable(),
+    paper_title: z.string().nullable(),
+    bibtex: z.string().nullable(),
+    github_link: z.string().nullable(),
+    submission_status: z.string(),
+    notes: z.string().nullable(),
+  }),
+});
+
+// Export inferred types
+type ResearchTopicDetailResponse = z.infer<typeof ResearchTopicDetailResponseSchema>;
+type UserConferencePlansResponse = z.infer<typeof UserConferencePlansResponseSchema>;
+type UserConferencePlanResponse = z.infer<typeof UserConferencePlanResponseSchema>;
 
 export function useResearchTopics() {
   const [topics, setTopics] = useState<ResearchTopic[]>([]);
@@ -285,10 +344,10 @@ export function useResearchTopics() {
     setError(null);
     try {
       const response = await fetch(`/api/research-topics/${topicId}/conferences`);
-      const data = await response.json() as TopicConferencesResponse;
+      const data = await response.json() as UserConferencePlansResponse;
 
       if (data.success) {
-        return data.topicConferences;
+        return data.plans;
       } else {
         setError(data.error || 'Failed to fetch topic conferences');
         return null;
@@ -324,10 +383,10 @@ export function useResearchTopics() {
         }),
       });
 
-      const data = await response.json() as TopicConferenceResponse;
+      const data = await response.json() as UserConferencePlanResponse;
 
       if (data.success) {
-        return data.topicConference;
+        return data.plan;
       } else {
         setError(data.error || 'Failed to link conference to topic');
         return null;
@@ -363,10 +422,10 @@ export function useResearchTopics() {
         }),
       });
 
-      const data = await response.json() as TopicConferenceResponse;
+      const data = await response.json() as UserConferencePlanResponse;
 
       if (data.success) {
-        return data.topicConference;
+        return data.plan;
       } else {
         setError(data.error || 'Failed to update topic-conference link');
         return null;

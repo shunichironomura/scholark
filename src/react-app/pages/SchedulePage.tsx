@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useConferences } from '../hooks/useConferences';
 import { useResearchTopics } from '../hooks/useResearchTopics';
-import { Conference, TopicConference } from '../../shared/schemas';
+import { Conference, UserConferencePlan } from '../../shared/schemas';
 
 // Define the schedule item interface
 interface ScheduleItem {
@@ -105,7 +105,7 @@ export function SchedulePage() {
           const topicConferences = await fetchTopicConferences(topic.id);
           if (topicConferences) {
             // Add conference IDs to the set
-            topicConferences.forEach((tc: TopicConference) => {
+            topicConferences.forEach((tc: UserConferencePlan) => {
               conferenceIds.add(tc.conference_id);
             });
           }
