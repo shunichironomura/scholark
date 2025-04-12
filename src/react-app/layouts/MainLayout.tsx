@@ -6,7 +6,7 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-white">
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
@@ -14,13 +14,13 @@ export function MainLayout({ children }: MainLayoutProps) {
               <h1 className="text-2xl font-bold text-blue-600">Scholark</h1>
             </div>
             <nav className="flex space-x-4">
-              <a href="#" className="text-slate-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
+              <a href="#" className="text-zinc-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                 Conferences
               </a>
-              <a href="#" className="text-slate-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
+              <a href="#" className="text-zinc-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                 Research Topics
               </a>
-              <a href="#" className="text-slate-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
+              <a href="#" className="text-zinc-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                 Calendar
               </a>
             </nav>
@@ -30,9 +30,9 @@ export function MainLayout({ children }: MainLayoutProps) {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {children}
       </main>
-      <footer className="bg-white border-t border-slate-200 py-6">
+      <footer className="bg-white border-t border-zinc-200 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-slate-500 text-sm">
+          <p className="text-center text-zinc-500 text-sm">
             &copy; {new Date().getFullYear()} Scholark - A minimalist, flexible SaaS tool for researchers
           </p>
         </div>

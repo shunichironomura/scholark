@@ -43,7 +43,7 @@ export function ConferenceCard({ conference, onEdit, onDelete }: ConferenceCardP
     if (!daysUntilDeadline) return '';
 
     if (daysUntilDeadline < 0) {
-      return 'text-slate-500'; // Past deadline
+      return 'text-zinc-500'; // Past deadline
     } else if (daysUntilDeadline <= 7) {
       return 'text-red-500 font-bold'; // Urgent (within a week)
     } else if (daysUntilDeadline <= 30) {
@@ -57,7 +57,7 @@ export function ConferenceCard({ conference, onEdit, onDelete }: ConferenceCardP
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <div className="p-6">
         <div className="flex justify-between items-start">
-          <h3 className="text-xl font-semibold text-slate-900 mb-2">{name}</h3>
+          <h3 className="text-xl font-semibold text-zinc-900 mb-2">{name}</h3>
           {(onEdit || onDelete) && (
             <div className="flex space-x-2">
               {onEdit && (
@@ -87,8 +87,8 @@ export function ConferenceCard({ conference, onEdit, onDelete }: ConferenceCardP
         </div>
 
         <div className="mt-4 space-y-3">
-          <div className="flex items-center text-slate-700">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-slate-500" viewBox="0 0 20 20" fill="currentColor">
+          <div className="flex items-center text-zinc-700">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-zinc-500" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
             </svg>
             <span>
@@ -97,7 +97,7 @@ export function ConferenceCard({ conference, onEdit, onDelete }: ConferenceCardP
           </div>
 
           <div className="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-slate-500" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-zinc-500" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
             </svg>
             <span className={getDeadlineStatus()}>
@@ -114,10 +114,10 @@ export function ConferenceCard({ conference, onEdit, onDelete }: ConferenceCardP
           </div>
 
           {metadata && (
-            <div className="mt-4 pt-4 border-t border-slate-100">
+            <div className="mt-4 pt-4 border-t border-zinc-100">
               {metadata.location && (
-                <div className="flex items-center text-slate-700 mb-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-slate-500" viewBox="0 0 20 20" fill="currentColor">
+                <div className="flex items-center text-zinc-700 mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-zinc-500" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                   </svg>
                   <span>{metadata.location}</span>
@@ -125,8 +125,8 @@ export function ConferenceCard({ conference, onEdit, onDelete }: ConferenceCardP
               )}
 
               {metadata.website && (
-                <div className="flex items-center text-slate-700">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-slate-500" viewBox="0 0 20 20" fill="currentColor">
+                <div className="flex items-center text-zinc-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-zinc-500" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
                   </svg>
                   <a

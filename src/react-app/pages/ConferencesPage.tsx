@@ -107,7 +107,7 @@ export function ConferencesPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-slate-900">Conferences</h1>
+        <h1 className="text-3xl font-bold text-zinc-900">Conferences</h1>
         <div className="flex space-x-3">
           <button
             onClick={handleRefresh}
@@ -152,11 +152,11 @@ export function ConferencesPage() {
         </div>
       ) : conferences.length === 0 ? (
         <div className="bg-white rounded-lg shadow-md p-6 text-center">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-slate-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-zinc-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
-          <h3 className="text-lg font-medium text-slate-900 mb-2">No conferences found</h3>
-          <p className="text-slate-500 mb-4">Get started by adding your first conference.</p>
+          <h3 className="text-lg font-medium text-zinc-900 mb-2">No conferences found</h3>
+          <p className="text-zinc-500 mb-4">Get started by adding your first conference.</p>
           <button
             onClick={handleAddNew}
             className="btn btn-primary"
