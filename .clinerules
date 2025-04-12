@@ -1,0 +1,17 @@
+# Project Guidelines
+
+## Documents to check
+
+Check the following documents before executing any task:
+
+- `README.md` -- Project overview and tech stack
+- `DB_SCHEMA.md` -- Database schema
+
+## TypeScript guidelines
+
+- Use `pnpm` for package management instead of `npm` or `yarn`.
+
+## Python guidelines
+
+- Use `uv` for project management instead of `pip`, `pipenv`, or `poetry`.
+- Always use type hints in Python code.
