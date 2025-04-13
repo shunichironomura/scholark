@@ -31,15 +31,12 @@ The goal of Scholark is to fill the gap between traditional calendar tools and a
 
 ### 🧠 **Backend**
 
-- **Cloudflare Workers** — serverless functions for handling API requests
-- **Cloudflare D1** — lightweight, serverless SQL database (SQLite-based)
-- **UUID-based IDs** — for globally unique entity references
+- **Hono** - a small, simple, and ultrafast web framework built on Web Standards. It works on Cloudflare Workers, Fastly Compute, Deno, Bun, Vercel, Netlify, AWS Lambda ...
 
 ### 🛠️ **Tooling**
 
-- **Wrangler** — CLI for developing and deploying Cloudflare Workers and D1
-  - `wrangler` CLI is installed, so you can directly run `wrangler` commands in the terminal
 - **TypeScript** — safe, modern language for both backend and frontend
+- **Vite** — fast, modern build tool for frontend
 - **GitHub** — source code + CI integration
 - **pnpm** — package manager in place of npm/yarn
 

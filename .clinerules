@@ -14,3 +14,9 @@ Check the following documents before executing any task:
 - Types should be defined in the `src/shared/schemas.ts` file.
 - Use `zod` for schema validation.
 - The types should be defined first as `zod` schemas, and then converted to TypeScript types using `z.infer`.
+
+## Overall guidelines
+
+- DO NOT implement any shortcuts or workarounds, even if they seem easier or faster.
+- DO NOT implement any features that can be considered "nice to have" or "bonus".
+- Search for existing libraries or packages before implementing any new functionality.
