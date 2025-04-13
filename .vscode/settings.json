@@ -1,5 +1,8 @@
 {
 	"files.associations": {
 		"wrangler.json": "jsonc"
-	}
+	},
+	"css.customData": [
+		".vscode/tailwind.json"
+	]
 }
