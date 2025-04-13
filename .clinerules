@@ -5,8 +5,7 @@
 Check the following documents before executing any task:
 
 - `README.md` -- Project overview and tech stack
-- `DB_SCHEMA.md` -- Database schema
-- `DEVELOPING.md` -- Development
+- `DB_SCHEMA.md` -- Database schema plan
 
 ## TypeScript guidelines
 
