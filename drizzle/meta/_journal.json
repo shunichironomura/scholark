@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1744591965532,
+      "tag": "0000_warm_fenris",
+      "breakpoints": true
+    }
+  ]
+}
