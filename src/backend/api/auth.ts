@@ -5,31 +5,25 @@ import { v4 as uuidv4 } from 'uuid';
 import { db } from '../db/index';
 import { user } from '../db/schema';
 import { eq } from 'drizzle-orm';
+import { getCookie, setCookie } from 'hono/cookie';
 
 const app = new Hono();
 
 // Configure Google OAuth
-const googleAuthConfig = {
-  clientId: process.env.GOOGLE_CLIENT_ID || '',
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-  redirectUri: `${process.env.APP_URL || 'http://localhost:3000'}/api/auth/callback/google`,
-  scopes: ['email', 'profile'],
-};
-
-// Initialize Google OAuth middleware
-const googleAuthMiddleware = googleAuth(googleAuthConfig);
-
-// Login route
-app.get('/login/google', async (c) => {
-  return await googleAuthMiddleware.getAuthorizationUrl(c);
+const googleAuthMiddleware = googleAuth({
+  client_id: process.env.GOOGLE_CLIENT_ID || '',
+  client_secret: process.env.GOOGLE_CLIENT_SECRET || '',
+  redirect_uri: `${process.env.APP_URL || 'http://localhost:3000'}/api/auth/callback/google`,
+  scope: ['email', 'profile'],
 });
 
-// Callback route
+// Login and callback route
+app.use('/callback/google', googleAuthMiddleware);
 app.get('/callback/google', async (c) => {
   try {
-    const userData = await googleAuthMiddleware.callback(c);
+    const googleUser = c.get('user-google');
 
-    if (!userData.email) {
+    if (!googleUser || !googleUser.email) {
       return c.json({ success: false, error: 'Email not provided by Google' }, 400);
     }
 
@@ -37,7 +31,7 @@ app.get('/callback/google', async (c) => {
     const existingUsers = await db
       .select()
       .from(user)
-      .where(eq(user.oauthProviderUserId, userData.id))
+      .where(eq(user.oauthProviderUserId, googleUser.id || ''))
       .limit(1);
 
     let existingUser = existingUsers[0];
@@ -46,10 +40,10 @@ app.get('/callback/google', async (c) => {
       const id = uuidv4();
       await db.insert(user).values({
         id,
-        name: userData.name || 'User',
-        email: userData.email,
+        name: googleUser.name || 'User',
+        email: googleUser.email || '',
         oauthProvider: 'google',
-        oauthProviderUserId: userData.id,
+        oauthProviderUserId: googleUser.id || '',
         calendarToken: uuidv4(), // Generate a random calendar token
       });
 
@@ -64,16 +58,16 @@ app.get('/callback/google', async (c) => {
     }
 
     // Create JWT token
-    const token = await sign({
+    const jwtToken = await sign({
       userId: existingUser.id,
       email: existingUser.email
     }, process.env.JWT_SECRET || 'default-secret-change-this');
 
     // Set cookie and redirect
-    c.cookie('auth_token', token, {
+    setCookie(c, 'auth_token', jwtToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'Lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 1 week
     });
@@ -85,12 +79,17 @@ app.get('/callback/google', async (c) => {
   }
 });
 
+// Login route
+app.get('/login/google', async (c) => {
+  return c.redirect('/api/auth/callback/google');
+});
+
 // Logout route
 app.get('/logout', (c) => {
-  c.cookie('auth_token', '', {
+  setCookie(c, 'auth_token', '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    sameSite: 'Lax',
     path: '/',
     maxAge: 0,
   });
@@ -100,7 +99,7 @@ app.get('/logout', (c) => {
 
 // Get current user
 app.get('/me', async (c) => {
-  const token = c.req.cookie('auth_token');
+  const token = getCookie(c, 'auth_token');
 
   if (!token) {
     return c.json({ success: false, authenticated: false }, 401);

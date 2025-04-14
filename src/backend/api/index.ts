@@ -18,10 +18,17 @@ const jwtMiddleware = jwt({
 });
 
 // Protected routes
-api.route('/conferences', jwtMiddleware, conferenceRoutes);
-api.route('/research-topics', jwtMiddleware, researchTopicRoutes);
-api.route('/topic-notes', jwtMiddleware, topicNoteRoutes);
-api.route('/topic-conferences', jwtMiddleware, topicConferenceRoutes);
+api.use('/conferences', jwtMiddleware);
+api.route('/conferences', conferenceRoutes);
+
+api.use('/research-topics', jwtMiddleware);
+api.route('/research-topics', researchTopicRoutes);
+
+api.use('/topic-notes', jwtMiddleware);
+api.route('/topic-notes', topicNoteRoutes);
+
+api.use('/topic-conferences', jwtMiddleware);
+api.route('/topic-conferences', topicConferenceRoutes);
 
 // Health check endpoint
 api.get('/', (c) => c.json({ status: 'ok', message: 'API is running' }));

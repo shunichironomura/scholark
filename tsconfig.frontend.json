@@ -1,0 +1,28 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "module": "ESNext",
+        "target": "ESNext",
+        "lib": [
+            "DOM",
+            "DOM.Iterable",
+            "ESNext"
+        ],
+        "jsx": "react-jsx",
+        "moduleResolution": "bundler",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "isolatedModules": true,
+        "resolveJsonModule": true,
+        "noEmit": true
+    },
+    "include": [
+        "src/frontend/**/*.ts",
+        "src/frontend/**/*.tsx",
+        "src/shared/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

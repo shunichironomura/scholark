@@ -1,9 +1,8 @@
-import { serve } from '@hono/bun-server';
 import { Hono } from 'hono';
 import { logger } from 'hono/logger';
 import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
-import { serveStatic } from '@hono/bun-server/serve-static';
+import { serveStatic } from 'hono/bun';
 import { api } from './api/index';
 
 // Create Hono app
@@ -29,7 +28,7 @@ app.get('*', (c) => {
 const port = parseInt(process.env.PORT || '3000');
 console.log(`Server starting on port ${port}...`);
 
-serve({
-  fetch: app.fetch,
+export default {
   port,
-});
+  fetch: app.fetch,
+};

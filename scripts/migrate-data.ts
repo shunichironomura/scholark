@@ -11,10 +11,9 @@
  *    bun run scripts/migrate-data.ts
  */
 
-import { db } from '../src/db';
-import * as schema from '../src/db/schema';
+import { db } from '../src/backend/db';
+import * as schema from '../src/backend/db/schema';
 import fs from 'fs';
-import { parse } from 'sql-parser';
 
 // Configuration
 const D1_EXPORT_FILE = './d1-export.sql';
