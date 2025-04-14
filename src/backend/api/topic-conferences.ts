@@ -20,7 +20,7 @@ app.post('/', zValidator('json', UserConferencePlanSchema), async (c) => {
       .select()
       .from(researchTopic)
       .where(and(
-        eq(researchTopic.id, data.topic_id),
+        eq(researchTopic.id, data.topic_id || ""),
         eq(researchTopic.userId, jwtPayload.userId)
       ))
       .limit(1);
@@ -51,8 +51,8 @@ app.post('/', zValidator('json', UserConferencePlanSchema), async (c) => {
       .select()
       .from(userConferencePlan)
       .where(and(
-        eq(userConferencePlan.topicId, data.topic_id),
-        eq(userConferencePlan.conferenceId, data.conference_id),
+        eq(userConferencePlan.topicId, data.topic_id || ""),
+        eq(userConferencePlan.conferenceId, data.conference_id || ""),
         eq(userConferencePlan.userId, jwtPayload.userId)
       ))
       .limit(1);

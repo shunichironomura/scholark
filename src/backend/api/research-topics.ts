@@ -76,7 +76,7 @@ app.post('/', zValidator('json', ResearchTopicSchema), async (c) => {
     await db.insert(researchTopic).values({
       id,
       userId: jwtPayload.userId,
-      topicName: data.name || data.topic_name,
+      topicName: data.name || data.topic_name || "",
       description: data.description || null,
     });
 
