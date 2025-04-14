@@ -17,17 +17,32 @@ const jwtMiddleware = jwt({
   secret: process.env.JWT_SECRET || 'default-secret-change-this',
 });
 
+// Development mode bypass middleware
+const devAuthBypass = async (c: any, next: any) => {
+  if (process.env.NODE_ENV === 'development') {
+    // In development, set a mock JWT payload
+    c.set('jwtPayload', {
+      userId: 'dev-user-id',
+      email: 'dev@example.com'
+    });
+    await next();
+  } else {
+    // In production, use the real JWT middleware
+    await jwtMiddleware(c, next);
+  }
+};
+
 // Protected routes
-api.use('/conferences', jwtMiddleware);
+api.use('/conferences', devAuthBypass);
 api.route('/conferences', conferenceRoutes);
 
-api.use('/research-topics', jwtMiddleware);
+api.use('/research-topics', devAuthBypass);
 api.route('/research-topics', researchTopicRoutes);
 
-api.use('/topic-notes', jwtMiddleware);
+api.use('/topic-notes', devAuthBypass);
 api.route('/topic-notes', topicNoteRoutes);
 
-api.use('/topic-conferences', jwtMiddleware);
+api.use('/topic-conferences', devAuthBypass);
 api.route('/topic-conferences', topicConferenceRoutes);
 
 // Health check endpoint
