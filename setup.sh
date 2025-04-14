@@ -58,6 +58,10 @@ pnpm db:generate
 echo "🔄 Running database migrations..."
 pnpm db:migrate
 
+# Install concurrently if not already installed
+echo "📦 Installing concurrently..."
+pnpm add -D concurrently
+
 echo "✅ Setup completed successfully!"
 echo ""
 echo "🚀 To start the development server, run:"

@@ -124,9 +124,19 @@ The goal of Scholark is to fill the gap between traditional calendar tools and a
 ```
 scholark/
 ├── src/                  # Source code
-│   ├── api/              # API routes
-│   ├── db/               # Database configuration and schema
-│   ├── react-app/        # Frontend React application
+│   ├── backend/          # Backend code
+│   │   ├── api/          # API routes
+│   │   ├── db/           # Database configuration and schema
+│   │   └── server.ts     # Server entry point
+│   ├── frontend/         # Frontend React application
+│   │   ├── assets/       # Images, fonts, etc.
+│   │   ├── components/   # Reusable UI components
+│   │   ├── hooks/        # Custom React hooks
+│   │   ├── layouts/      # Page layouts
+│   │   ├── pages/        # Page components
+│   │   ├── App.tsx       # Main React component
+│   │   ├── index.html    # HTML entry point
+│   │   └── main.tsx      # JavaScript entry point
 │   └── shared/           # Shared types and utilities
 ├── drizzle/              # Database migrations
 ├── scripts/              # Utility scripts
@@ -138,7 +148,7 @@ scholark/
 
 ## 🔄 Database Setup
 
-The project uses PostgreSQL with Drizzle ORM. The database schema is defined in `src/db/schema.ts` and migrations are managed by Drizzle.
+The project uses PostgreSQL with Drizzle ORM. The database schema is defined in `src/backend/db/schema.ts` and migrations are managed by Drizzle.
 
 To set up the database:
 
