@@ -136,21 +136,35 @@ scholark/
 └── README.md             # Project documentation
 ```
 
-## 🔄 Migrating from Cloudflare Workers
+## 🔄 Database Setup
 
-If you're migrating from the previous Cloudflare Workers version:
+The project uses PostgreSQL with Drizzle ORM. The database schema is defined in `src/db/schema.ts` and migrations are managed by Drizzle.
 
-1. Export your D1 database:
+To set up the database:
 
-   ```bash
-   wrangler d1 export scholark --output=d1-export.sql
-   ```
-
-2. Run the migration script:
+1. Start the PostgreSQL container:
 
    ```bash
-   pnpm bun run scripts/migrate-data.ts
+   pnpm docker:up
    ```
+
+2. Generate the database migrations:
+
+   ```bash
+   pnpm db:generate
+   ```
+
+3. Run the migrations:
+
+   ```bash
+   pnpm db:migrate
+   ```
+
+You can also use Drizzle Studio to view and edit the database:
+
+```bash
+pnpm db:studio
+```
 
 ## 🤝 Contributing
 
