@@ -14,6 +14,10 @@ Check the following documents before executing any task:
 - Use `zod` for schema validation.
 - The types should be defined first as `zod` schemas, and then converted to TypeScript types using `z.infer`.
 
+## Database guidelines
+
+- Use singular nouns for table names (e.g. `user`, `conference`, `note`).
+
 ## Overall guidelines
 
 - DO NOT implement any shortcuts or workarounds, even if they seem easier or faster.
