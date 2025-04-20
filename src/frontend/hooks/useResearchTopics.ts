@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { handleAuthResponse } from '../utils/auth';
 import {
   ResearchTopic,
   ResearchTopicsResponse,
@@ -103,6 +104,8 @@ export function useResearchTopics() {
     setError(null);
     try {
       const response = await fetch('/api/research-topics');
+      // Handle authentication
+      await handleAuthResponse(response);
       const data = await response.json() as ResearchTopicsResponse;
 
       if (data.success) {
@@ -124,6 +127,8 @@ export function useResearchTopics() {
     setError(null);
     try {
       const response = await fetch(`/api/research-topics/${id}`);
+      // Handle authentication
+      await handleAuthResponse(response);
       const data = await response.json() as ResearchTopicResponse;
 
       if (data.success) {
@@ -150,6 +155,8 @@ export function useResearchTopics() {
       console.log("Fetching from URL:", `/api/research-topics/${id}/detail`);
       const response = await fetch(`/api/research-topics/${id}/detail`);
       console.log("Response status:", response.status);
+      // Handle authentication
+      await handleAuthResponse(response);
       const data = await response.json() as ResearchTopicDetailResponse;
       console.log("Response data:", data);
 
@@ -184,6 +191,8 @@ export function useResearchTopics() {
         body: JSON.stringify(topic),
       });
 
+      // Handle authentication
+      await handleAuthResponse(response);
       const data = await response.json() as ResearchTopicResponse;
 
       if (data.success) {

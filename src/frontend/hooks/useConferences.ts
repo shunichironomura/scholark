@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Conference, ConferencesResponse, ConferenceResponse } from '../../shared/schemas';
+import { handleAuthResponse } from '../utils/auth';
 
 export function useConferences() {
   const [conferences, setConferences] = useState<Conference[]>([]);
@@ -12,6 +13,8 @@ export function useConferences() {
     setError(null);
     try {
       const response = await fetch('/api/conferences');
+      // Handle authentication
+      await handleAuthResponse(response);
       const data = await response.json() as ConferencesResponse;
 
       if (data.success) {
@@ -33,6 +36,8 @@ export function useConferences() {
     setError(null);
     try {
       const response = await fetch(`/api/conferences/${id}`);
+      // Handle authentication
+      await handleAuthResponse(response);
       const data = await response.json() as ConferenceResponse;
 
       if (data.success) {
@@ -63,6 +68,8 @@ export function useConferences() {
         body: JSON.stringify(conference),
       });
 
+      // Handle authentication
+      await handleAuthResponse(response);
       const data = await response.json() as ConferenceResponse;
 
       if (data.success) {
@@ -94,6 +101,8 @@ export function useConferences() {
         body: JSON.stringify(conference),
       });
 
+      // Handle authentication
+      await handleAuthResponse(response);
       const data = await response.json() as ConferenceResponse;
 
       if (data.success) {
@@ -123,6 +132,8 @@ export function useConferences() {
         method: 'DELETE',
       });
 
+      // Handle authentication
+      await handleAuthResponse(response);
       const data = await response.json();
 
       if (data.success) {

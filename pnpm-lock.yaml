@@ -11,6 +11,9 @@ importers:
       '@hono/oauth-providers':
         specifier: ^0.7.1
         version: 0.7.1(hono@4.7.5)
+      '@hono/oidc-auth':
+        specifier: ^1.6.0
+        version: 1.6.0(hono@4.7.5)
       '@hono/zod-validator':
         specifier: ^0.4.3
         version: 0.4.3(hono@4.7.5)(zod@3.24.2)
@@ -715,6 +718,12 @@ packages:
   '@hono/oauth-providers@0.7.1':
     resolution: {integrity: sha512-NJ9weiJ5Af+/Waq0q/DIMofxkKlK32pVl7/iXh/Q0dumRKftn1A41h3d5clsNtwNsKfADErtshbdD1Q89/bFag==}
     engines: {node: '>=18.4.0'}
+    peerDependencies:
+      hono: '>=3.*'
+
+  '@hono/oidc-auth@1.6.0':
+    resolution: {integrity: sha512-bK+ypup0K1geC1U8SKDyzeMzONSvfH1IY9wBM/81XLsrKBqLPghsqonh864v0MYNV3TVaE5IADKXqH9T2x2Q/A==}
+    engines: {node: '>=18.0.0'}
     peerDependencies:
       hono: '>=3.*'
 
@@ -2029,6 +2038,9 @@ packages:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
     engines: {node: '>=0.10.0'}
 
+  oauth4webapi@2.17.0:
+    resolution: {integrity: sha512-lbC0Z7uzAFNFyzEYRIC+pkSVvDHJTbEW+dYlSBAlCYDe6RxUkJ26bClhk8ocBZip1wfI9uKTe0fm4Ib4RHn6uQ==}
+
   obuf@1.1.2:
     resolution: {integrity: sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==}
 
@@ -2847,6 +2859,11 @@ snapshots:
   '@hono/oauth-providers@0.7.1(hono@4.7.5)':
     dependencies:
       hono: 4.7.5
+
+  '@hono/oidc-auth@1.6.0(hono@4.7.5)':
+    dependencies:
+      hono: 4.7.5
+      oauth4webapi: 2.17.0
 
   '@hono/zod-validator@0.4.3(hono@4.7.5)(zod@3.24.2)':
     dependencies:
@@ -4098,6 +4115,8 @@ snapshots:
   node-releases@2.0.19: {}
 
   normalize-range@0.1.2: {}
+
+  oauth4webapi@2.17.0: {}
 
   obuf@1.1.2: {}
 

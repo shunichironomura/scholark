@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "dependencies": {
     "@hono/oauth-providers": "^0.7.1",
+    "@hono/oidc-auth": "^1.6.0",
     "@hono/zod-validator": "^0.4.3",
     "@radix-ui/react-dialog": "^1.1.7",
     "@radix-ui/react-dropdown-menu": "^2.1.7",
