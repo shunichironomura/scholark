@@ -1,9 +1,9 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
+from scholark.core.config import settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -27,8 +27,7 @@ target_metadata = None
 
 
 def get_url() -> str:
-    # TODO: Implement a function to get the database URL
-    raise NotImplementedError
+    return str(settings.SQLALCHEMY_DATABASE_URI)
 
 
 def run_migrations_offline() -> None:
@@ -63,6 +62,7 @@ def run_migrations_online() -> None:
 
     """
     configuration = config.get_section(config.config_ini_section)
+    assert configuration is not None
     configuration["sqlalchemy.url"] = get_url()
     connectable = engine_from_config(
         configuration,
