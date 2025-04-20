@@ -1,7 +1,6 @@
 import uuid
 from datetime import date, datetime
 
-from pydantic_core import Url
 from sqlmodel import Field, SQLModel
 
 
@@ -10,7 +9,7 @@ class ConferenceBase(SQLModel):
     start_date: date | None = Field(default=None)
     end_date: date | None = Field(default=None)
     location: str | None = Field(default=None)
-    website_url: Url | None = Field(default=None)
+    website_url: str | None = Field(default=None)
     abstract_deadline: datetime | None = Field(default=None)
     paper_deadline: datetime | None = Field(default=None)
 

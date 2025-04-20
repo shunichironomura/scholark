@@ -1,15 +1,15 @@
-from typing import Union
-
 from fastapi import FastAPI
+from fastapi.routing import APIRoute
 
-app = FastAPI()
-
-
-@app.get("/")
-async def read_root():
-    return {"Hello": "World"}
+from scholark.api.main import api_router
+from scholark.core.config import settings
 
 
-@app.get("/items/{item_id}")
-async def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+def custom_generate_unique_id(route: APIRoute) -> str:
+    return f"{route.tags[0]}-{route.name}"
+
+
+app = FastAPI(generate_unique_id_function=custom_generate_unique_id)
+
+
+app.include_router(api_router, prefix=settings.API_V1_STR)

@@ -10,6 +10,7 @@ requires-python = ">=3.13"
 dependencies = [
     "alembic>=1.15.2",
     "fastapi[standard]>=0.115.12",
+    "psycopg[binary]>=3.2.6",
     "pydantic>=2.11.3",
     "pydantic-settings>=2.9.1",
     "sqlmodel>=0.0.24",
@@ -51,7 +52,7 @@ ignore = [
     "TD002",  # Missing author in TODO
     "TD003",  # add link on issue into TODO
     #     "PLR0913", # Too many arguments to function call
-    #     "ERA001",  # Commented out code
+    "ERA001", # Commented out code
     "FIX002", # Fixme comment
     #     "S311",    # suspicious-non-cryptographic-random-usage
     #     "EM101",   # raw-string-in-exception

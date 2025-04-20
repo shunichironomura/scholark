@@ -3,8 +3,6 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-from scholark.core.config import settings
-from scholark.models import SQLModel
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -15,10 +13,9 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
+from scholark.core.config import settings  # noqa: E402
+from scholark.models import SQLModel  # noqa: E402
+
 target_metadata = SQLModel.metadata
 
 # other values from the config, defined by the needs of env.py,
