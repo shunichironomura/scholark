@@ -1,0 +1,17 @@
+[project]
+name = "scholark"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Shunichiro Nomura", email = "nomura@space.t.u-tokyo.ac.jp" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+scholark = "scholark:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
