@@ -6,9 +6,11 @@
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "typecheck": "react-router typegen && tsc",
+    "generate-client": "openapi-ts --input http://localhost:8000/openapi.json --output ./app/client --client @hey-api/client-fetch"
   },
   "dependencies": {
+    "@hey-api/client-fetch": "^0.10.0",
     "@radix-ui/react-slot": "^1.2.0",
     "@react-router/node": "^7.5.1",
     "@react-router/serve": "^7.5.1",
@@ -22,6 +24,7 @@
     "tailwind-merge": "^3.2.0"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.66.5",
     "@react-router/dev": "^7.5.1",
     "@tailwindcss/vite": "^4.0.0",
     "@types/node": "^20",
