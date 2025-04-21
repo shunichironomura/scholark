@@ -2,6 +2,9 @@
     "css.customData": [
         ".vscode/tailwind.json"
     ],
+    "files.associations": {
+        ".env.*": "env"
+    },
     "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
     "[python]": {
         "editor.formatOnSave": true,
