@@ -17,3 +17,9 @@ Run the migration:
 ```bash
 dotenvx run -f ../.env.local -- uv run alembic upgrade head
 ```
+
+Start the development server:
+
+```bash
+dotenvx run -f ../.env.local -- uv run fastapi dev src/scholark/main.py
+```
