@@ -610,6 +610,7 @@ dev = [
     { name = "mypy" },
     { name = "pre-commit" },
     { name = "pyright" },
+    { name = "ruff" },
 ]
 ruff = [
     { name = "ruff" },
@@ -635,6 +636,7 @@ dev = [
     { name = "mypy", specifier = ">=1.15.0" },
     { name = "pre-commit", specifier = ">=4.2.0" },
     { name = "pyright", specifier = ">=1.1.399" },
+    { name = "ruff", specifier = ">=0.11.6" },
 ]
 ruff = [{ name = "ruff", specifier = ">=0.11.6" }]
 typing = [
