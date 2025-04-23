@@ -1,8 +1,11 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card"
+import { Button } from "~/components/ui/button"
 import type { Route } from "./+types/conferences"
-import { conferencesReadConferences } from '~/client/sdk.gen';
-import type { ConferencePublic } from "~/client/types.gen";
-import { MapPin, Calendar } from "lucide-react";
+import { conferencesReadConferences, conferencesCreateConference } from '~/client';
+import type { ConferencePublic, ConferenceCreate } from "~/client";
+import { MapPin, Calendar, Plus, Trash2, Pencil } from "lucide-react";
+import { Form, redirect } from "react-router";
+
 export async function clientLoader({ }: Route.ClientLoaderArgs) {
   const { data, error } = await conferencesReadConferences();
   if (error) {

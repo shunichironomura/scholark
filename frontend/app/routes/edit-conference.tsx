@@ -1,14 +1,10 @@
-import { Form, Outlet, data, redirect, useNavigate } from "react-router";
+import { Form, data, redirect, useNavigate } from "react-router";
 import type { Route } from "./+types/edit-conference";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
-import { Calendar } from "~/components/ui/calendar";
 import { conferencesUpdateConference, conferencesReadConference } from "~/client";
-import type { ConferencesCreateConferenceData, ConferencesCreateConferenceResponses, ConferencesUpdateConferenceData } from "~/client";
-import { MapPin, Plus, Trash2, Pencil, CalendarIcon } from "lucide-react";
-import { useState } from "react";
+import type { ConferencesUpdateConferenceData } from "~/client";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const { data: conference, error } = await conferencesReadConference({ path: { conference_id: params.conferenceId } });
@@ -27,7 +23,6 @@ export async function clientAction({ request, params }: Route.ActionArgs) {
       updates[field] = null;
     }
   });
-  console.log(updates);
 
   await conferencesUpdateConference({
     path: { conference_id: params.conferenceId },
@@ -80,5 +75,4 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
       </div>
     </Form >
   )
-
 }
