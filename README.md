@@ -1,6 +1,8 @@
-# Scholark
+<div align="center">
+    <img src="frontend/app/assets/logo-wide.png" alt="Scholark Logo" >
+</div>
 
-**Scholark** is a SaaS tool that helps researchers and students manage their research schedules effectively.
+**Scholark** (Scholar + Lark) is a SaaS tool that helps researchers and students manage their research schedules effectively.
 
 ## 🎯 Purpose
 
