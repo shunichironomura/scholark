@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter
 from sqlmodel import func, select
 
@@ -34,4 +36,30 @@ def create_conference(
     session.add(conference)
     session.commit()
     session.refresh(conference)
+    return conference
+
+
+@router.get("/{conference_id}", response_model=ConferencePublic)
+def read_conference(
+    *,
+    session: SessionDep,
+    conference_id: UUID,
+) -> Conference:
+    """Retrieve a conference by ID."""
+    statement = select(Conference).where(Conference.id == conference_id)
+    return session.exec(statement).one()
+
+
+@router.delete("/{conference_id}", response_model=ConferencePublic)
+def delete_conference(
+    *,
+    session: SessionDep,
+    conference_id: UUID,
+) -> Conference:
+    """Delete a conference by ID."""
+    # TODO: Implement soft delete
+    statement = select(Conference).where(Conference.id == conference_id)
+    conference = session.exec(statement).one()
+    session.delete(conference)
+    session.commit()
     return conference
