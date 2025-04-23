@@ -1,10 +1,10 @@
 from uuid import UUID
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from sqlmodel import func, select
 
 from scholark.api.deps import SessionDep
-from scholark.models import Conference, ConferenceCreate, ConferencePublic, ConferencesPublic
+from scholark.models import Conference, ConferenceCreate, ConferencePublic, ConferencesPublic, ConferenceUpdate
 
 router = APIRouter(prefix="/conferences", tags=["conferences"])
 
@@ -47,7 +47,10 @@ def read_conference(
 ) -> Conference:
     """Retrieve a conference by ID."""
     statement = select(Conference).where(Conference.id == conference_id)
-    return session.exec(statement).one()
+    conference = session.exec(statement).one()
+    if not conference:
+        raise HTTPException(status_code=404, detail="Conference not found")
+    return conference
 
 
 @router.delete("/{conference_id}", response_model=ConferencePublic)
@@ -60,6 +63,29 @@ def delete_conference(
     # TODO: Implement soft delete
     statement = select(Conference).where(Conference.id == conference_id)
     conference = session.exec(statement).one()
+    if not conference:
+        raise HTTPException(status_code=404, detail="Conference not found")
     session.delete(conference)
     session.commit()
+    return conference
+
+
+@router.put("/{conference_id}", response_model=ConferencePublic)
+def update_conference(
+    *,
+    session: SessionDep,
+    conference_id: UUID,
+    conference_in: ConferenceUpdate,
+) -> Conference:
+    """Update a conference by ID."""
+    statement = select(Conference).where(Conference.id == conference_id)
+    conference = session.exec(statement).one()
+    if not conference:
+        raise HTTPException(status_code=404, detail="Conference not found")
+
+    update_dict = conference_in.model_dump(exclude_unset=True)
+    conference.sqlmodel_update(update_dict)
+    session.add(conference)
+    session.commit()
+    session.refresh(conference)
     return conference

@@ -58,7 +58,14 @@ export default function Conferences({
 
   return (
     <div className="flex flex-col items-center justify-center min-h-svh p-4">
-      <h1 className="text-2xl font-bold mb-4">Conferences</h1>
+      <div className="flex justify-between items-center mb-6 space-x-3">
+        <h1 className="text-3xl font-bold text-zinc-900">Conferences</h1>
+        <Form action="new">
+          <Button type="submit" variant="outline">
+            <Plus /> Add Conference
+          </Button>
+        </Form>
+      </div>
 
       {conferences && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -84,12 +91,35 @@ export default function Conferences({
                 <div className={`${getDeadlineStatus(conference.abstract_deadline)} text-sm`}>Abstract Deadline: {formatDate(conference.abstract_deadline)}</div>
                 <div className={`${getDeadlineStatus(conference.paper_deadline)} text-sm`}>Paper Deadline: {formatDate(conference.paper_deadline)}</div>
               </CardContent>
-              <CardFooter className="flex-none">
-                {conference.website_url && (
+              <CardFooter className="flex justify-between items-center">
+                {conference.website_url ? (
                   <a href={conference.website_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline text-sm mt-auto">
                     Visit Website
                   </a>
-                )}
+                ) : <div />}
+                <div className="flex space-x-2">
+                  <Form
+                    action={`${conference.id}/edit`}
+                  >
+                    <Button type="submit" variant="secondary" size="icon">
+                      <Pencil />
+                    </Button>
+                  </Form>
+                  <Form
+                    action={`${conference.id}/delete`}
+                    method="post"
+                    onSubmit={(event) => {
+                      const response = confirm("Are you sure you want to delete this conference?");
+                      if (!response) {
+                        event.preventDefault();
+                      }
+                    }}
+                  >
+                    <Button type="submit" variant="destructive" size="icon">
+                      <Trash2 />
+                    </Button>
+                  </Form>
+                </div>
               </CardFooter>
             </Card>
           ))}

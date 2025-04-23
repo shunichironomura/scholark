@@ -5,5 +5,8 @@ export default [
   layout("layouts/main.tsx", [
     index("routes/home.tsx"),
     route("conferences", "routes/conferences.tsx"),
+    route("conferences/new", "routes/create-conference.tsx"),
+    route("conferences/:conferenceId/edit", "routes/edit-conference.tsx"),
+    route("conferences/:conferenceId/delete", "routes/delete-conference.tsx"),
   ])
 ] satisfies RouteConfig;
