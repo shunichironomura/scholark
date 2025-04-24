@@ -29,7 +29,7 @@ export default function CreateConference() {
     <Form id="new-conference-form" method="post">
       <div>
         <Label htmlFor="name">Conference Name</Label>
-        <Input id="name" name="name" type="text" placeholder="Conference Name" />
+        <Input id="name" name="name" type="text" placeholder="Conference Name" defaultValue="New Conference" />
       </div>
       <div>
         <Label htmlFor="start-date">Start Date</Label>

@@ -1,5 +1,5 @@
 import uuid
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 
 from sqlmodel import Field, SQLModel
 
@@ -24,10 +24,14 @@ class ConferenceUpdate(ConferenceBase):
 
 class Conference(ConferenceBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class ConferencePublic(ConferenceBase):
     id: uuid.UUID
+    created_at: datetime
+    updated_at: datetime
 
 
 class ConferencesPublic(SQLModel):

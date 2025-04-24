@@ -19,6 +19,8 @@ export type ConferencePublic = {
     abstract_deadline?: string | null;
     paper_deadline?: string | null;
     id: string;
+    created_at: string;
+    updated_at: string;
 };
 
 export type ConferenceUpdate = {

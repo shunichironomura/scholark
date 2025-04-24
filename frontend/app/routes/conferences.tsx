@@ -18,22 +18,34 @@ import {
 } from "~/components/ui/alert-dialog"
 
 export async function clientLoader({ }: Route.ClientLoaderArgs) {
-  const { data, error } = await conferencesReadConferences();
+  const { data: conferences, error } = await conferencesReadConferences();
   if (error) {
     throw new Response("Error fetching conferences", { status: 500 });
   }
-  return { data };
+  // Sort conferences by start_date in ascending order
+  conferences.data.sort((a: ConferencePublic, b: ConferencePublic) => {
+    const dateA = new Date(a.start_date || 0);
+    const dateB = new Date(b.start_date || 0);
+    return dateA.getTime() - dateB.getTime();
+  });
+  return { conferences };
 }
 
 export default function Conferences({
   loaderData,
 }: Route.ComponentProps) {
-  const { data: conferences } = loaderData;
+  const { conferences } = loaderData;
 
   const formatDate = (dateString?: string | null) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
     return date.toISOString().slice(0, 10) // Format as YYYY-MM-DD
+  }
+
+  const formatDateTime = (dateString?: string | null) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toISOString().slice(0, 19).replace("T", " "); // Format as YYYY-MM-DD HH:MM:SS
   }
 
   // Determine deadline status for styling
@@ -105,44 +117,58 @@ export default function Conferences({
                 <div className={`${getDeadlineStatus(conference.abstract_deadline)} text-sm`}>Abstract Deadline: {formatDate(conference.abstract_deadline)}</div>
                 <div className={`${getDeadlineStatus(conference.paper_deadline)} text-sm`}>Paper Deadline: {formatDate(conference.paper_deadline)}</div>
               </CardContent>
-              <CardFooter className="flex justify-between items-center">
-                {conference.website_url ? (
-                  <a href={conference.website_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline text-sm mt-auto">
-                    Visit Website
-                  </a>
-                ) : <div />}
-                <div className="flex space-x-2">
-                  <Form
-                    action={`${conference.id}/edit`}
-                  >
-                    <Button type="submit" variant="secondary" size="icon">
-                      <Pencil />
-                    </Button>
-                  </Form>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button type="button" variant="destructive" size="icon">
-                        <Trash2 />
+              <CardFooter className="flex flex-col space-y-2">
+                <div className="flex w-full items-center justify-between">
+                  {/* Left side: Website Link (takes all available space) */}
+                  {conference.website_url ? (
+                    <a
+                      href={conference.website_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline text-sm mt-auto"
+                    >
+                      Visit Website
+                    </a>
+                  ) : <div />} {/* Placeholder if no link */}
+
+                  {/* Right side: Buttons */}
+                  <div className="flex space-x-2">
+                    <Form action={`${conference.id}/edit`}>
+                      <Button type="submit" variant="secondary" size="icon">
+                        <Pencil />
                       </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <Form
-                        action={`${conference.id}/delete`}
-                        method="post"
-                      >
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete this conference.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction type="submit">Delete</AlertDialogAction>
-                        </AlertDialogFooter>
-                      </Form>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                    </Form>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button type="button" variant="destructive" size="icon">
+                          <Trash2 />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <Form
+                          action={`${conference.id}/delete`}
+                          method="post"
+                        >
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete this conference.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction type="submit">Delete</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </Form>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+                {/* Display created_at and updated_at values in small text */}
+                <div className="text-xs text-gray-500 mt-2 text-right w-full">
+                  Created at: {formatDateTime(conference.created_at)}
+                  <br />
+                  Updated at: {formatDateTime(conference.updated_at)}
                 </div>
               </CardFooter>
             </Card>

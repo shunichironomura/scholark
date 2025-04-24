@@ -1,3 +1,4 @@
+from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
@@ -84,6 +85,7 @@ def update_conference(
         raise HTTPException(status_code=404, detail="Conference not found")
 
     update_dict = conference_in.model_dump(exclude_unset=True)
+    update_dict["updated_at"] = datetime.now(UTC)
     conference.sqlmodel_update(update_dict)
     session.add(conference)
     session.commit()
