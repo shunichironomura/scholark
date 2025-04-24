@@ -22,12 +22,6 @@ export async function clientLoader({ }: Route.ClientLoaderArgs) {
   if (error) {
     throw new Response("Error fetching conferences", { status: 500 });
   }
-  // Sort conferences by start_date in ascending order
-  conferences.data.sort((a: ConferencePublic, b: ConferencePublic) => {
-    const dateA = new Date(a.start_date || 0);
-    const dateB = new Date(b.start_date || 0);
-    return dateA.getTime() - dateB.getTime();
-  });
   return { conferences };
 }
 

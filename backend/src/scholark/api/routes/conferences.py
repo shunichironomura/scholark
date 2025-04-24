@@ -2,7 +2,7 @@ from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
-from sqlmodel import func, select
+from sqlmodel import col, func, select
 
 from scholark.api.deps import SessionDep
 from scholark.models import Conference, ConferenceCreate, ConferencePublic, ConferencesPublic, ConferenceUpdate
@@ -20,7 +20,7 @@ def read_conferences(
     """Retrieve a list of conferences."""
     count_statement = select(func.count()).select_from(Conference)
     count = session.exec(count_statement).one()
-    statement = select(Conference).offset(skip).limit(limit)
+    statement = select(Conference).order_by(col(Conference.start_date)).offset(skip).limit(limit)
     conferences = session.exec(statement).all()
 
     return ConferencesPublic(data=conferences, count=count)
