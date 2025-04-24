@@ -19,6 +19,18 @@ export type ConferencePublic = {
     abstract_deadline?: string | null;
     paper_deadline?: string | null;
     id: string;
+    created_at: string;
+    updated_at: string;
+};
+
+export type ConferenceUpdate = {
+    name: string;
+    start_date?: string | null;
+    end_date?: string | null;
+    location?: string | null;
+    website_url?: string | null;
+    abstract_deadline?: string | null;
+    paper_deadline?: string | null;
 };
 
 export type ConferencesPublic = {
@@ -88,6 +100,87 @@ export type ConferencesCreateConferenceResponses = {
 };
 
 export type ConferencesCreateConferenceResponse = ConferencesCreateConferenceResponses[keyof ConferencesCreateConferenceResponses];
+
+export type ConferencesDeleteConferenceData = {
+    body?: never;
+    path: {
+        conference_id: string;
+    };
+    query?: never;
+    url: '/api/v1/conferences/{conference_id}';
+};
+
+export type ConferencesDeleteConferenceErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ConferencesDeleteConferenceError = ConferencesDeleteConferenceErrors[keyof ConferencesDeleteConferenceErrors];
+
+export type ConferencesDeleteConferenceResponses = {
+    /**
+     * Successful Response
+     */
+    200: ConferencePublic;
+};
+
+export type ConferencesDeleteConferenceResponse = ConferencesDeleteConferenceResponses[keyof ConferencesDeleteConferenceResponses];
+
+export type ConferencesReadConferenceData = {
+    body?: never;
+    path: {
+        conference_id: string;
+    };
+    query?: never;
+    url: '/api/v1/conferences/{conference_id}';
+};
+
+export type ConferencesReadConferenceErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ConferencesReadConferenceError = ConferencesReadConferenceErrors[keyof ConferencesReadConferenceErrors];
+
+export type ConferencesReadConferenceResponses = {
+    /**
+     * Successful Response
+     */
+    200: ConferencePublic;
+};
+
+export type ConferencesReadConferenceResponse = ConferencesReadConferenceResponses[keyof ConferencesReadConferenceResponses];
+
+export type ConferencesUpdateConferenceData = {
+    body: ConferenceUpdate;
+    path: {
+        conference_id: string;
+    };
+    query?: never;
+    url: '/api/v1/conferences/{conference_id}';
+};
+
+export type ConferencesUpdateConferenceErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ConferencesUpdateConferenceError = ConferencesUpdateConferenceErrors[keyof ConferencesUpdateConferenceErrors];
+
+export type ConferencesUpdateConferenceResponses = {
+    /**
+     * Successful Response
+     */
+    200: ConferencePublic;
+};
+
+export type ConferencesUpdateConferenceResponse = ConferencesUpdateConferenceResponses[keyof ConferencesUpdateConferenceResponses];
 
 export type ClientOptions = {
     baseUrl: 'http://localhost:8000' | (string & {});
