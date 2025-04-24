@@ -5,6 +5,17 @@ import { conferencesReadConferences, conferencesCreateConference } from '~/clien
 import type { ConferencePublic, ConferenceCreate } from "~/client";
 import { MapPin, Calendar, Plus, Trash2, Pencil } from "lucide-react";
 import { Form, redirect } from "react-router";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "~/components/ui/alert-dialog"
 
 export async function clientLoader({ }: Route.ClientLoaderArgs) {
   const { data, error } = await conferencesReadConferences();
@@ -108,20 +119,30 @@ export default function Conferences({
                       <Pencil />
                     </Button>
                   </Form>
-                  <Form
-                    action={`${conference.id}/delete`}
-                    method="post"
-                    onSubmit={(event) => {
-                      const response = confirm("Are you sure you want to delete this conference?");
-                      if (!response) {
-                        event.preventDefault();
-                      }
-                    }}
-                  >
-                    <Button type="submit" variant="destructive" size="icon">
-                      <Trash2 />
-                    </Button>
-                  </Form>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button type="button" variant="destructive" size="icon">
+                        <Trash2 />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <Form
+                        action={`${conference.id}/delete`}
+                        method="post"
+                      >
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete this conference.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction type="submit">Delete</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </Form>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </CardFooter>
             </Card>
