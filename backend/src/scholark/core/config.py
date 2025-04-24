@@ -1,3 +1,4 @@
+import secrets
 from typing import Annotated, Any
 
 from pydantic import AnyUrl, BeforeValidator, PostgresDsn, computed_field
@@ -16,6 +17,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="scholark_")
 
     API_V1_STR: str = "/api/v1"
+    SECRET_KEY: str = secrets.token_urlsafe(32)
 
     FRONTEND_HOST: str
     BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)]

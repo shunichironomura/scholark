@@ -37,3 +37,41 @@ class ConferencePublic(ConferenceBase):
 class ConferencesPublic(SQLModel):
     data: list[ConferencePublic]
     count: int
+
+
+class UserBase(SQLModel):
+    username: str
+
+
+class UserCreate(UserBase):
+    password: str | None = Field(default=None)
+
+
+class UserUpdate(UserBase):
+    # TODO: add password update
+    pass
+
+
+class User(UserBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    role: str = Field(default="member")
+
+
+class UserPublic(UserBase):
+    id: uuid.UUID
+    created_at: datetime
+    updated_at: datetime
+
+
+class UsersPublic(SQLModel):
+    data: list[UserPublic]
+    count: int
+
+
+class Credential(SQLModel, table=True):
+    user_id: uuid.UUID = Field(foreign_key="user.id", primary_key=True)
+    provider: str = Field(primary_key=True)  # "db", "auth0", "ldap"
+    identifier: str  # unique identifier for the user in the provider
+    hashed_password: str | None = Field(default=None)
