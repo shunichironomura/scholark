@@ -99,7 +99,7 @@ export default function Conferences({
       {conferences && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {conferences.data.map((conference: ConferencePublicReadable) => (
-            <Card className="w-[300px] flex flex-col space-y-2">
+            <Card className="w-[300px] flex flex-col space-y-2" key={conference.id}>
               <CardHeader className="flex-none space-y-1">
                 <CardTitle>{conference.name}</CardTitle>
                 <CardDescription>
@@ -121,11 +121,13 @@ export default function Conferences({
                 {/* <div className={`${getDeadlineStatus(conference.paper_deadline)} text-sm`}>Paper Deadline: {formatDate(conference.paper_deadline)}</div> */}
                 {conference.milestones && conference.milestones.length > 0 ? (
                   <ul className="list-disc list-inside">
-                    {conference.milestones.map((milestone, index) => (
-                      <li key={index} className={`${getDeadlineStatus(milestone.date)} text-sm`}>
-                        {milestone.name}: {formatDate(milestone.date)}
-                      </li>
-                    ))}
+                    {conference.milestones
+                      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                      .map((milestone, index) => (
+                        <li key={index} className={`${getDeadlineStatus(milestone.date)} text-sm`}>
+                          {milestone.name}: {formatDate(milestone.date)}
+                        </li>
+                      ))}
                   </ul>) : (
                   <div className="text-sm text-gray-500">No milestones available</div>
                 )
