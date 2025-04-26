@@ -27,13 +27,13 @@ export default function MainLayout({ loaderData }: Route.ComponentProps) {
               </NavLink>
               {username ? <NavLink
                 to="/logout"
-                className={"px-3 py-2 rounded-md text-sm font-medium"}
+                className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
               >
                 Logout
               </NavLink> :
                 <NavLink
                   to="/login"
-                  className={"px-3 py-2 rounded-md text-sm font-medium"}
+                  className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
                 >
                   Login
                 </NavLink>}
