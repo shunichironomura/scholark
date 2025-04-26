@@ -1,10 +1,11 @@
 import type { Route } from "./+types/create-conference";
 import { Form, redirect, useNavigate } from "react-router";
+import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { conferencesCreateConference } from "~/client";
-import type { ConferencesCreateConferenceData, ConferencesCreateConferenceResponses, ConferencesUpdateConferenceData } from "~/client";
+import type { ConferenceMilestoneCreate, ConferenceCreate, ConferencesCreateConferenceData, ConferencesCreateConferenceResponses, ConferencesUpdateConferenceData } from "~/client";
 import { getSession } from "~/sessions.server";
 
 
@@ -23,8 +24,33 @@ export async function action({ request, params }: Route.ActionArgs) {
     }
   });
 
+  // Extract the milestones fields from the form data
+  const milestoneIndices = Object.keys(updates)
+    .filter((key) => key.startsWith("milestone_name__"))
+    .map((key) => parseInt(key.split("__")[1], 10))
+    .filter((index) => (updates[`milestone_name__${index}`] && updates[`milestone_date__${index}`]))
+
+  const milestones: ConferenceMilestoneCreate[] = milestoneIndices.map((index): ConferenceMilestoneCreate | null => {
+    const name = updates[`milestone_name__${index}`];
+    const date = updates[`milestone_date__${index}`];
+    if (name == null || date == null) {
+      return null;
+    }
+    return { name, date };
+  })
+    .filter((milestone): milestone is ConferenceMilestoneCreate => milestone !== null);
+
+  const requestBody: ConferenceCreate = {
+    name: updates.name ?? "New Conference",
+    start_date: updates.start_date,
+    end_date: updates.end_date,
+    location: updates.location,
+    website_url: updates.website_url,
+    milestones: milestones,
+  };
+
   await conferencesCreateConference({
-    body: updates as ConferencesCreateConferenceData["body"],
+    body: requestBody,
     headers: { Authorization: `Bearer ${session.get("accessToken")}` },
   });
   return redirect(`/conferences`);
@@ -32,6 +58,8 @@ export async function action({ request, params }: Route.ActionArgs) {
 
 export default function CreateConference() {
   const navigate = useNavigate();
+  // Milestones
+  const [numMilestones, setNumMilestones] = useState(0);
   return (
     <Form id="new-conference-form" method="post">
       <div>
@@ -54,13 +82,23 @@ export default function CreateConference() {
         <Label htmlFor="website-url">Website URL</Label>
         <Input id="website-url" name="website_url" type="url" placeholder="https://example.com" />
       </div>
+      <div></div>
+      {[...Array(numMilestones)].map((_, index) => (
+        <div key={index}>
+          <Label htmlFor={`milestone-${index}`}>Milestone {index + 1}</Label>
+          <div className="flex flex-row space-x-2">
+            <Input id={`milestone-name-${index}`} name={`milestone_name__${index}`} type="text" placeholder="Milestone Name" />
+            <Input id={`milestone-date-${index}`} name={`milestone_date__${index}`} type="date" placeholder="Milestone" />
+          </div>
+        </div>
+      ))}
       <div>
-        <Label htmlFor="abstract-deadline">Abstract Deadline</Label>
-        <Input id="abstract-deadline" name="abstract_deadline" type="date" placeholder="YYYY-MM-DD" />
-      </div>
-      <div>
-        <Label htmlFor="paper-deadline">Paper Deadline</Label>
-        <Input id="paper-deadline" name="paper_deadline" type="date" placeholder="YYYY-MM-DD" />
+        <Button type="button" onClick={() => setNumMilestones(numMilestones + 1)}>
+          Add Milestone
+        </Button>
+        <Button type="button" onClick={() => setNumMilestones(numMilestones - 1)} disabled={numMilestones === 0}>
+          Remove Milestone
+        </Button>
       </div>
       <div className="flex items-center space-x-2">
         <Button type="submit">
