@@ -1,10 +1,10 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card"
 import { Button } from "~/components/ui/button"
 import type { Route } from "./+types/conferences"
-import { conferencesReadConferences, conferencesCreateConference } from '~/client';
+import { conferencesReadConferences, conferencesCreateConference, tagsReadTags } from '~/client';
 import type { ConferencePublicReadable, ConferenceCreate } from "~/client";
 import { MapPin, Calendar, Plus, Trash2, Pencil } from "lucide-react";
-import { Form, redirect } from "react-router";
+import { Form, redirect, useSubmit } from "react-router";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +17,7 @@ import {
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
 import { getSession } from "~/sessions.server";
+import MultipleSelector from "~/components/ui/multi-select";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -31,13 +32,22 @@ export async function loader({ request }: Route.LoaderArgs) {
   if (error) {
     throw new Response("Error fetching conferences", { status: 500 });
   }
-  return { conferences };
+
+  const { data: tags, error: tagsError } = await tagsReadTags({
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (tagsError) {
+    throw new Response("Error fetching tags", { status: 500 });
+  }
+
+
+  return { conferences, tags };
 }
 
 export default function Conferences({
   loaderData,
 }: Route.ComponentProps) {
-  const { conferences } = loaderData;
+  const { conferences, tags } = loaderData;
 
   const formatDate = (dateString?: string | null) => {
     if (!dateString) return "N/A";
@@ -85,6 +95,8 @@ export default function Conferences({
     return '';                           // neither
   };
 
+  const submit = useSubmit();
+
   return (
     <div className="flex flex-col items-center justify-center min-h-svh p-4">
       <div className="flex justify-between items-center mb-6 space-x-3">
@@ -117,8 +129,6 @@ export default function Conferences({
               </CardHeader>
               <CardContent className="flex-1">
                 <div className="font-medium">Milestones</div>
-                {/* <div className={`${getDeadlineStatus(conference.abstract_deadline)} text-sm`}>Abstract Deadline: {formatDate(conference.abstract_deadline)}</div> */}
-                {/* <div className={`${getDeadlineStatus(conference.paper_deadline)} text-sm`}>Paper Deadline: {formatDate(conference.paper_deadline)}</div> */}
                 {conference.milestones && conference.milestones.length > 0 ? (
                   <ul className="list-disc list-inside">
                     {conference.milestones
@@ -185,6 +195,23 @@ export default function Conferences({
                   Created at: {formatDateTime(conference.created_at)}
                   <br />
                   Updated at: {formatDateTime(conference.updated_at)}
+                </div>
+                <div className="flex w-full flex-col gap-5 px-10">
+                  <MultipleSelector
+                    onChange={(options) => {
+                      const formData = new FormData();
+                      formData.append("tags", JSON.stringify(options));
+                      submit(formData, { method: "post", action: `${conference.id}/tags` });
+                    }}
+                    value={conference.tags ? conference.tags.map((tag) => ({ label: tag.name, value: tag.id })) : []}
+                    defaultOptions={tags.data.map((tag) => ({ label: tag.name, value: tag.id }))}
+                    placeholder="Select tags"
+                    emptyIndicator={
+                      <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                        No tags available
+                      </p>
+                    }
+                  />
                 </div>
               </CardFooter>
             </Card>

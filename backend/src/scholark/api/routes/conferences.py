@@ -1,3 +1,4 @@
+import logging
 from datetime import UTC, datetime
 from uuid import UUID
 
@@ -15,6 +16,7 @@ from scholark.models import (
     Tag,
 )
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/conferences", tags=["conferences"])
 
 
@@ -175,6 +177,38 @@ def remove_tag_from_conference(
     if not tag:
         raise HTTPException(status_code=404, detail="Tag not found")
     conference.tags.remove(tag)
+    session.add(conference)
+    session.commit()
+    session.refresh(conference)
+    return conference
+
+
+@router.put("/{conference_id}/tags", response_model=ConferencePublic)
+def update_tags_for_conference(
+    *,
+    current_user: CurrentUser,
+    session: SessionDep,
+    conference_id: UUID,
+    tags: list[UUID],
+) -> Conference:
+    """Update tags for a conference."""
+    logger.info(f"Updating tags for conference {conference_id} with tags {tags}")
+    statement = select(Conference).where(Conference.id == conference_id)
+    conference = session.exec(statement).one()
+    if not conference:
+        raise HTTPException(status_code=404, detail="Conference not found")
+
+    # Clear existing tags
+    conference.tags.clear()
+
+    # Add new tags
+    for tag_id in tags:
+        tag_statement = select(Tag).where(Tag.id == tag_id, Tag.user_id == current_user.id)
+        tag = session.exec(tag_statement).one()
+        if not tag:
+            raise HTTPException(status_code=404, detail="Tag not found")
+        conference.tags.append(tag)
+
     session.add(conference)
     session.commit()
     session.refresh(conference)

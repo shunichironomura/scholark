@@ -321,6 +321,33 @@ export type ConferencesAddTagToConferenceResponses = {
 
 export type ConferencesAddTagToConferenceResponse = ConferencesAddTagToConferenceResponses[keyof ConferencesAddTagToConferenceResponses];
 
+export type ConferencesUpdateTagsForConferenceData = {
+    body: Array<string>;
+    path: {
+        conference_id: string;
+    };
+    query?: never;
+    url: '/api/v1/conferences/{conference_id}/tags';
+};
+
+export type ConferencesUpdateTagsForConferenceErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ConferencesUpdateTagsForConferenceError = ConferencesUpdateTagsForConferenceErrors[keyof ConferencesUpdateTagsForConferenceErrors];
+
+export type ConferencesUpdateTagsForConferenceResponses = {
+    /**
+     * Successful Response
+     */
+    200: ConferencePublicReadable;
+};
+
+export type ConferencesUpdateTagsForConferenceResponse = ConferencesUpdateTagsForConferenceResponses[keyof ConferencesUpdateTagsForConferenceResponses];
+
 export type ConferencesRemoveTagFromConferenceData = {
     body?: never;
     path: {
