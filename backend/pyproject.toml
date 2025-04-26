@@ -10,9 +10,11 @@ requires-python = ">=3.13"
 dependencies = [
     "alembic>=1.15.2",
     "fastapi[standard]>=0.115.12",
+    "passlib[bcrypt]>=1.7.4",
     "psycopg[binary]>=3.2.6",
     "pydantic>=2.11.3",
     "pydantic-settings>=2.9.1",
+    "pyjwt>=2.10.1",
     "sqlmodel>=0.0.24",
     "uvicorn[standard]>=0.34.2",
 ]
@@ -28,7 +30,11 @@ dev = [
     "pre-commit>=4.2.0",
 ]
 ruff = ["ruff>=0.11.6"]
-typing = ["mypy>=1.15.0", "pyright>=1.1.399"]
+typing = [
+    "mypy>=1.15.0",
+ "pyright>=1.1.399",
+ "types-passlib>=1.7.7.20250408",
+]
 
 [tool.mypy]
 strict = true
