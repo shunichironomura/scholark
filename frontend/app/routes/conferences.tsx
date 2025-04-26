@@ -21,7 +21,6 @@ import { getSession } from "~/sessions.server";
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
   if (!session.has("accessToken")) {
-    console.error("No access token found in session");
     return redirect("/login");
   }
   const token = session.get("accessToken");

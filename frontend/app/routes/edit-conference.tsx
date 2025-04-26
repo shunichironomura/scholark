@@ -5,9 +5,17 @@ import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { conferencesUpdateConference, conferencesReadConference } from "~/client";
 import type { ConferencesUpdateConferenceData } from "~/client";
+import { getSession } from "~/sessions.server";
 
-export async function loader({ params }: Route.LoaderArgs) {
-  const { data: conference, error } = await conferencesReadConference({ path: { conference_id: params.conferenceId } });
+export async function loader({ request, params }: Route.LoaderArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  if (!session.has("accessToken")) {
+    return redirect("/login");
+  }
+  const { data: conference, error } = await conferencesReadConference({
+    path: { conference_id: params.conferenceId },
+    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
+  });
   if (error) {
     throw data("Conference not found", { status: 404 });
   }
@@ -15,6 +23,10 @@ export async function loader({ params }: Route.LoaderArgs) {
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  if (!session.has("accessToken")) {
+    return redirect("/login");
+  }
   const formData = await request.formData();
   const updates = Object.fromEntries(formData) as Record<string, string | null>;
   // For fields other than name, set to null if empty
@@ -27,6 +39,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   await conferencesUpdateConference({
     path: { conference_id: params.conferenceId },
     body: updates as ConferencesUpdateConferenceData["body"],
+    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
   });
   return redirect(`/conferences`);
 }
