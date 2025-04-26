@@ -3,8 +3,9 @@ import type { Route } from "./+types/edit-conference";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
+import { useState } from "react";
 import { conferencesUpdateConference, conferencesReadConference } from "~/client";
-import type { ConferencesUpdateConferenceData } from "~/client";
+import type { ConferencesUpdateConferenceData, ConferenceMilestoneCreate, ConferenceCreate } from "~/client";
 import { getSession } from "~/sessions.server";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
@@ -36,9 +37,33 @@ export async function action({ request, params }: Route.ActionArgs) {
     }
   });
 
+  // Extract the milestones fields from the form data
+  const milestoneIndices = Object.keys(updates)
+    .filter((key) => key.startsWith("milestone_name__"))
+    .map((key) => parseInt(key.split("__")[1], 10))
+    .filter((index) => (updates[`milestone_name__${index}`] && updates[`milestone_date__${index}`]));
+
+  const milestones: ConferenceMilestoneCreate[] = milestoneIndices.map((index): ConferenceMilestoneCreate | null => {
+    const name = updates[`milestone_name__${index}`];
+    const date = updates[`milestone_date__${index}`];
+    if (name == null || date == null) {
+      return null;
+    }
+    return { name, date };
+  })
+    .filter((milestone): milestone is ConferenceMilestoneCreate => milestone !== null);
+  const requestBody: ConferenceCreate = {
+    name: updates.name ?? "New Conference",
+    start_date: updates.start_date,
+    end_date: updates.end_date,
+    location: updates.location,
+    website_url: updates.website_url,
+    milestones: milestones,
+  };
+
   await conferencesUpdateConference({
     path: { conference_id: params.conferenceId },
-    body: updates as ConferencesUpdateConferenceData["body"],
+    body: requestBody,
     headers: { Authorization: `Bearer ${session.get("accessToken")}` },
   });
   return redirect(`/conferences`);
@@ -47,6 +72,8 @@ export async function action({ request, params }: Route.ActionArgs) {
 export default function EditConference({ loaderData }: Route.ComponentProps) {
   const { conference } = loaderData;
   const navigate = useNavigate();
+
+  const [numMilestones, setNumMilestones] = useState(conference.milestones.length);
 
   return (
     <Form key={conference.id} id="conference-form" method="post">
@@ -70,14 +97,22 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
         <Label htmlFor="website-url">Website URL</Label>
         <Input id="website-url" name="website_url" type="url" defaultValue={conference.website_url ?? ""} placeholder="https://example.com" />
       </div>
-      {/* <div>
-        <Label htmlFor="abstract-deadline">Abstract Deadline</Label>
-        <Input id="abstract-deadline" name="abstract_deadline" type="date" defaultValue={conference.abstract_deadline ?? ""} placeholder="YYYY-MM-DD" />
-      </div>
+      {Array.from({ length: numMilestones }).map((_, index) => (
+        <div key={index}>
+          <Label htmlFor={`milestone_name__${index}`}>Milestone Name</Label>
+          <Input id={`milestone_name__${index}`} name={`milestone_name__${index}`} type="text" defaultValue={conference.milestones[index]?.name ?? ""} placeholder="Milestone Name" />
+          <Label htmlFor={`milestone_date__${index}`}>Milestone Date</Label>
+          <Input id={`milestone_date__${index}`} name={`milestone_date__${index}`} type="date" defaultValue={conference.milestones[index]?.date ?? ""} placeholder="YYYY-MM-DD" />
+        </div>
+      ))}
       <div>
-        <Label htmlFor="paper-deadline">Paper Deadline</Label>
-        <Input id="paper-deadline" name="paper_deadline" type="date" defaultValue={conference.paper_deadline ?? ""} placeholder="YYYY-MM-DD" />
-      </div> */}
+        <Button type="button" onClick={() => setNumMilestones(numMilestones + 1)}>
+          Add Milestone
+        </Button>
+        <Button type="button" onClick={() => setNumMilestones(numMilestones - 1)} disabled={numMilestones === 0}>
+          Remove Milestone
+        </Button>
+      </div>
       <div className="flex items-center space-x-2">
         <Button type="submit">
           Save

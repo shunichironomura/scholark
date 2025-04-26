@@ -116,9 +116,20 @@ export default function Conferences({
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-1">
-                <div className="font-medium">Deadlines</div>
+                <div className="font-medium">Milestones</div>
                 {/* <div className={`${getDeadlineStatus(conference.abstract_deadline)} text-sm`}>Abstract Deadline: {formatDate(conference.abstract_deadline)}</div> */}
                 {/* <div className={`${getDeadlineStatus(conference.paper_deadline)} text-sm`}>Paper Deadline: {formatDate(conference.paper_deadline)}</div> */}
+                {conference.milestones && conference.milestones.length > 0 ? (
+                  <ul className="list-disc list-inside">
+                    {conference.milestones.map((milestone, index) => (
+                      <li key={index} className={`${getDeadlineStatus(milestone.date)} text-sm`}>
+                        {milestone.name}: {formatDate(milestone.date)}
+                      </li>
+                    ))}
+                  </ul>) : (
+                  <div className="text-sm text-gray-500">No milestones available</div>
+                )
+                }
               </CardContent>
               <CardFooter className="flex flex-col space-y-2">
                 <div className="flex w-full items-center justify-between">

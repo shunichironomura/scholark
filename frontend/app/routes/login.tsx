@@ -4,7 +4,7 @@ import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { getSession, commitSession } from "~/sessions.server";
-import { loginLoginAccessToken } from "~/client";
+import { loginLoginAccessToken, loginTestToken } from "~/client";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(
@@ -46,6 +46,21 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   session.set("accessToken", data_.access_token);
+
+  const { data: testTokenData, error: testTokenError } = await loginTestToken({
+    headers: { Authorization: `Bearer ${data_.access_token}` },
+  });
+  if (testTokenError || !testTokenData) {
+    session.flash("error", "Login failed");
+
+    return redirect("/login", {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    });
+  }
+
+  session.set("username", testTokenData.username);
 
   return redirect("/conferences", {
     headers: {
