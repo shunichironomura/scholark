@@ -9,8 +9,8 @@ from sqlmodel import Field, Relationship, SQLModel
 
 
 class TagConferenceLink(SQLModel, table=True):
-    tag_id: uuid.UUID = Field(foreign_key="tag.id", primary_key=True)
-    conference_id: uuid.UUID = Field(foreign_key="conference.id", primary_key=True)
+    tag_id: uuid.UUID = Field(foreign_key="tag.id", primary_key=True, ondelete="CASCADE")
+    conference_id: uuid.UUID = Field(foreign_key="conference.id", primary_key=True, ondelete="CASCADE")
 
 
 class TagBase(SQLModel):
@@ -29,7 +29,7 @@ class TagUpdate(SQLModel):
 
 class Tag(TagBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    user_id: uuid.UUID = Field(foreign_key="user.id")
+    user_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
 
     user: "User" = Relationship(back_populates="tags")
     conferences: list["Conference"] = Relationship(back_populates="tags", link_model=TagConferenceLink)
@@ -77,7 +77,7 @@ class ConferenceMilestoneCreate(ConferenceMilestoneBase):
 
 class ConferenceMilestone(ConferenceMilestoneBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    conference_id: uuid.UUID = Field(foreign_key="conference.id")
+    conference_id: uuid.UUID = Field(foreign_key="conference.id", ondelete="CASCADE")
 
     conference: "Conference" = Relationship(back_populates="milestones")
 
@@ -107,10 +107,10 @@ class Conference(ConferenceBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload]
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload]
-    created_by_user_id: uuid.UUID = Field(foreign_key="user.id")
+    created_by_user_id: uuid.UUID | None = Field(foreign_key="user.id", ondelete="SET NULL")
 
     tags: list[Tag] = Relationship(back_populates="conferences", link_model=TagConferenceLink)
-    milestones: list[ConferenceMilestone] = Relationship(back_populates="conference")
+    milestones: list[ConferenceMilestone] = Relationship(back_populates="conference", cascade_delete=True)
 
 
 class ConferencePublic(ConferenceBase):
@@ -154,7 +154,7 @@ class User(UserBase, table=True):
     disabled: bool = Field(default=False)
     role: str = Field(default="member")
 
-    tags: list[Tag] = Relationship(back_populates="user")
+    tags: list[Tag] = Relationship(back_populates="user", cascade_delete=True)
 
 
 class UserPublic(UserBase):
@@ -169,7 +169,7 @@ class UsersPublic(SQLModel):
 
 
 class DbAuthCredential(SQLModel, table=True):
-    user_id: uuid.UUID = Field(foreign_key="user.id", primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", primary_key=True, ondelete="CASCADE")
     hashed_password: str
 
 
