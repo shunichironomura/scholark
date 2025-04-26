@@ -5,9 +5,15 @@ import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { conferencesCreateConference } from "~/client";
 import type { ConferencesCreateConferenceData, ConferencesCreateConferenceResponses, ConferencesUpdateConferenceData } from "~/client";
+import { getSession } from "~/sessions.server";
 
 
-export async function clientAction({ request, params }: Route.ActionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  if (!session.has("accessToken")) {
+    return redirect("/login");
+  }
+
   const formData = await request.formData();
   const updates = Object.fromEntries(formData) as Record<string, string | null>;
   // For fields other than name, set to null if empty
@@ -19,6 +25,7 @@ export async function clientAction({ request, params }: Route.ActionArgs) {
 
   await conferencesCreateConference({
     body: updates as ConferencesCreateConferenceData["body"],
+    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
   });
   return redirect(`/conferences`);
 }

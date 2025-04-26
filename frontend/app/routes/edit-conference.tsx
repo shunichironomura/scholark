@@ -5,16 +5,28 @@ import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { conferencesUpdateConference, conferencesReadConference } from "~/client";
 import type { ConferencesUpdateConferenceData } from "~/client";
+import { getSession } from "~/sessions.server";
 
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-  const { data: conference, error } = await conferencesReadConference({ path: { conference_id: params.conferenceId } });
+export async function loader({ request, params }: Route.LoaderArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  if (!session.has("accessToken")) {
+    return redirect("/login");
+  }
+  const { data: conference, error } = await conferencesReadConference({
+    path: { conference_id: params.conferenceId },
+    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
+  });
   if (error) {
     throw data("Conference not found", { status: 404 });
   }
   return { conference };
 }
 
-export async function clientAction({ request, params }: Route.ActionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  if (!session.has("accessToken")) {
+    return redirect("/login");
+  }
   const formData = await request.formData();
   const updates = Object.fromEntries(formData) as Record<string, string | null>;
   // For fields other than name, set to null if empty
@@ -27,6 +39,7 @@ export async function clientAction({ request, params }: Route.ActionArgs) {
   await conferencesUpdateConference({
     path: { conference_id: params.conferenceId },
     body: updates as ConferencesUpdateConferenceData["body"],
+    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
   });
   return redirect(`/conferences`);
 }
@@ -57,14 +70,14 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
         <Label htmlFor="website-url">Website URL</Label>
         <Input id="website-url" name="website_url" type="url" defaultValue={conference.website_url ?? ""} placeholder="https://example.com" />
       </div>
-      <div>
+      {/* <div>
         <Label htmlFor="abstract-deadline">Abstract Deadline</Label>
         <Input id="abstract-deadline" name="abstract_deadline" type="date" defaultValue={conference.abstract_deadline ?? ""} placeholder="YYYY-MM-DD" />
       </div>
       <div>
         <Label htmlFor="paper-deadline">Paper Deadline</Label>
         <Input id="paper-deadline" name="paper_deadline" type="date" defaultValue={conference.paper_deadline ?? ""} placeholder="YYYY-MM-DD" />
-      </div>
+      </div> */}
       <div className="flex items-center space-x-2">
         <Button type="submit">
           Save

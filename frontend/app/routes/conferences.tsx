@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "~/components/ui/button"
 import type { Route } from "./+types/conferences"
 import { conferencesReadConferences, conferencesCreateConference } from '~/client';
-import type { ConferencePublic, ConferenceCreate } from "~/client";
+import type { ConferencePublicReadable, ConferenceCreate } from "~/client";
 import { MapPin, Calendar, Plus, Trash2, Pencil } from "lucide-react";
 import { Form, redirect } from "react-router";
 import {
@@ -16,9 +16,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
+import { getSession } from "~/sessions.server";
 
-export async function clientLoader({ }: Route.ClientLoaderArgs) {
-  const { data: conferences, error } = await conferencesReadConferences();
+export async function loader({ request }: Route.LoaderArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  if (!session.has("accessToken")) {
+    return redirect("/login");
+  }
+  const token = session.get("accessToken");
+
+  const { data: conferences, error } = await conferencesReadConferences({
+    headers: { Authorization: `Bearer ${token}` },
+  });
   if (error) {
     throw new Response("Error fetching conferences", { status: 500 });
   }
@@ -89,7 +98,7 @@ export default function Conferences({
 
       {conferences && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {conferences.data.map((conference: ConferencePublic) => (
+          {conferences.data.map((conference: ConferencePublicReadable) => (
             <Card className="w-[300px] flex flex-col space-y-2">
               <CardHeader className="flex-none space-y-1">
                 <CardTitle>{conference.name}</CardTitle>
@@ -108,8 +117,8 @@ export default function Conferences({
               </CardHeader>
               <CardContent className="flex-1">
                 <div className="font-medium">Deadlines</div>
-                <div className={`${getDeadlineStatus(conference.abstract_deadline)} text-sm`}>Abstract Deadline: {formatDate(conference.abstract_deadline)}</div>
-                <div className={`${getDeadlineStatus(conference.paper_deadline)} text-sm`}>Paper Deadline: {formatDate(conference.paper_deadline)}</div>
+                {/* <div className={`${getDeadlineStatus(conference.abstract_deadline)} text-sm`}>Abstract Deadline: {formatDate(conference.abstract_deadline)}</div> */}
+                {/* <div className={`${getDeadlineStatus(conference.paper_deadline)} text-sm`}>Paper Deadline: {formatDate(conference.paper_deadline)}</div> */}
               </CardContent>
               <CardFooter className="flex flex-col space-y-2">
                 <div className="flex w-full items-center justify-between">
