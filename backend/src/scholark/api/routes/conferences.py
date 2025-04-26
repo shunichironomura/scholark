@@ -5,7 +5,15 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import col, func, select
 
 from scholark.api.deps import CurrentUser, SessionDep, get_current_active_superuser
-from scholark.models import Conference, ConferenceCreate, ConferencePublic, ConferencesPublic, ConferenceUpdate, Tag
+from scholark.models import (
+    Conference,
+    ConferenceCreate,
+    ConferenceMilestone,
+    ConferencePublic,
+    ConferencesPublic,
+    ConferenceUpdate,
+    Tag,
+)
 
 router = APIRouter(prefix="/conferences", tags=["conferences"])
 
@@ -39,10 +47,15 @@ def create_conference(
     conference_in: ConferenceCreate,
 ) -> Conference:
     """Create a new conference."""
+    milestones = conference_in.milestones or []
     conference = Conference.model_validate(
         conference_in,
-        update={"created_by_user_id": current_user.id},
+        update={"created_by_user_id": current_user.id, "milestones": []},
     )
+    conference.milestones = [
+        ConferenceMilestone.model_validate(milestone, update={"conference_id": conference.id})
+        for milestone in milestones
+    ]
 
     session.add(conference)
     session.commit()
@@ -102,9 +115,18 @@ def update_conference(
     if not conference:
         raise HTTPException(status_code=404, detail="Conference not found")
 
+    new_milestones = conference_in.milestones or []
+    conference_in.milestones = None
     update_dict = conference_in.model_dump(exclude_unset=True)
     update_dict["updated_at"] = datetime.now(UTC)
     conference.sqlmodel_update(update_dict)
+    for milestone in conference.milestones:
+        session.delete(milestone)
+
+    conference.milestones = [
+        ConferenceMilestone.model_validate(milestone, update={"conference_id": conference.id})
+        for milestone in new_milestones
+    ]
     session.add(conference)
     session.commit()
     session.refresh(conference)
