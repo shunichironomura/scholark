@@ -1,6 +1,15 @@
 import { Outlet, NavLink } from "react-router";
+import { getSession } from "~/sessions.server";
+import type { Route } from "./+types/main";
 
-export default function MainLayout() {
+export async function loader({ request }: Route.LoaderArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  const username = session.get("username");
+  return { username };
+}
+
+export default function MainLayout({ loaderData }: Route.ComponentProps) {
+  const { username } = loaderData;
   return (
     <div className="min-h-screen bg-white">
       <header className="bg-white shadow-sm">
@@ -16,18 +25,18 @@ export default function MainLayout() {
               >
                 Conferences
               </NavLink>
-              {/* <NavLink
-                to="/research-topics"
+              {username ? <NavLink
+                to="/logout"
                 className={"px-3 py-2 rounded-md text-sm font-medium"}
               >
-                Research Topics
-              </NavLink>
-              <NavLink
-                to="/schedule"
-                className={"px-3 py-2 rounded-md text-sm font-medium"}
-              >
-                My Schedule
-              </NavLink> */}
+                Logout
+              </NavLink> :
+                <NavLink
+                  to="/login"
+                  className={"px-3 py-2 rounded-md text-sm font-medium"}
+                >
+                  Login
+                </NavLink>}
             </nav>
           </div>
         </div>

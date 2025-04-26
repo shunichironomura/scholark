@@ -5,6 +5,7 @@ export default [
   layout("layouts/main.tsx", [
     index("routes/home.tsx"),
     route("login", "routes/login.tsx"),
+    route("logout", "routes/logout.tsx"),
     route("conferences", "routes/conferences.tsx"),
     route("conferences/new", "routes/create-conference.tsx"),
     route("conferences/:conferenceId/edit", "routes/edit-conference.tsx"),
