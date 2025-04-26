@@ -1,7 +1,0 @@
-Request failed with status 200: 
-Error: Request failed with status 200: 
-    at go (/Users/nomura/ghq/github.com/shunichironomura/scholark/frontend/node_modules/.pnpm/@hey-api+openapi-ts@0.66.5_typescript@5.8.3/node_modules/@hey-api/openapi-ts/dist/index.cjs:14:94523)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async Promise.all (index 0)
-    at async Pj (/Users/nomura/ghq/github.com/shunichironomura/scholark/frontend/node_modules/.pnpm/@hey-api+openapi-ts@0.66.5_typescript@5.8.3/node_modules/@hey-api/openapi-ts/dist/index.cjs:1311:4503)
-    at async start (/Users/nomura/ghq/github.com/shunichironomura/scholark/frontend/node_modules/.pnpm/@hey-api+openapi-ts@0.66.5_typescript@5.8.3/node_modules/@hey-api/openapi-ts/bin/index.cjs:131:21)
