@@ -22,7 +22,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:  # noqa: ARG001
     yield
 
 
-app = FastAPI(generate_unique_id_function=custom_generate_unique_id, lifespan=lifespan)
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    generate_unique_id_function=custom_generate_unique_id,
+    lifespan=lifespan,
+)
 
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
