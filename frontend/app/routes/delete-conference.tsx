@@ -3,7 +3,7 @@ import type { Route } from "./+types/delete-conference";
 import { conferencesDeleteConference } from "~/client";
 
 
-export async function clientAction({ params }: Route.ActionArgs) {
+export async function action({ params }: Route.ActionArgs) {
   if (!params.conferenceId) {
     throw data("Conference ID is required", { status: 400 });
   }

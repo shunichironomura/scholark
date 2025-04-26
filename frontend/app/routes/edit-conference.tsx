@@ -6,7 +6,7 @@ import { Input } from "~/components/ui/input";
 import { conferencesUpdateConference, conferencesReadConference } from "~/client";
 import type { ConferencesUpdateConferenceData } from "~/client";
 
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   const { data: conference, error } = await conferencesReadConference({ path: { conference_id: params.conferenceId } });
   if (error) {
     throw data("Conference not found", { status: 404 });
@@ -14,7 +14,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   return { conference };
 }
 
-export async function clientAction({ request, params }: Route.ActionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   const formData = await request.formData();
   const updates = Object.fromEntries(formData) as Record<string, string | null>;
   // For fields other than name, set to null if empty
@@ -57,14 +57,14 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
         <Label htmlFor="website-url">Website URL</Label>
         <Input id="website-url" name="website_url" type="url" defaultValue={conference.website_url ?? ""} placeholder="https://example.com" />
       </div>
-      <div>
+      {/* <div>
         <Label htmlFor="abstract-deadline">Abstract Deadline</Label>
         <Input id="abstract-deadline" name="abstract_deadline" type="date" defaultValue={conference.abstract_deadline ?? ""} placeholder="YYYY-MM-DD" />
       </div>
       <div>
         <Label htmlFor="paper-deadline">Paper Deadline</Label>
         <Input id="paper-deadline" name="paper_deadline" type="date" defaultValue={conference.paper_deadline ?? ""} placeholder="YYYY-MM-DD" />
-      </div>
+      </div> */}
       <div className="flex items-center space-x-2">
         <Button type="submit">
           Save

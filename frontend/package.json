@@ -7,7 +7,7 @@
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
-    "generate-client": "openapi-ts --input http://localhost:8000/openapi.json --output ./app/client --client @hey-api/client-fetch"
+    "generate-client": "openapi-ts --input http://localhost:8000/api/v1/openapi.json --output ./app/client --client @hey-api/client-fetch"
   },
   "dependencies": {
     "@hey-api/client-fetch": "^0.10.0",

@@ -1,0 +1,85 @@
+import { Form, data, redirect, useNavigate } from "react-router";
+import type { Route } from "./+types/login";
+import { Button } from "~/components/ui/button";
+import { Label } from "~/components/ui/label";
+import { Input } from "~/components/ui/input";
+import { getSession, commitSession } from "~/sessions.server";
+import { loginLoginAccessToken } from "~/client";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const session = await getSession(
+    request.headers.get("Cookie")
+  );
+
+  if (session.has("accessToken")) {
+    return redirect("/conferences");
+  }
+
+  return data(
+    { error: session.get("error") },
+    {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    }
+  );
+}
+
+export async function action({ request }: Route.ActionArgs) {
+  const session = await getSession(
+    request.headers.get("Cookie")
+  );
+
+  const formData = await request.formData();
+  const { data: data_, error } = await loginLoginAccessToken({
+    body: {
+      username: formData.get("username") as string,
+      password: formData.get("password") as string,
+    },
+  });
+  if (error || !data_) {
+    session.flash("error", "Login failed");
+
+    return redirect("/login", {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    });
+  }
+
+  session.set("accessToken", data_.access_token);
+
+  return redirect("/conferences", {
+    headers: {
+      "Set-Cookie": await commitSession(session),
+    },
+  });
+}
+
+export default function Login({ loaderData }: Route.ComponentProps) {
+  const { error } = loaderData;
+
+  return (
+    <div>
+      {error && (
+        <div className="mb-4 text-red-500">
+          {error}
+        </div>
+      )}
+      <h1 className="text-4xl font-bold mb-4">Login</h1>
+      <Form method="post">
+        <div className="mb-4">
+          <Label htmlFor="username">Username</Label>
+          <Input type="username" id="username" name="username" required />
+        </div>
+        <div className="mb-4">
+          <Label htmlFor="password">Password</Label>
+          <Input type="password" id="password" name="password" required />
+        </div>
+        <Button type="submit">
+          Login
+        </Button>
+      </Form>
+    </div>
+  );
+}

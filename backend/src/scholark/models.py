@@ -187,3 +187,7 @@ class TokenPayload(SQLModel):
 # Generic message
 class Message(SQLModel):
     message: str
+
+
+class LoginResponse(SQLModel):
+    user_id: uuid.UUID
