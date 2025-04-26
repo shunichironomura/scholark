@@ -40,7 +40,8 @@ class ConferencesPublic(SQLModel):
 
 
 class UserBase(SQLModel):
-    username: str
+    username: str = Field(unique=True, index=True, max_length=255)
+    is_superuser: bool = Field(default=False)
 
 
 class UserCreate(UserBase):
@@ -52,10 +53,16 @@ class UserUpdate(UserBase):
     pass
 
 
+class UserRegister(SQLModel):
+    username: str
+    password: str = Field(min_length=8, max_length=40)
+
+
 class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    disabled: bool = Field(default=False)
     role: str = Field(default="member")
 
 
@@ -70,8 +77,22 @@ class UsersPublic(SQLModel):
     count: int
 
 
-class Credential(SQLModel, table=True):
+class DbAuthCredential(SQLModel, table=True):
     user_id: uuid.UUID = Field(foreign_key="user.id", primary_key=True)
-    provider: str = Field(primary_key=True)  # "db", "auth0", "ldap"
-    identifier: str  # unique identifier for the user in the provider
-    hashed_password: str | None = Field(default=None)
+    hashed_password: str
+
+
+# JSON payload containing access token
+class Token(SQLModel):
+    access_token: str
+    token_type: str = "bearer"  # noqa: S105
+
+
+# Contents of JWT token
+class TokenPayload(SQLModel):
+    sub: str | None = None
+
+
+# Generic message
+class Message(SQLModel):
+    message: str

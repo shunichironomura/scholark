@@ -1,7 +1,8 @@
 import secrets
+from datetime import timedelta
 from typing import Annotated, Any
 
-from pydantic import AnyUrl, BeforeValidator, PostgresDsn, computed_field
+from pydantic import AnyUrl, BeforeValidator, Field, PostgresDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -18,6 +19,7 @@ class Settings(BaseSettings):
 
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = secrets.token_urlsafe(32)
+    ACCESS_TOKEN_EXPIRE: timedelta = Field(default=timedelta(days=7))
 
     FRONTEND_HOST: str
     BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)]
@@ -46,6 +48,9 @@ class Settings(BaseSettings):
             port=self.POSTGRES_PORT,
             path=self.POSTGRES_DB,
         )
+
+    FIRST_SUPERUSER: str
+    FIRST_SUPERUSER_PASSWORD: str
 
 
 settings = Settings()  # type: ignore[call-arg]
