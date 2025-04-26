@@ -1,7 +1,7 @@
 from sqlmodel import Session, select
 
 from scholark.core.security import get_password_hash, verify_password
-from scholark.models import DbAuthCredential, User, UserCreate
+from scholark.models import DbAuthCredential, User, UserCreate, default_tags
 
 from .base import AuthProvider, AuthProviderError
 
@@ -22,6 +22,10 @@ class DbAuthProvider(AuthProvider):
             raise AuthProviderError(status_code=400, detail="User already exists")
 
         new_user = User.model_validate(user_create)
+
+        # Set default tags for the user
+        new_user.tags.extend(default_tags(user_id=new_user.id))
+
         self.db.add(new_user)
 
         try:

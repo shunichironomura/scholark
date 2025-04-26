@@ -1,7 +1,54 @@
 import uuid
 from datetime import UTC, date, datetime
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+
+class TagConferenceLink(SQLModel, table=True):
+    tag_id: uuid.UUID = Field(foreign_key="tag.id", primary_key=True)
+    conference_id: uuid.UUID = Field(foreign_key="conference.id", primary_key=True)
+
+
+class TagBase(SQLModel):
+    name: str
+    color: str
+
+
+class TagCreate(TagBase):
+    pass
+
+
+class TagUpdate(SQLModel):
+    name: str | None = Field(default=None)
+    color: str | None = Field(default=None)
+
+
+class Tag(TagBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id")
+
+    user: "User" = Relationship(back_populates="tags")
+    conferences: list["Conference"] = Relationship(back_populates="tags", link_model=TagConferenceLink)
+
+
+def default_tags(user_id: uuid.UUID) -> list[Tag]:
+    return [
+        Tag(name="Interested", color="#FF5733", user_id=user_id),
+        Tag(name="Abstract submitted", color="#33FF57", user_id=user_id),
+        Tag(name="Accepted", color="#3357FF", user_id=user_id),
+        Tag(name="Registered", color="#FF33A1", user_id=user_id),
+        Tag(name="Attended", color="#FF33FF", user_id=user_id),
+    ]
+
+
+class TagPublic(TagBase):
+    id: uuid.UUID
+    user_id: uuid.UUID
+
+
+class TagsPublic(SQLModel):
+    data: list[TagPublic]
+    count: int
 
 
 class ConferenceBase(SQLModel):
@@ -26,12 +73,16 @@ class Conference(ConferenceBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_by_user_id: uuid.UUID = Field(foreign_key="user.id")
+
+    tags: list[Tag] = Relationship(back_populates="conferences", link_model=TagConferenceLink)
 
 
 class ConferencePublic(ConferenceBase):
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
+    tags: list[TagPublic] | None = Field(default=None)
 
 
 class ConferencesPublic(SQLModel):
@@ -64,6 +115,8 @@ class User(UserBase, table=True):
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     disabled: bool = Field(default=False)
     role: str = Field(default="member")
+
+    tags: list[Tag] = Relationship(back_populates="user")
 
 
 class UserPublic(UserBase):
