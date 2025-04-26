@@ -3,7 +3,7 @@
         ".vscode/tailwind.json"
     ],
     "files.associations": {
-        ".env.*": "env"
+        ".env*": "env"
     },
     "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
     "[python]": {
