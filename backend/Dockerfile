@@ -1,5 +1,12 @@
 FROM python:3.13-slim
 
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    curl \
+    && apt-get -y clean && rm -rf /var/lib/apt/lists/*
+
 COPY --from=ghcr.io/astral-sh/uv:0.6.17 /uv /bin/uv
 RUN curl -fsS https://dotenvx.sh | sh
 
