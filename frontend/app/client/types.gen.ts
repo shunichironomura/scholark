@@ -645,6 +645,22 @@ export type TagsUpdateTagResponses = {
 
 export type TagsUpdateTagResponse = TagsUpdateTagResponses[keyof TagsUpdateTagResponses];
 
+export type HealthHealthCheckData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/health/';
+};
+
+export type HealthHealthCheckResponses = {
+    /**
+     * Successful Response
+     */
+    200: Message;
+};
+
+export type HealthHealthCheckResponse = HealthHealthCheckResponses[keyof HealthHealthCheckResponses];
+
 export type ClientOptions = {
     baseUrl: 'http://localhost:8000' | (string & {});
 };

@@ -1,7 +1,9 @@
+name: scholark-${SCHOLARK_ENV?Variable not set}
 services:
   db:
     image: postgres:17.4
     restart: always
+    container_name: scholark-db-ctr-${SCHOLARK_ENV?Variable not set}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${SCHOLARK_POSTGRES_USER} -d ${SCHOLARK_POSTGRES_DB}"]
       interval: 10s
@@ -9,7 +11,7 @@ services:
       start_period: 30s
       timeout: 10s
     volumes:
-      - scholark-db-data:/var/lib/postgresql/data/pgdata
+      - db-data:/var/lib/postgresql/data/pgdata
     ports:
       - "${SCHOLARK_POSTGRES_PORT?Variable not set}:5432"
     environment:
@@ -18,5 +20,45 @@ services:
       - POSTGRES_USER=${SCHOLARK_POSTGRES_USER?Variable not set}
       - POSTGRES_DB=${SCHOLARK_POSTGRES_DB?Variable not set}
 
+  backend:
+    build: ./backend
+    restart: always
+    container_name: scholark-backend-ctr-${SCHOLARK_ENV?Variable not set}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    ports:
+      - "${SCHOLARK_BACKEND_PORT?Variable not set}:8000"
+    environment:
+      - SCHOLARK_FRONTEND_HOST=http://frontend:3000
+      - SCHOLARK_BACKEND_CORS_ORIGINS="http://frontend,http://frontend:3000,https://frontend,https://frontend:3000"
+      - SCHOLARK_POSTGRES_SERVER=db
+      - SCHOLARK_POSTGRES_PORT=5432
+      - SCHOLARK_POSTGRES_USER=${SCHOLARK_POSTGRES_USER?Variable not set}
+      - SCHOLARK_POSTGRES_PASSWORD=${SCHOLARK_POSTGRES_PASSWORD?Variable not set}
+      - SCHOLARK_POSTGRES_DB=${SCHOLARK_POSTGRES_DB?Variable not set}
+      - SCHOLARK_FIRST_SUPERUSER=${SCHOLARK_FIRST_SUPERUSER?Variable not set}
+      - SCHOLARK_FIRST_SUPERUSER_PASSWORD=${SCHOLARK_FIRST_SUPERUSER_PASSWORD?Variable not set}
+
+  frontend:
+    build: ./frontend
+    restart: always
+    container_name: scholark-frontend-ctr-${SCHOLARK_ENV?Variable not set}
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${SCHOLARK_FRONTEND_PORT?Variable not set}:3000"
+    environment:
+      - VITE_API_URL=http://backend:8000
+
+
 volumes:
-  scholark-db-data:
+  db-data:
+    name: scholark_db-data-${SCHOLARK_ENV?Variable not set}
