@@ -1,6 +1,10 @@
 import uuid
-from datetime import UTC, date, datetime
+from datetime import UTC, datetime
+from datetime import date as date_
+from datetime import time as time_
 
+import sqlalchemy as sa
+from pydantic import computed_field
 from sqlmodel import Field, Relationship, SQLModel
 
 
@@ -51,38 +55,72 @@ class TagsPublic(SQLModel):
     count: int
 
 
+class ConferenceMilestoneBase(SQLModel):
+    name: str
+    date: date_
+    time: time_ | None = Field(default=None, sa_type=sa.Time(timezone=True))  # type: ignore[call-overload]
+
+    @computed_field
+    def as_datetime(self) -> datetime:
+        """Convert date and time to datetime.
+
+        If time is not provided, it defaults to midnight (00:00).
+        """
+        if self.time:
+            return datetime.combine(self.date, self.time)
+        return datetime.combine(self.date, time_(0, 0))
+
+
+class ConferenceMilestoneCreate(ConferenceMilestoneBase):
+    pass
+
+
+class ConferenceMilestone(ConferenceMilestoneBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    conference_id: uuid.UUID = Field(foreign_key="conference.id")
+
+    conference: "Conference" = Relationship(back_populates="milestones")
+
+
+class ConferenceMilestonePublic(ConferenceMilestoneBase):
+    id: uuid.UUID
+    conference_id: uuid.UUID
+
+
 class ConferenceBase(SQLModel):
     name: str
-    start_date: date | None = Field(default=None)
-    end_date: date | None = Field(default=None)
+    start_date: date_ | None = Field(default=None)
+    end_date: date_ | None = Field(default=None)
     location: str | None = Field(default=None)
     website_url: str | None = Field(default=None)
-    abstract_deadline: datetime | None = Field(default=None)
-    paper_deadline: datetime | None = Field(default=None)
 
 
 class ConferenceCreate(ConferenceBase):
-    pass
+    milestones: list[ConferenceMilestoneCreate] | None = Field(default=None)
 
 
 class ConferenceUpdate(ConferenceBase):
-    pass
+    milestones: list[ConferenceMilestoneCreate] | None = Field(default=None)
 
 
 class Conference(ConferenceBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload]
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload]
     created_by_user_id: uuid.UUID = Field(foreign_key="user.id")
 
     tags: list[Tag] = Relationship(back_populates="conferences", link_model=TagConferenceLink)
+    milestones: list[ConferenceMilestone] = Relationship(back_populates="conference")
 
 
 class ConferencePublic(ConferenceBase):
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
-    tags: list[TagPublic] | None = Field(default=None)
+    created_by_user_id: uuid.UUID
+
+    tags: list[TagPublic] = Field(default=None)
+    milestones: list[ConferenceMilestonePublic]
 
 
 class ConferencesPublic(SQLModel):
@@ -111,8 +149,8 @@ class UserRegister(SQLModel):
 
 class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload]
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload]
     disabled: bool = Field(default=False)
     role: str = Field(default="member")
 
