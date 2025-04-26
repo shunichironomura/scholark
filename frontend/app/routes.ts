@@ -11,5 +11,6 @@ export default [
     route("conferences/new", "routes/create-conference.tsx"),
     route("conferences/:conferenceId/edit", "routes/edit-conference.tsx"),
     route("conferences/:conferenceId/delete", "routes/delete-conference.tsx"),
+    route("timeline", "routes/timeline.tsx"),
   ])
 ] satisfies RouteConfig;

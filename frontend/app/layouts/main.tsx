@@ -25,6 +25,12 @@ export default function MainLayout({ loaderData }: Route.ComponentProps) {
               >
                 Conferences
               </NavLink>
+              <NavLink
+                to="/timeline"
+                className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
+              >
+                Timeline
+              </NavLink>
               {username ? <NavLink
                 to="/logout"
                 className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}

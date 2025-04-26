@@ -105,6 +105,14 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
           <Input id={`milestone_date__${index}`} name={`milestone_date__${index}`} type="date" defaultValue={conference.milestones[index]?.date ?? ""} placeholder="YYYY-MM-DD" />
         </div>
       ))}
+      <div>
+        <Button type="button" onClick={() => setNumMilestones(numMilestones + 1)}>
+          Add Milestone
+        </Button>
+        <Button type="button" onClick={() => setNumMilestones(numMilestones - 1)} disabled={numMilestones === 0}>
+          Remove Milestone
+        </Button>
+      </div>
       <div className="flex items-center space-x-2">
         <Button type="submit">
           Save
