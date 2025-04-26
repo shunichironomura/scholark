@@ -198,16 +198,26 @@ def update_tags_for_conference(
     if not conference:
         raise HTTPException(status_code=404, detail="Conference not found")
 
-    # Clear existing tags
-    conference.tags.clear()
+    existing_tag_ids = {tag.id for tag in conference.tags if tag.user_id == current_user.id}
+
+    tag_ids_to_remove = existing_tag_ids - set(tags)
+    tag_ids_to_add = set(tags) - existing_tag_ids
 
     # Add new tags
-    for tag_id in tags:
+    for tag_id in tag_ids_to_add:
         tag_statement = select(Tag).where(Tag.id == tag_id, Tag.user_id == current_user.id)
         tag = session.exec(tag_statement).one()
         if not tag:
             raise HTTPException(status_code=404, detail="Tag not found")
         conference.tags.append(tag)
+
+    # Remove old tags
+    for tag_id in tag_ids_to_remove:
+        tag_statement = select(Tag).where(Tag.id == tag_id, Tag.user_id == current_user.id)
+        tag = session.exec(tag_statement).one()
+        if not tag:
+            raise HTTPException(status_code=404, detail="Tag not found")
+        conference.tags.remove(tag)
 
     session.add(conference)
     session.commit()
