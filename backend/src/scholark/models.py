@@ -31,6 +31,16 @@ class Tag(TagBase, table=True):
     conferences: list["Conference"] = Relationship(back_populates="tags", link_model=TagConferenceLink)
 
 
+def default_tags(user_id: uuid.UUID) -> list[Tag]:
+    return [
+        Tag(name="Interested", color="#FF5733", user_id=user_id),
+        Tag(name="Abstract submitted", color="#33FF57", user_id=user_id),
+        Tag(name="Accepted", color="#3357FF", user_id=user_id),
+        Tag(name="Registered", color="#FF33A1", user_id=user_id),
+        Tag(name="Attended", color="#FF33FF", user_id=user_id),
+    ]
+
+
 class TagPublic(TagBase):
     id: uuid.UUID
     user_id: uuid.UUID
