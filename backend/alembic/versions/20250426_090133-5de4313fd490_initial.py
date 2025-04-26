@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: 86f37b2d7da6
+Revision ID: 5de4313fd490
 Revises:
-Create Date: 2025-04-26 04:34:32.637956+00:00
+Create Date: 2025-04-26 09:01:33.763984+00:00
 
 """
 
@@ -14,7 +14,7 @@ import sqlmodel.sql.sqltypes
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "86f37b2d7da6"
+revision: str = "5de4313fd490"
 down_revision: str | None = None
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
@@ -45,15 +45,15 @@ def upgrade() -> None:
         sa.Column("id", sa.Uuid(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
-        sa.Column("created_by_user_id", sa.Uuid(), nullable=False),
-        sa.ForeignKeyConstraint(["created_by_user_id"], ["user.id"]),
+        sa.Column("created_by_user_id", sa.Uuid(), nullable=True),
+        sa.ForeignKeyConstraint(["created_by_user_id"], ["user.id"], ondelete="SET NULL"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
         "dbauthcredential",
         sa.Column("user_id", sa.Uuid(), nullable=False),
         sa.Column("hashed_password", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-        sa.ForeignKeyConstraint(["user_id"], ["user.id"]),
+        sa.ForeignKeyConstraint(["user_id"], ["user.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("user_id"),
     )
     op.create_table(
@@ -62,7 +62,7 @@ def upgrade() -> None:
         sa.Column("color", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("id", sa.Uuid(), nullable=False),
         sa.Column("user_id", sa.Uuid(), nullable=False),
-        sa.ForeignKeyConstraint(["user_id"], ["user.id"]),
+        sa.ForeignKeyConstraint(["user_id"], ["user.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -72,15 +72,15 @@ def upgrade() -> None:
         sa.Column("time", sa.Time(timezone=True), nullable=True),
         sa.Column("id", sa.Uuid(), nullable=False),
         sa.Column("conference_id", sa.Uuid(), nullable=False),
-        sa.ForeignKeyConstraint(["conference_id"], ["conference.id"]),
+        sa.ForeignKeyConstraint(["conference_id"], ["conference.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
         "tagconferencelink",
         sa.Column("tag_id", sa.Uuid(), nullable=False),
         sa.Column("conference_id", sa.Uuid(), nullable=False),
-        sa.ForeignKeyConstraint(["conference_id"], ["conference.id"]),
-        sa.ForeignKeyConstraint(["tag_id"], ["tag.id"]),
+        sa.ForeignKeyConstraint(["conference_id"], ["conference.id"], ondelete="CASCADE"),
+        sa.ForeignKeyConstraint(["tag_id"], ["tag.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("tag_id", "conference_id"),
     )
     # ### end Alembic commands ###
