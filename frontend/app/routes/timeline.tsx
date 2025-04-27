@@ -174,28 +174,31 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
 
   return (
     <>
-      <Label>Filter by tag</Label>
-      <Select
-        defaultValue={searchParams.get("selectedTagId") ?? "_all"}
-        onValueChange={(selectedTagId) => {
-          setSearchParams({ selectedTagId });
-        }}
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="All tags" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Tags</SelectLabel>
-            <SelectItem value="_all">All tags</SelectItem>
-            {userTags.data.map((tag) => (
-              <SelectItem key={tag.id} value={tag.id}>
-                {tagComponent(tag)}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+      <h1 className="text-3xl font-bold mb-6 text-center">Timeline</h1>
+      <div className="p-4 flex justify-end space-x-2 items-center">
+        <Label>Filter by tag</Label>
+        <Select
+          defaultValue={searchParams.get("selectedTagId") ?? "_all"}
+          onValueChange={(selectedTagId) => {
+            setSearchParams({ selectedTagId });
+          }}
+        >
+          <SelectTrigger className="w-[240px]">
+            <SelectValue placeholder="All tags" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Tags</SelectLabel>
+              <SelectItem value="_all">All tags</SelectItem>
+              {userTags.data.map((tag) => (
+                <SelectItem key={tag.id} value={tag.id}>
+                  {tagComponent(tag)}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
       <div className="flex flex-col gap-4">
         {Object.entries(groupedScheduleItems).map(([yearMonth, items]) => (
           <div key={yearMonth} className="flex flex-col gap-2">
