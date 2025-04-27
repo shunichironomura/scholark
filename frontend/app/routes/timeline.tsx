@@ -17,12 +17,17 @@ import {
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
 import { getSession } from "~/sessions.server";
-
+import { Badge } from "~/components/ui/badge"
 // Define the schedule item interface
+interface Tag {
+  name: string;
+  color: string;
+}
 interface ScheduleItem {
   date: Date;
   type: 'conference_start' | 'conference_end' | 'milestone';
   title: string;
+  tags: Tag[];
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -61,11 +66,14 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
     return date.toISOString().slice(0, 7); // Format as YYYY-MM
   };
   conferences.data.forEach((conference) => {
+    const conferenceTags = conference.tags ?? [];
+
     if (conference.start_date) {
       scheduleItems.push({
         date: new Date(conference.start_date),
         type: 'conference_start',
         title: `${conference.name} – Start`,
+        tags: conferenceTags,
       });
     }
     if (conference.end_date) {
@@ -73,6 +81,7 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
         date: new Date(conference.end_date),
         type: 'conference_end',
         title: `${conference.name} – End`,
+        tags: conferenceTags,
       });
     }
     if (conference.milestones) {
@@ -82,6 +91,7 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
             date: new Date(milestone.date),
             type: 'milestone',
             title: `${conference.name} – ${milestone.name}`,
+            tags: conferenceTags,
           });
         }
       });
@@ -127,6 +137,13 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
                   <Calendar className="inline mr-1" />
                   {formatDate(item.date)}
                 </CardDescription>
+                <CardFooter>
+                  {item.tags.map((tag, index) => (
+                    <Badge key={index} style={{ backgroundColor: tag.color }} className="text-blue-700">
+                      {tag.name}
+                    </Badge>
+                  ))}
+                </CardFooter>
               </CardHeader>
             </Card>
           ))}
