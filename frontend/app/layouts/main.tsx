@@ -1,6 +1,11 @@
 import { Outlet, NavLink } from "react-router";
 import { getSession } from "~/sessions.server";
 import type { Route } from "./+types/main";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "~/components/ui/avatar"
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -18,7 +23,7 @@ export default function MainLayout({ loaderData }: Route.ComponentProps) {
             <div className="flex items-center">
               <NavLink to="/" className="text-2xl font-bold text-blue-600">Scholark</NavLink>
             </div>
-            <nav className="flex space-x-4">
+            <nav className="flex space-x-4 items-center">
               <NavLink
                 to="/conferences"
                 className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
@@ -43,6 +48,16 @@ export default function MainLayout({ loaderData }: Route.ComponentProps) {
                 >
                   Login
                 </NavLink>}
+              {/* Display username and avatar if logged in */}
+              {username && (
+                <div className="flex items-center space-x-2">
+                  <Avatar className="w-8 h-8">
+                    <AvatarImage src="/path/to/avatar.jpg" alt="User Avatar" />
+                    <AvatarFallback>{username.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <span className="text-zinc-600">{username}</span>
+                </div>
+              )}
             </nav>
           </div>
         </div>
