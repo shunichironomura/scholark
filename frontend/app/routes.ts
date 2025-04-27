@@ -16,5 +16,6 @@ export default [
     route("settings", "routes/settings.tsx"),
     route("tags/:tagId/edit", "routes/edit-tag.tsx"),
     route("tags/:tagId/delete", "routes/delete-tag.tsx"),
+    route("tags/new", "routes/create-tag.tsx"),
   ])
 ] satisfies RouteConfig;

@@ -160,7 +160,38 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
           );
         })}
       </div>
-      {/* <Button onClick={() => setEditMode(true)}>Edit Tags</Button> */}
+      {/* Add tag */}
+      <Dialog open={openTagId === "new"} onOpenChange={(open) => setOpenTagId(open ? "new" : null)}>
+        <DialogTrigger asChild>
+          <Button variant="outline" >
+            <Plus className="mr-2" /> Add new tag
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <Form action={`/tags/new`} method="post">
+            <DialogHeader>
+              <DialogTitle>Add new tag</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="tag-name" className="text-right">
+                  Name
+                </Label>
+                <Input id="tag-name" name="name" className="col-span-3" />
+              </div>
+              {/* <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="color" className="text-right">
+                  Color
+                </Label>
+                <Input id="color" value={tag.color} className="col-span-3" />
+              </div> */}
+            </div>
+            <DialogFooter>
+              <Button type="submit">Add</Button>
+            </DialogFooter>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
