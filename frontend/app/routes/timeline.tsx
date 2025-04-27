@@ -138,7 +138,7 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
                   <Calendar className="inline mr-1" />
                   {formatDate(item.date)}
                 </CardDescription>
-                <CardFooter>
+                <CardFooter className="flex gap-1">
                   {item.tags.map((tag, index) => (
                     <Badge key={index} style={{ color: pickLabelTextColor(tag.color), backgroundColor: tag.color }} className="text-blue-700">
                       {tag.name}
