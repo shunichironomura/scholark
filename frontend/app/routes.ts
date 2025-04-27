@@ -15,5 +15,6 @@ export default [
     route("timeline", "routes/timeline.tsx"),
     route("settings", "routes/settings.tsx"),
     route("tags/:tagId/edit", "routes/edit-tag.tsx"),
+    route("tags/:tagId/delete", "routes/delete-tag.tsx"),
   ])
 ] satisfies RouteConfig;

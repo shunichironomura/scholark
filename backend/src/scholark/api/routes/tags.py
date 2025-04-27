@@ -92,3 +92,22 @@ def update_tag(
     session.commit()
     session.refresh(tag)
     return tag
+
+
+@router.delete("/{tag_id}", response_model=TagPublic)
+def delete_tag(
+    *,
+    current_user: CurrentUser,
+    session: SessionDep,
+    tag_id: uuid.UUID,
+) -> Tag:
+    """Delete a tag."""
+    tag = session.get(Tag, tag_id)
+    if not tag:
+        raise HTTPException(status_code=404, detail="Tag not found")
+    if not current_user.is_superuser and tag.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this tag")
+
+    session.delete(tag)
+    session.commit()
+    return tag

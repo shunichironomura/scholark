@@ -619,6 +619,33 @@ export type TagsCreateTagResponses = {
 
 export type TagsCreateTagResponse = TagsCreateTagResponses[keyof TagsCreateTagResponses];
 
+export type TagsDeleteTagData = {
+    body?: never;
+    path: {
+        tag_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tags/{tag_id}';
+};
+
+export type TagsDeleteTagErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type TagsDeleteTagError = TagsDeleteTagErrors[keyof TagsDeleteTagErrors];
+
+export type TagsDeleteTagResponses = {
+    /**
+     * Successful Response
+     */
+    200: TagPublic;
+};
+
+export type TagsDeleteTagResponse = TagsDeleteTagResponses[keyof TagsDeleteTagResponses];
+
 export type TagsReadTagData = {
     body?: never;
     path: {

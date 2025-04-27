@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { usersReadUserMe, tagsReadTags } from "~/client";
 import { getSession } from "~/sessions.server";
 import type { TagCreate, TagUpdate } from "~/client";
+import { MapPin, Calendar, Plus, Trash2, Pencil } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -16,20 +17,31 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "~/components/ui/alert-dialog"
 // User settings
 // - Add/edit/delete user tags
 // - iCal feed
 // - Change password
 // - Change username
 
-export async function action({ request, params }: Route.ActionArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  if (!session.has("accessToken")) {
-    return redirect("/login");
-  }
-  const formData = await request.formData();
-  console.log("Form data:", formData);
-}
+// export async function action({ request, params }: Route.ActionArgs) {
+//   const session = await getSession(request.headers.get("Cookie"));
+//   if (!session.has("accessToken")) {
+//     return redirect("/login");
+//   }
+//   const formData = await request.formData();
+//   console.log("Form data:", formData);
+// }
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -65,7 +77,12 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
 
   const { user, userTags } = loaderData;
   const navigation = useNavigation();
-
+  const [openTagId, setOpenTagId] = useState<string | null>(null);
+  useEffect(() => {
+    if (navigation.state === "idle") {
+      setOpenTagId(null);
+    }
+  }, [navigation.state]);
   return (
     <>
       <h1 className="text-4xl font-bold mb-4">Settings</h1>
@@ -80,15 +97,8 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
 
       <div className="flex flex-wrap gap-2 mb-4">
         {userTags.data.map((tag) => {
-          const [open, setOpen] = useState(false);
-          useEffect(() => {
-            if (navigation.state === "idle") {
-              setOpen(false);
-            }
-          }, [navigation.state]);
-
           return (
-            <Dialog open={open} onOpenChange={setOpen} key={tag.id}>
+            <Dialog open={openTagId === tag.id} onOpenChange={(open) => setOpenTagId(open ? tag.id : null)} key={tag.id}>
               <DialogTrigger asChild>
                 <span
                   key={tag.id}
@@ -115,8 +125,33 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
                     </Label>
                     <Input id="color" value={tag.color} className="col-span-3" />
                   </div> */}
+                    {/* Remove button */}
                   </div>
-                  <DialogFooter>
+                  <DialogFooter className="flex justify-between items-center">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button type="button" variant="destructive" size="icon">
+                          <Trash2 />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <Form
+                          action={`/tags/${tag.id}/delete`}
+                          method="post"
+                        >
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete this tag.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction type="submit">Delete</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </Form>
+                      </AlertDialogContent>
+                    </AlertDialog>
                     <Button type="submit">Save changes</Button>
                   </DialogFooter>
                 </Form>
