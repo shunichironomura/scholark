@@ -68,31 +68,40 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
 /** ------------------------------------------------------------------
  * Re‑usable dialog that shows a form to edit or create a tag.
- * It validates the colour (must be #rgb or #rrggbb) on the client
+ * It validates the color (must be #rgb or #rrggbb) on the client
  * and renders a live preview chip from the current inputs.
  * ------------------------------------------------------------------*/
 function TagDialog({
   tag,
   action,
   trigger,
+  dialogKey,
+  openTagId,
+  setOpenTagId,
 }: {
-  /** Existing tag (for edit) or { id:"", name:"", colour:"#000000" } for new */
+  /** Existing tag (for edit) or { id:"", name:"", color:"#000000" } for new */
   tag: { id: string; name: string; color: string };
   /** The form action URL (e.g. "/tags/123/edit" or "/tags/new") */
   action: string;
   /** The element that opens the dialog (DialogTrigger’s child) */
   trigger: React.ReactElement;
+  /** Unique key that identifies this dialog (usually the tag id). */
+  dialogKey: string;
+  /** The id of the dialog that is currently open (lifted‑state). */
+  openTagId: string | null;
+  /** Setter to change the open dialog id. */
+  setOpenTagId: React.Dispatch<React.SetStateAction<string | null>>;
 }) {
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const [name, setName] = useState(tag.name);
   const [color, setColor] = useState(tag.color);
 
-  /** Simple HEX colour validator */
+  /** Simple HEX color validator */
   const HEX_RE = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
   const colourIsValid = HEX_RE.test(color);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={openTagId === dialogKey} onOpenChange={(open) => setOpenTagId(open ? dialogKey : null)}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogContent>
@@ -100,7 +109,7 @@ function TagDialog({
           <DialogHeader>
             <DialogTitle>{tag.id ? "Edit tag" : "Add new tag"}</DialogTitle>
             <DialogDescription>
-              Colour must be a HEX value such as <code>#ff00ff</code> or{" "}
+              Color must be a HEX value such as <code>#ff00ff</code> or{" "}
               <code>#0f0</code>.
             </DialogDescription>
           </DialogHeader>
@@ -118,7 +127,7 @@ function TagDialog({
             </div>
 
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor={`tag-color-${tag.id}`}>Colour</Label>
+              <Label htmlFor={`tag-color-${tag.id}`}>Color</Label>
               <Input
                 id={`tag-color-${tag.id}`}
                 name="color"
@@ -126,7 +135,7 @@ function TagDialog({
                 onChange={(e) => setColor(e.target.value)}
                 className="col-span-3"
                 pattern="^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$"
-                title="HEX colour like #ff00ff or #0f0"
+                title="HEX color like #ff00ff or #0f0"
               />
             </div>
 
@@ -143,7 +152,7 @@ function TagDialog({
               </span>
               {!colourIsValid && (
                 <p className="mt-2 text-sm text-destructive">
-                  Invalid HEX colour
+                  Invalid HEX color
                 </p>
               )}
             </div>
@@ -238,6 +247,9 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
                   {tag.name}
                 </span>
               }
+              dialogKey={tag.id}
+              openTagId={openTagId}
+              setOpenTagId={setOpenTagId}
             />
           );
         })}
@@ -251,6 +263,9 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
             <Plus className="mr-2" /> Add new tag
           </Button>
         }
+        dialogKey="new"
+        openTagId={openTagId}
+        setOpenTagId={setOpenTagId}
       />
     </>
   );
