@@ -1,4 +1,4 @@
-import { Form, data, redirect, useNavigate } from "react-router";
+import { Form, data, redirect, Link, useNavigate } from "react-router";
 import type { Route } from "./+types/login";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
@@ -93,6 +93,13 @@ export default function Login({ loaderData }: Route.ComponentProps) {
           Login
         </Button>
       </Form>
+      {/* Show the link to the registration page in the center */}
+      <div className="mt-4 text-center">
+        <p className="mb-2">Don't have an account?</p>
+        <Link to="/register" className="text-blue-500 hover:underline">
+          Register here
+        </Link>
+      </div>
     </div>
   );
 }
