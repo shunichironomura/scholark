@@ -18,6 +18,7 @@ import {
 } from "~/components/ui/alert-dialog"
 import { getSession } from "~/sessions.server";
 import { Badge } from "~/components/ui/badge"
+import { pickLabelTextColor } from "~/lib/color";
 // Define the schedule item interface
 interface Tag {
   name: string;
@@ -139,7 +140,7 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
                 </CardDescription>
                 <CardFooter>
                   {item.tags.map((tag, index) => (
-                    <Badge key={index} style={{ backgroundColor: tag.color }} className="text-blue-700">
+                    <Badge key={index} style={{ color: pickLabelTextColor(tag.color), backgroundColor: tag.color }} className="text-blue-700">
                       {tag.name}
                     </Badge>
                   ))}

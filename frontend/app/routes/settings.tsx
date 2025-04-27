@@ -28,6 +28,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
+import { pickLabelTextColor } from "~/lib/color";
 // User settings
 // - Add/edit/delete user tags
 // - iCal feed
@@ -102,7 +103,8 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
               <DialogTrigger asChild>
                 <span
                   key={tag.id}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700"
+                  style={{ color: pickLabelTextColor(tag.color), backgroundColor: tag.color }}
+                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
                 >
                   {tag.name}
                 </span>

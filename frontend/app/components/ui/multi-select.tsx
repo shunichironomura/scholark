@@ -9,7 +9,6 @@ import { Badge } from '~/components/ui/badge';
 import { Command, CommandGroup, CommandItem, CommandList } from '~/components/ui/command';
 
 import { cn } from '~/lib/utils';
-import { generateLabelBackground } from '~/lib/color';
 
 export interface Option {
   value: string;
@@ -17,10 +16,10 @@ export interface Option {
   disable?: boolean;
   /** fixed option that can't be removed. */
   fixed?: boolean;
-  /** Background color for this option. If omitted, one is generated from `textColor`. */
+  /** Background color for this option. */
   bgColor?: string;
   /** Text (foreground) color for this option (any valid CSS color string). */
-  textColor?: string;
+  color?: string;
   /** Group the options by providing key. */
   [key: string]: string | boolean | undefined;
 }
@@ -471,10 +470,8 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                   data-fixed={option.fixed}
                   data-disabled={disabled || undefined}
                   style={{
-                    backgroundColor:
-                      option.bgColor ??
-                      (option.textColor ? generateLabelBackground(option.textColor) : undefined),
-                    color: option.textColor,
+                    backgroundColor: option.bgColor,
+                    color: option.color,
                   }}
                 >
                   {option.label}
@@ -599,10 +596,8 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                                 option.disable && 'cursor-default text-muted-foreground',
                               )}
                               style={{
-                                backgroundColor:
-                                  option.bgColor ??
-                                  (option.textColor ? generateLabelBackground(option.textColor) : undefined),
-                                color: option.textColor,
+                                backgroundColor: option.bgColor,
+                                color: option.color,
                               }}
                             >
                               {option.label}
