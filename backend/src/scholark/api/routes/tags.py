@@ -13,11 +13,13 @@ router = APIRouter(prefix="/tags", tags=["tags"])
 def read_tags(
     session: SessionDep,
     current_user: CurrentUser,
+    *,
     skip: int = 0,
     limit: int = 100,
+    all_users: bool = False,
 ) -> TagsPublic:
     """Retrieve a list of tags."""
-    if current_user.is_superuser:
+    if current_user.is_superuser and all_users:
         count_statement = select(func.count()).select_from(Tag)
         statement = select(Tag).order_by(col(Tag.name)).offset(skip).limit(limit)
     else:

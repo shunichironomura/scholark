@@ -571,6 +571,7 @@ export type TagsReadTagsData = {
     query?: {
         skip?: number;
         limit?: number;
+        all_users?: boolean;
     };
     url: '/api/v1/tags/';
 };

@@ -73,18 +73,15 @@ export default function MainLayout({ loaderData }: Route.ComponentProps) {
                   <DropdownMenuContent>
                     <DropdownMenuLabel>{username}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
+                    {/* <DropdownMenuItem>
                       Profile
-                      <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    </DropdownMenuItem> */}
+                    <DropdownMenuItem onSelect={() => navigate("/settings")}>
                       Settings
-                      <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
+                    {/* <DropdownMenuSeparator /> */}
                     <DropdownMenuItem onSelect={() => navigate("/logout")}>
                       Logout
-                      <DropdownMenuShortcut>⌘L</DropdownMenuShortcut>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
