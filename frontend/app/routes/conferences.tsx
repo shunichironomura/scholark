@@ -18,6 +18,7 @@ import {
 } from "~/components/ui/alert-dialog"
 import { getSession } from "~/sessions.server";
 import MultipleSelector from "~/components/ui/multi-select";
+import { pickLabelTextColor } from "~/lib/color";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -203,11 +204,11 @@ export default function Conferences({
                       formData.append("tags", JSON.stringify(options));
                       submit(formData, { method: "post", action: `${conference.id}/tags` });
                     }}
-                    value={conference.tags ? conference.tags.map((tag) => ({ label: tag.name, value: tag.id })) : []}
-                    defaultOptions={tags.data.map((tag) => ({ label: tag.name, value: tag.id }))}
+                    value={conference.tags ? conference.tags.map((tag) => ({ label: tag.name, value: tag.id, color: pickLabelTextColor(tag.color), bgColor: tag.color })) : []}
+                    defaultOptions={tags.data.map((tag) => ({ label: tag.name, value: tag.id, color: pickLabelTextColor(tag.color), bgColor: tag.color }))}
                     placeholder="Select tags"
                     emptyIndicator={
-                      <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                      <p className="text-center text-sm leading-3 text-gray-600 dark:text-gray-400">
                         No tags available
                       </p>
                     }
