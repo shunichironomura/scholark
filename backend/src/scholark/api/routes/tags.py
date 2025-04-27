@@ -13,11 +13,13 @@ router = APIRouter(prefix="/tags", tags=["tags"])
 def read_tags(
     session: SessionDep,
     current_user: CurrentUser,
+    *,
     skip: int = 0,
     limit: int = 100,
+    all_users: bool = False,
 ) -> TagsPublic:
     """Retrieve a list of tags."""
-    if current_user.is_superuser:
+    if current_user.is_superuser and all_users:
         count_statement = select(func.count()).select_from(Tag)
         statement = select(Tag).order_by(col(Tag.name)).offset(skip).limit(limit)
     else:
@@ -89,4 +91,23 @@ def update_tag(
     session.add(tag)
     session.commit()
     session.refresh(tag)
+    return tag
+
+
+@router.delete("/{tag_id}", response_model=TagPublic)
+def delete_tag(
+    *,
+    current_user: CurrentUser,
+    session: SessionDep,
+    tag_id: uuid.UUID,
+) -> Tag:
+    """Delete a tag."""
+    tag = session.get(Tag, tag_id)
+    if not tag:
+        raise HTTPException(status_code=404, detail="Tag not found")
+    if not current_user.is_superuser and tag.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this tag")
+
+    session.delete(tag)
+    session.commit()
     return tag

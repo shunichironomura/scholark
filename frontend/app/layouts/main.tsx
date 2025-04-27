@@ -1,4 +1,4 @@
-import { Outlet, NavLink } from "react-router";
+import { Outlet, NavLink, redirect, useNavigate } from "react-router";
 import { getSession } from "~/sessions.server";
 import type { Route } from "./+types/main";
 import {
@@ -6,6 +6,20 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "~/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu"
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -14,6 +28,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function MainLayout({ loaderData }: Route.ComponentProps) {
+  const navigate = useNavigate();
   const { username } = loaderData;
   return (
     <div className="min-h-screen bg-white">
@@ -24,24 +39,21 @@ export default function MainLayout({ loaderData }: Route.ComponentProps) {
               <NavLink to="/" className="text-2xl font-bold text-blue-600">Scholark</NavLink>
             </div>
             <nav className="flex space-x-4 items-center">
-              <NavLink
-                to="/conferences"
-                className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
-              >
-                Conferences
-              </NavLink>
-              <NavLink
-                to="/timeline"
-                className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
-              >
-                Timeline
-              </NavLink>
-              {username ? <NavLink
-                to="/logout"
-                className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
-              >
-                Logout
-              </NavLink> :
+              {username ?
+                <div>
+                  <NavLink
+                    to="/conferences"
+                    className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
+                  >
+                    Conferences
+                  </NavLink>
+                  <NavLink
+                    to="/timeline"
+                    className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
+                  >
+                    Timeline
+                  </NavLink></div>
+                :
                 <NavLink
                   to="/login"
                   className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
@@ -50,13 +62,29 @@ export default function MainLayout({ loaderData }: Route.ComponentProps) {
                 </NavLink>}
               {/* Display username and avatar if logged in */}
               {username && (
-                <div className="flex items-center space-x-2">
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage src="/path/to/avatar.jpg" alt="User Avatar" />
-                    <AvatarFallback>{username.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <span className="text-zinc-600">{username}</span>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center space-x-2">
+                    <Avatar className="w-8 h-8">
+                      <AvatarImage src="/path/to/avatar.jpg" alt="User Avatar" />
+                      <AvatarFallback>{username.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <span className="text-zinc-600">{username}</span>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>{username}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {/* <DropdownMenuItem>
+                      Profile
+                    </DropdownMenuItem> */}
+                    <DropdownMenuItem onSelect={() => navigate("/settings")}>
+                      Settings
+                    </DropdownMenuItem>
+                    {/* <DropdownMenuSeparator /> */}
+                    <DropdownMenuItem onSelect={() => navigate("/logout")}>
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
             </nav>
           </div>
