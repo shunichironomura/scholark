@@ -37,11 +37,12 @@ class Tag(TagBase, table=True):
 
 def default_tags(user_id: uuid.UUID) -> list[Tag]:
     return [
-        Tag(name="Interested", color="#FF5733", user_id=user_id),
-        Tag(name="Abstract submitted", color="#33FF57", user_id=user_id),
-        Tag(name="Accepted", color="#3357FF", user_id=user_id),
-        Tag(name="Registered", color="#FF33A1", user_id=user_id),
-        Tag(name="Attended", color="#FF33FF", user_id=user_id),
+        Tag(name="📅 In My Schedule", color="#FFC04D", user_id=user_id),
+        Tag(name="👀 Interested", color="#F4D06F", user_id=user_id),
+        Tag(name="📄 Abstract Submitted", color="#A7D8E8", user_id=user_id),
+        Tag(name="✅ Accepted", color="#8FD19E", user_id=user_id),
+        Tag(name="❌ Rejected", color="#E67C73", user_id=user_id),
+        Tag(name="🎟️ Registered", color="#7BAAF7", user_id=user_id),
     ]
 
 
