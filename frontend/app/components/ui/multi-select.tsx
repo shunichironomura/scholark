@@ -595,12 +595,18 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                                 'cursor-pointer',
                                 option.disable && 'cursor-default text-muted-foreground',
                               )}
-                              style={{
-                                backgroundColor: option.bgColor,
-                                color: option.color,
-                              }}
                             >
-                              {option.label}
+                              <Badge
+                                className="rounded-sm px-2 py-1"
+                                key={option.value}
+                                style={{
+                                  backgroundColor: option.bgColor,
+                                  color: option.color,
+                                }}
+                              >
+                                {option.label}
+                              </Badge>
+
                             </CommandItem>
                           );
                         })}
