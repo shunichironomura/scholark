@@ -121,12 +121,12 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
                       </Label>
                       <Input id="tag-name" name="name" defaultValue={tag.name} className="col-span-3" />
                     </div>
-                    {/* <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="color" className="text-right">
-                      Color
-                    </Label>
-                    <Input id="color" value={tag.color} className="col-span-3" />
-                  </div> */}
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="color" className="text-right">
+                        Color
+                      </Label>
+                      <Input id="tag-color" name="color" defaultValue={tag.color} className="col-span-3" />
+                    </div>
                     {/* Remove button */}
                   </div>
                   <DialogFooter className="flex justify-between items-center">
@@ -181,12 +181,12 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
                 </Label>
                 <Input id="tag-name" name="name" className="col-span-3" />
               </div>
-              {/* <div className="grid grid-cols-4 items-center gap-4">
+              <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="color" className="text-right">
                   Color
                 </Label>
-                <Input id="color" value={tag.color} className="col-span-3" />
-              </div> */}
+                <Input id="color" name="color" defaultValue="#000000" className="col-span-3" />
+              </div>
             </div>
             <DialogFooter>
               <Button type="submit">Add</Button>
