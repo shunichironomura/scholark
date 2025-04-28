@@ -4,7 +4,7 @@ import type { Route } from "./+types/conferences"
 import { conferencesReadConferences, conferencesCreateConference, tagsReadTags } from '~/client';
 import type { ConferencePublicReadable, ConferenceCreate } from "~/client";
 import { MapPin, Calendar, Plus, Trash2, Pencil } from "lucide-react";
-import { Form, redirect, useSubmit } from "react-router";
+import { Form, redirect, useSubmit, data } from "react-router";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,16 +31,15 @@ export async function loader({ request }: Route.LoaderArgs) {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (error) {
-    throw new Response("Error fetching conferences", { status: 500 });
+    throw data("Error fetching conferences", { status: 500 });
   }
 
   const { data: tags, error: tagsError } = await tagsReadTags({
     headers: { Authorization: `Bearer ${token}` },
   });
   if (tagsError) {
-    throw new Response("Error fetching tags", { status: 500 });
+    throw data("Error fetching tags", { status: 500 });
   }
-
 
   return { conferences, tags };
 }
