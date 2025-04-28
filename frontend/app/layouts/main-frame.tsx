@@ -93,7 +93,7 @@ export function MainFrame({
       <footer className="bg-white border-t border-zinc-200 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-zinc-500 text-sm">
-            &copy; {new Date().getFullYear()} Scholark
+            &copy; {new Date().getFullYear()} Shunichiro Nomura
           </p>
         </div>
       </footer>
