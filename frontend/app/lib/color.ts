@@ -1,6 +1,6 @@
 
 /**
- * Convert a hex colour like "#abc" or "#aabbcc" to an RGB tuple.
+ * Convert a hex color like "#abc" or "#aabbcc" to an RGB tuple.
  */
 export function hexToRgb(hex: string): [number, number, number] {
   let clean = hex.replace("#", "");
@@ -23,11 +23,11 @@ export function rgbToHex(r: number, g: number, b: number): string {
 }
 
 /**
- * Generate a soft background colour for a given foreground/text colour,
+ * Generate a soft background color for a given foreground/text color,
  * similar to GitHub issue labels.
- * It linearly blends the text colour with white using the provided ratio.
+ * It linearly blends the text color with white using the provided ratio.
  *
- * @param textColor Any valid 3‑ or 6‑digit hex colour (e.g. "#0e8a16").
+ * @param textColor Any valid 3‑ or 6‑digit hex color (e.g. "#0e8a16").
  * @param ratio Blend ratio (0–1). 0.15 roughly matches GitHub’s appearance.
  */
 export function generateLabelBackground(
@@ -58,7 +58,7 @@ export function pickLabelTextColor(hex: string): "white" | "black" {
     clean = clean.split("").map(c => c + c).join("");
   }
   if (!/^[0-9a-f]{6}$/i.test(clean)) {
-    throw new Error(`Invalid hex colour: ${hex}`);
+    throw new Error(`Invalid hex color: ${hex}`);
   }
 
   // ── 2. Parse to 0‒255 integers ───────────────────────────────
