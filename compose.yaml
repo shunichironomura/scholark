@@ -37,7 +37,7 @@ services:
       - "${SCHOLARK_BACKEND_PORT?Variable not set}:8000"
     environment:
       - SCHOLARK_FRONTEND_HOST=http://frontend:3000
-      - SCHOLARK_BACKEND_CORS_ORIGINS="http://frontend,http://frontend:3000,https://frontend,https://frontend:3000"
+      - SCHOLARK_BACKEND_CORS_ORIGINS="http://frontend,http://frontend:3000,https://frontend,https://frontend:3000,http://localhost"
       - SCHOLARK_POSTGRES_SERVER=db
       - SCHOLARK_POSTGRES_PORT=5432
       - SCHOLARK_POSTGRES_USER=${SCHOLARK_POSTGRES_USER?Variable not set}
@@ -47,7 +47,10 @@ services:
       - SCHOLARK_FIRST_SUPERUSER_PASSWORD=${SCHOLARK_FIRST_SUPERUSER_PASSWORD?Variable not set}
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        - VITE_API_URL=http://backend:8000
     restart: always
     container_name: scholark-frontend-ctr-${SCHOLARK_ENV?Variable not set}
     depends_on:
@@ -55,8 +58,6 @@ services:
         condition: service_healthy
     ports:
       - "${SCHOLARK_FRONTEND_PORT?Variable not set}:3000"
-    environment:
-      - VITE_API_URL=http://backend:8000
 
 
 volumes:
