@@ -1,25 +1,8 @@
-import { Outlet, NavLink, redirect, useNavigate } from "react-router";
+import { Outlet } from "react-router";
 import { getSession } from "~/sessions.server";
 import type { Route } from "./+types/main";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "~/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu"
+import { isRouteErrorResponse } from "react-router";
+import { MainFrame } from "./main-frame";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -28,78 +11,43 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function MainLayout({ loaderData }: Route.ComponentProps) {
-  const navigate = useNavigate();
   const { username } = loaderData;
+
   return (
-    <div className="min-h-screen bg-white">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center">
-              <NavLink to="/" className="text-2xl font-bold text-blue-600">Scholark</NavLink>
-            </div>
-            <nav className="flex space-x-4 items-center">
-              {username ?
-                <div>
-                  <NavLink
-                    to="/conferences"
-                    className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
-                  >
-                    Conferences
-                  </NavLink>
-                  <NavLink
-                    to="/timeline"
-                    className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
-                  >
-                    Timeline
-                  </NavLink></div>
-                :
-                <NavLink
-                  to="/login"
-                  className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
-                >
-                  Login
-                </NavLink>}
-              {/* Display username and avatar if logged in */}
-              {username && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="flex items-center space-x-2">
-                    <Avatar className="w-8 h-8">
-                      <AvatarImage src="/path/to/avatar.jpg" alt="User Avatar" />
-                      <AvatarFallback>{username.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <span className="text-zinc-600">{username}</span>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuLabel>{username}</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {/* <DropdownMenuItem>
-                      Profile
-                    </DropdownMenuItem> */}
-                    <DropdownMenuItem onSelect={() => navigate("/settings")}>
-                      Settings
-                    </DropdownMenuItem>
-                    {/* <DropdownMenuSeparator /> */}
-                    <DropdownMenuItem onSelect={() => navigate("/logout")}>
-                      Logout
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-            </nav>
-          </div>
-        </div>
-      </header>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <Outlet />
-      </main>
-      <footer className="bg-white border-t border-zinc-200 py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-zinc-500 text-sm">
-            &copy; {new Date().getFullYear()} Scholark
-          </p>
-        </div>
-      </footer>
-    </div>
+    <MainFrame username={username}>
+      <Outlet />
+    </MainFrame>
   );
+}
+
+export function ErrorBoundary({
+  error,
+  loaderData
+}: Route.ErrorBoundaryProps) {
+  // Fetch `username` from the possibly-undefined loaderData
+  const username = loaderData?.username;
+
+  let body;
+  if (isRouteErrorResponse(error)) {
+    body = (
+      <>
+        <h1>
+          {error.status} {error.statusText}
+        </h1>
+        <p>{error.data}</p>
+      </>
+    );
+  } else if (error instanceof Error) {
+    body = (
+      <div>
+        <h1>Error</h1>
+        <p>{error.message}</p>
+        <p>The stack trace is:</p>
+        <pre>{error.stack}</pre>
+      </div>
+    );
+  } else {
+    body = <h1>Unknown Error</h1>;
+  }
+  return <MainFrame username={username}>{body}</MainFrame>;
 }

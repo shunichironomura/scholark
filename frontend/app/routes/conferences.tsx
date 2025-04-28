@@ -41,7 +41,6 @@ export async function loader({ request }: Route.LoaderArgs) {
     throw new Response("Error fetching tags", { status: 500 });
   }
 
-
   return { conferences, tags };
 }
 
