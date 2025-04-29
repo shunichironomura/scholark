@@ -77,54 +77,56 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
 
   return (
     <Form key={conference.id} id="conference-form" method="post">
-      <p className="text-sm text-yellow-600 mb-4">
-        Changes made here are shared and will affect all users.
-        <br />
-        Only admins can delete a conference. If you want to delete a conference, please contact an admin.
-      </p>
-      <div>
-        <Label htmlFor="name">Conference Name</Label>
-        <Input id="name" name="name" type="text" defaultValue={conference.name} placeholder="Conference Name" />
-      </div>
-      <div>
-        <Label htmlFor="start-date">Start Date</Label>
-        <Input id="start-date" name="start_date" type="date" defaultValue={conference.start_date ?? ""} placeholder="YYYY-MM-DD" />
-      </div>
-      <div>
-        <Label htmlFor="end-date">End Date</Label>
-        <Input id="end-date" name="end_date" type="date" defaultValue={conference.end_date ?? ""} placeholder="YYYY-MM-DD" />
-      </div>
-      <div>
-        <Label htmlFor="location">Location</Label>
-        <Input id="location" name="location" type="text" defaultValue={conference.location ?? ""} placeholder="Location" />
-      </div>
-      <div>
-        <Label htmlFor="website-url">Website URL</Label>
-        <Input id="website-url" name="website_url" type="url" defaultValue={conference.website_url ?? ""} placeholder="https://example.com" />
-      </div>
-      {Array.from({ length: numMilestones }).map((_, index) => (
-        <div key={index}>
-          <Label htmlFor={`milestone_name__${index}`}>Milestone Name</Label>
-          <Input id={`milestone_name__${index}`} name={`milestone_name__${index}`} type="text" defaultValue={conference.milestones[index]?.name ?? ""} placeholder="Milestone Name" />
-          <Label htmlFor={`milestone_date__${index}`}>Milestone Date</Label>
-          <Input id={`milestone_date__${index}`} name={`milestone_date__${index}`} type="date" defaultValue={conference.milestones[index]?.date ?? ""} placeholder="YYYY-MM-DD" />
+      <div className="max-w-2xl mx-auto space-y-6">
+        <p className="text-sm text-yellow-600 mb-4">
+          Changes made here are shared and will affect all users.
+          <br />
+          Only admins can delete a conference. If you want to delete a conference, please contact an admin.
+        </p>
+        <div className="space-y-1">
+          <Label htmlFor="name">Conference Name</Label>
+          <Input id="name" name="name" type="text" defaultValue={conference.name} placeholder="Conference Name" />
         </div>
-      ))}
-      <div>
-        <Button type="button" onClick={() => setNumMilestones(numMilestones + 1)}>
-          Add Milestone
-        </Button>
-        <Button type="button" onClick={() => setNumMilestones(numMilestones - 1)} disabled={numMilestones === 0}>
-          Remove Milestone
-        </Button>
-      </div>
-      <div className="flex items-center space-x-2">
-        <Button type="submit">
-          Save
-        </Button>
-        <Button onClick={() => navigate(-1)} type="button" variant="outline">
-          Cancel
-        </Button>
+        <div className="space-y-1">
+          <Label htmlFor="start-date">Start Date</Label>
+          <Input id="start-date" name="start_date" type="date" defaultValue={conference.start_date ?? ""} placeholder="YYYY-MM-DD" />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="end-date">End Date</Label>
+          <Input id="end-date" name="end_date" type="date" defaultValue={conference.end_date ?? ""} placeholder="YYYY-MM-DD" />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="location">Location</Label>
+          <Input id="location" name="location" type="text" defaultValue={conference.location ?? ""} placeholder="Location" />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="website-url">Website URL</Label>
+          <Input id="website-url" name="website_url" type="url" defaultValue={conference.website_url ?? ""} placeholder="https://example.com" />
+        </div>
+        {Array.from({ length: numMilestones }).map((_, index) => (
+          <div key={index} className="space-y-1">
+            <Label htmlFor={`milestone_name__${index}`}>Milestone Name</Label>
+            <Input id={`milestone_name__${index}`} name={`milestone_name__${index}`} type="text" defaultValue={conference.milestones[index]?.name ?? ""} placeholder="Milestone Name" />
+            <Label htmlFor={`milestone_date__${index}`}>Milestone Date</Label>
+            <Input id={`milestone_date__${index}`} name={`milestone_date__${index}`} type="date" defaultValue={conference.milestones[index]?.date ?? ""} placeholder="YYYY-MM-DD" />
+          </div>
+        ))}
+        <div className="flex items-center space-x-2">
+          <Button type="button" onClick={() => setNumMilestones(numMilestones + 1)}>
+            Add Milestone
+          </Button>
+          <Button type="button" variant="destructive" onClick={() => setNumMilestones(numMilestones - 1)} disabled={numMilestones === 0}>
+            Remove Milestone
+          </Button>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button type="submit">
+            Save
+          </Button>
+          <Button onClick={() => navigate(-1)} type="button" variant="outline">
+            Cancel
+          </Button>
+        </div>
       </div>
     </Form >
   )
