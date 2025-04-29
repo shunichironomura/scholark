@@ -7,6 +7,7 @@ import { useState } from "react";
 import { conferencesUpdateConference, conferencesReadConference } from "~/client";
 import type { ConferencesUpdateConferenceData, ConferenceMilestoneCreate, ConferenceCreate } from "~/client";
 import { getSession } from "~/sessions.server";
+import { Trash2 } from "lucide-react";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -73,7 +74,7 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
   const { conference } = loaderData;
   const navigate = useNavigate();
 
-  const [numMilestones, setNumMilestones] = useState(conference.milestones.length);
+  const [milestones, setMilestones] = useState<number[]>(conference.milestones.map((_, i) => i));
 
   return (
     <Form key={conference.id} id="conference-form" method="post">
@@ -103,24 +104,29 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
           <Label htmlFor="website-url">Website URL</Label>
           <Input id="website-url" name="website_url" type="url" defaultValue={conference.website_url ?? ""} placeholder="https://example.com" />
         </div>
-        {Array.from({ length: numMilestones }).map((_, index) => (
-          <div key={index} className="flex flex-row space-x-4 items-end">
+        {milestones.map((milestoneIndex, index) => (
+          <div key={milestoneIndex} className="flex flex-row space-x-4 items-end">
             <div className="flex flex-col flex-3 space-y-1">
-              <Label htmlFor={`milestone_name__${index}`}>Milestone Name</Label>
-              <Input id={`milestone_name__${index}`} name={`milestone_name__${index}`} type="text" defaultValue={conference.milestones[index]?.name ?? ""} placeholder="Milestone Name" />
+              <Label htmlFor={`milestone_name__${milestoneIndex}`}>Milestone Name</Label>
+              <Input id={`milestone_name__${milestoneIndex}`} name={`milestone_name__${milestoneIndex}`} type="text" defaultValue={conference.milestones[milestoneIndex]?.name ?? ""} placeholder="Milestone Name" />
             </div>
             <div className="flex flex-col flex-2 space-y-1">
-              <Label htmlFor={`milestone_date__${index}`}>Milestone Date</Label>
-              <Input id={`milestone_date__${index}`} name={`milestone_date__${index}`} type="date" defaultValue={conference.milestones[index]?.date ?? ""} placeholder="YYYY-MM-DD" />
+              <Label htmlFor={`milestone_date__${milestoneIndex}`}>Milestone Date</Label>
+              <Input id={`milestone_date__${milestoneIndex}`} name={`milestone_date__${milestoneIndex}`} type="date" defaultValue={conference.milestones[milestoneIndex]?.date ?? ""} placeholder="YYYY-MM-DD" />
             </div>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              onClick={() => setMilestones(milestones.filter((_, i) => i !== index))}
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
           </div>
         ))}
         <div className="flex items-center space-x-2">
-          <Button type="button" onClick={() => setNumMilestones(numMilestones + 1)}>
+          <Button type="button" onClick={() => setMilestones([...milestones, milestones.length > 0 ? Math.max(...milestones) + 1 : 0])}>
             Add Milestone
-          </Button>
-          <Button type="button" variant="destructive" onClick={() => setNumMilestones(numMilestones - 1)} disabled={numMilestones === 0}>
-            Remove Milestone
           </Button>
         </div>
         <div className="flex items-center space-x-2">
