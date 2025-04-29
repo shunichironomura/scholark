@@ -205,7 +205,7 @@ export default function Conferences({
                     defaultOptions={tags.data.map((tag) => ({ label: tag.name, value: tag.id, color: pickLabelTextColor(tag.color), bgColor: tag.color }))}
                     placeholder="Select tags"
                     emptyIndicator={
-                      <p className="text-center text-sm leading-3 text-gray-600 dark:text-gray-400">
+                      <p className="text-center text-sm leading-1 text-gray-600">
                         No tags available
                       </p>
                     }
