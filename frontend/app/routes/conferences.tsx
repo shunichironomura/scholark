@@ -194,7 +194,11 @@ export default function Conferences({
                   <br />
                   Updated at: {formatDateTime(conference.updated_at)}
                 </div>
-                <div className="flex w-full flex-col gap-5 px-10">
+                <hr className="w-full border-t border-gray-300 my-2" />
+                <div className="flex flex-col w-full">
+                  <div className="text-sm text-gray-500 mt-auto">
+                    Personal Tags:
+                  </div>
                   <MultipleSelector
                     onChange={(options) => {
                       const formData = new FormData();
