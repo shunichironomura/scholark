@@ -61,6 +61,7 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   session.set("username", testTokenData.username);
+  session.set("isSuperUser", testTokenData.is_superuser ?? false);
 
   return redirect("/conferences", {
     headers: {
