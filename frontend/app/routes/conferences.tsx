@@ -26,6 +26,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     return redirect("/login");
   }
   const token = session.get("accessToken");
+  const isSuperUser = session.get("isSuperUser") ?? false;
 
   const { data: conferences, error } = await conferencesReadConferences({
     headers: { Authorization: `Bearer ${token}` },
@@ -41,13 +42,13 @@ export async function loader({ request }: Route.LoaderArgs) {
     throw data("Error fetching tags", { status: 500 });
   }
 
-  return { conferences, tags };
+  return { conferences, tags, isSuperUser };
 }
 
 export default function Conferences({
   loaderData,
 }: Route.ComponentProps) {
-  const { conferences, tags } = loaderData;
+  const { conferences, tags, isSuperUser } = loaderData;
 
   const formatDate = (dateString?: string | null) => {
     if (!dateString) return "N/A";
@@ -164,7 +165,7 @@ export default function Conferences({
                         <Pencil />
                       </Button>
                     </Form>
-                    <AlertDialog>
+                    {isSuperUser ? <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button type="button" variant="destructive" size="icon">
                           <Trash2 />
@@ -187,7 +188,7 @@ export default function Conferences({
                           </AlertDialogFooter>
                         </Form>
                       </AlertDialogContent>
-                    </AlertDialog>
+                    </AlertDialog> : null}
                   </div>
                 </div>
                 {/* Display created_at and updated_at values in small text */}
