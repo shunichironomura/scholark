@@ -62,51 +62,63 @@ export default function CreateConference() {
   const [numMilestones, setNumMilestones] = useState(0);
   return (
     <Form id="new-conference-form" method="post">
-      <div>
-        <Label htmlFor="name">Conference Name</Label>
-        <Input id="name" name="name" type="text" placeholder="Conference Name" defaultValue="New Conference" />
-      </div>
-      <div>
-        <Label htmlFor="start-date">Start Date</Label>
-        <Input id="start-date" name="start_date" type="date" placeholder="YYYY-MM-DD" />
-      </div>
-      <div>
-        <Label htmlFor="end-date">End Date</Label>
-        <Input id="end-date" name="end_date" type="date" placeholder="YYYY-MM-DD" />
-      </div>
-      <div>
-        <Label htmlFor="location">Location</Label>
-        <Input id="location" name="location" type="text" placeholder="Location" />
-      </div>
-      <div>
-        <Label htmlFor="website-url">Website URL</Label>
-        <Input id="website-url" name="website_url" type="url" placeholder="https://example.com" />
-      </div>
-      <div></div>
-      {[...Array(numMilestones)].map((_, index) => (
-        <div key={index}>
-          <Label htmlFor={`milestone-${index}`}>Milestone {index + 1}</Label>
-          <div className="flex flex-row space-x-2">
-            <Input id={`milestone-name-${index}`} name={`milestone_name__${index}`} type="text" placeholder="Milestone Name" />
-            <Input id={`milestone-date-${index}`} name={`milestone_date__${index}`} type="date" placeholder="Milestone" />
-          </div>
+      <div className="max-w-2xl mx-auto space-y-6">
+        <p className="text-sm text-yellow-600 mb-4">
+          Conferences you create here will be shared and visible to all users.
+          <br />
+          Only admins can delete a conference after it is created.
+        </p>
+        <div className="space-y-1">
+          <Label htmlFor="name">Conference Name</Label>
+          <Input id="name" name="name" type="text" placeholder="Conference Name" defaultValue="New Conference" />
         </div>
-      ))}
-      <div>
-        <Button type="button" onClick={() => setNumMilestones(numMilestones + 1)}>
-          Add Milestone
-        </Button>
-        <Button type="button" onClick={() => setNumMilestones(numMilestones - 1)} disabled={numMilestones === 0}>
-          Remove Milestone
-        </Button>
-      </div>
-      <div className="flex items-center space-x-2">
-        <Button type="submit">
-          Create Conference
-        </Button>
-        <Button onClick={() => navigate(-1)} type="button" variant="outline">
-          Cancel
-        </Button>
+        <div className="space-y-1">
+          <Label htmlFor="start-date">Start Date</Label>
+          <Input id="start-date" name="start_date" type="date" placeholder="YYYY-MM-DD" />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="end-date">End Date</Label>
+          <Input id="end-date" name="end_date" type="date" placeholder="YYYY-MM-DD" />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="location">Location</Label>
+          <Input id="location" name="location" type="text" placeholder="Location" />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="website-url">Website URL</Label>
+          <Input id="website-url" name="website_url" type="url" placeholder="https://example.com" />
+        </div>
+        <div></div>
+        {
+          [...Array(numMilestones)].map((_, index) => (
+            <div key={index} className="flex flex-row space-x-4 items-end">
+              <div className="flex flex-col flex-3 space-y-1">
+                <Label htmlFor={`milestone_name__${index}`}>Milestone Name</Label>
+                <Input id={`milestone_name__${index}`} name={`milestone_name__${index}`} type="text" placeholder="Milestone Name" />
+              </div>
+              <div className="flex flex-col flex-2 space-y-1">
+                <Label htmlFor={`milestone_date__${index}`}>Milestone Date</Label>
+                <Input id={`milestone_date__${index}`} name={`milestone_date__${index}`} type="date" placeholder="YYYY-MM-DD" />
+              </div>
+            </div>
+          ))
+        }
+        <div className="flex items-center space-x-2">
+          <Button type="button" onClick={() => setNumMilestones(numMilestones + 1)}>
+            Add Milestone
+          </Button>
+          <Button type="button" variant="destructive" onClick={() => setNumMilestones(numMilestones - 1)} disabled={numMilestones === 0}>
+            Remove Milestone
+          </Button>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button type="submit">
+            Create Conference
+          </Button>
+          <Button onClick={() => navigate(-1)} type="button" variant="outline">
+            Cancel
+          </Button>
+        </div>
       </div>
     </Form >
   )

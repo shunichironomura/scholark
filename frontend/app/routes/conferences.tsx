@@ -56,16 +56,13 @@ export default function Conferences({
     return date.toISOString().slice(0, 10) // Format as YYYY-MM-DD
   }
 
-  const formatDateTime = (dateString?: string | null) => {
-    if (!dateString) return "N/A";
+  const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toISOString().slice(0, 19).replace("T", " "); // Format as YYYY-MM-DD HH:MM:SS
   }
 
   // Determine deadline status for styling
-  const getDeadlineStatus = (deadlineString?: string | null) => {
-    if (!deadlineString) return '';
-
+  const getDeadlineStatus = (deadlineString: string) => {
     const deadline = new Date(deadlineString);
     const today = new Date();
 
@@ -82,7 +79,7 @@ export default function Conferences({
     } else if (diffDays <= 30) {
       return 'text-orange-500'; // Approaching (within a month)
     } else {
-      return 'text-green-500'; // Plenty of time
+      return 'text-black-500'; // Plenty of time
     }
   };
 
@@ -197,7 +194,11 @@ export default function Conferences({
                   <br />
                   Updated at: {formatDateTime(conference.updated_at)}
                 </div>
-                <div className="flex w-full flex-col gap-5 px-10">
+                <hr className="w-full border-t border-gray-300 my-2" />
+                <div className="flex flex-col w-full">
+                  <div className="text-sm text-gray-500 mt-auto">
+                    Personal Tags:
+                  </div>
                   <MultipleSelector
                     onChange={(options) => {
                       const formData = new FormData();
@@ -208,7 +209,7 @@ export default function Conferences({
                     defaultOptions={tags.data.map((tag) => ({ label: tag.name, value: tag.id, color: pickLabelTextColor(tag.color), bgColor: tag.color }))}
                     placeholder="Select tags"
                     emptyIndicator={
-                      <p className="text-center text-sm leading-3 text-gray-600 dark:text-gray-400">
+                      <p className="text-center text-sm leading-1 text-gray-600">
                         No tags available
                       </p>
                     }

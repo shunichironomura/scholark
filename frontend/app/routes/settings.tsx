@@ -228,6 +228,9 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
       </div>
 
       <h2 className="text-2xl font-bold mb-4">Tags</h2>
+      <p className="text-sm text-gray-500 mb-2">
+        These tags are personal. Any changes you make here will not affect other users.
+      </p>
 
       <div className="flex flex-wrap gap-2 mb-4">
         {userTags.data.map((tag) => {
