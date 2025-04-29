@@ -64,6 +64,8 @@ export default function CreateConference() {
     <Form id="new-conference-form" method="post">
       <p className="text-sm text-yellow-600 mb-4">
         Conferences you create here will be shared and visible to all users.
+        <br />
+        Only admins can delete a conference after it is created.
       </p>
       <div>
         <Label htmlFor="name">Conference Name</Label>
@@ -86,15 +88,17 @@ export default function CreateConference() {
         <Input id="website-url" name="website_url" type="url" placeholder="https://example.com" />
       </div>
       <div></div>
-      {[...Array(numMilestones)].map((_, index) => (
-        <div key={index}>
-          <Label htmlFor={`milestone-${index}`}>Milestone {index + 1}</Label>
-          <div className="flex flex-row space-x-2">
-            <Input id={`milestone-name-${index}`} name={`milestone_name__${index}`} type="text" placeholder="Milestone Name" />
-            <Input id={`milestone-date-${index}`} name={`milestone_date__${index}`} type="date" placeholder="Milestone" />
+      {
+        [...Array(numMilestones)].map((_, index) => (
+          <div key={index}>
+            <Label htmlFor={`milestone-${index}`}>Milestone {index + 1}</Label>
+            <div className="flex flex-row space-x-2">
+              <Input id={`milestone-name-${index}`} name={`milestone_name__${index}`} type="text" placeholder="Milestone Name" />
+              <Input id={`milestone-date-${index}`} name={`milestone_date__${index}`} type="date" placeholder="Milestone" />
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      }
       <div>
         <Button type="button" onClick={() => setNumMilestones(numMilestones + 1)}>
           Add Milestone
