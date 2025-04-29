@@ -8,7 +8,10 @@ from jwt.exceptions import InvalidTokenError
 from pydantic import ValidationError
 from sqlmodel import Session
 
+from scholark.auth.base import AuthProvider
 from scholark.auth.db_provider import DbAuthProvider
+from scholark.auth.ldap_provider import LdapAuthProvider
+from scholark.auth.router import AuthRouter
 from scholark.core import security
 from scholark.core.config import settings
 from scholark.core.db import engine
@@ -61,9 +64,18 @@ def get_current_active_superuser(current_user: CurrentUser) -> User:
     return current_user
 
 
-# TODO: Return different auth provider based on the settings
-def get_auth_provider(session: SessionDep) -> DbAuthProvider:
-    return DbAuthProvider(db=session)
+def get_auth_provider(session: SessionDep) -> AuthProvider:
+    match settings.AUTH_PROVIDER:
+        case "db":
+            return DbAuthProvider(session)
+        case "ldap":
+            assert settings.LDAP_SERVER is not None
+            assert settings.LDAP_DN_PATTERN is not None
+            return AuthRouter(
+                db_provider=DbAuthProvider(session),
+                ldap_provider=LdapAuthProvider(session, settings.LDAP_SERVER, settings.LDAP_DN_PATTERN),
+                preserved_db_usernames=settings.PRESERVED_DB_USERNAMES,
+            )
 
 
-AuthProviderDep = Annotated[DbAuthProvider, Depends(get_auth_provider)]
+AuthProviderDep = Annotated[AuthProvider, Depends(get_auth_provider)]

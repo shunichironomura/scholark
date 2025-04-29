@@ -1,6 +1,6 @@
 import secrets
 from datetime import timedelta
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from pydantic import AnyUrl, BeforeValidator, Field, PostgresDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -53,6 +53,11 @@ class Settings(BaseSettings):
 
     FIRST_SUPERUSER: str
     FIRST_SUPERUSER_PASSWORD: str
+
+    AUTH_PROVIDER: Literal["db", "ldap"] = "db"  # "db" or "ldap"
+    PRESERVED_DB_USERNAMES: set[str] = {"admin"}
+    LDAP_SERVER: str | None = None
+    LDAP_DN_PATTERN: str | None = None
 
 
 settings = Settings()  # type: ignore[call-arg]
