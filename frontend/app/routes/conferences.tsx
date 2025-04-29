@@ -56,16 +56,13 @@ export default function Conferences({
     return date.toISOString().slice(0, 10) // Format as YYYY-MM-DD
   }
 
-  const formatDateTime = (dateString?: string | null) => {
-    if (!dateString) return "N/A";
+  const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toISOString().slice(0, 19).replace("T", " "); // Format as YYYY-MM-DD HH:MM:SS
   }
 
   // Determine deadline status for styling
-  const getDeadlineStatus = (deadlineString?: string | null) => {
-    if (!deadlineString) return '';
-
+  const getDeadlineStatus = (deadlineString: string) => {
     const deadline = new Date(deadlineString);
     const today = new Date();
 
