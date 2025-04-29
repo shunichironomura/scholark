@@ -16,10 +16,10 @@ The goal of Scholark is to fill the gap between traditional calendar tools and a
 
 - 📅 **Conference Tracking**: Add and browse conference metadata (name, dates, abstract/paper deadlines, website, etc.)
 - 🏷️ **Custom Labels**: Mark conferences with user-defined labels (e.g. "Interested", "Attending")
-- 🧠 **Personal Notes**: Store private notes per conference (e.g. paper title, bibtex, GitHub links, misc info)
-- 🧭 **Research Roadmap**: Define personal research topics and link them to planned conference submissions
-- 🔁 **Real-Time Calendar Integration**: Subscribe to an always-up-to-date iCal feed for personalized scheduling
+- 🧠 **Personal Notes**: Store private notes per conference (e.g. paper title, bibtex, GitHub links, misc info) (🚧 Not yet implemented)
+- 🔁 **Real-Time Calendar Integration**: Subscribe to an always-up-to-date iCal feed for personalized scheduling (🚧 Not yet implemented)
 - 👥 **Community Sharing**: Share and discover conference info submitted by other users
+<!-- - 🧭 **Research Roadmap**: Define personal research topics and link them to planned conference submissions -->
 
 ## 🏗️ Technology Stack
 
@@ -39,8 +39,11 @@ The goal of Scholark is to fill the gap between traditional calendar tools and a
 - **Python** as backend language
 - **FastAPI** as web framework
 - **PostgreSQL** as database
-- **Google OIDC** for authentication
+- **SQLModel** as ORM
+- **Alembic** for database migrations
+- **OAuth2** and **LDAP** for authentication
 - **uv** as Python package manager
+<!-- - **Google OIDC** for authentication -->
 
 ### 🛠️ **Tooling**
 
