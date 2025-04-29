@@ -82,7 +82,7 @@ export default function Conferences({
     } else if (diffDays <= 30) {
       return 'text-orange-500'; // Approaching (within a month)
     } else {
-      return 'text-green-500'; // Plenty of time
+      return 'text-black-500'; // Plenty of time
     }
   };
 
