@@ -203,24 +203,30 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
         {Object.entries(groupedScheduleItems).map(([yearMonth, items]) => (
           <div key={yearMonth} className="flex flex-col gap-2">
             <h2 className="text-2xl font-bold">{yearMonth}</h2>
-            {items.map((item, index) => (
-              <Card key={index} className="bg-white shadow-md">
-                <CardHeader>
-                  <CardTitle>{icon(item.type)}{item.title}</CardTitle>
-                  <CardDescription>
-                    <Calendar className="inline mr-1" />
-                    {formatDate(item.date)}
-                  </CardDescription>
-                  <CardFooter className="flex gap-1">
-                    {item.tags.map((tag, index) => (
-                      <Badge key={index} style={{ color: pickLabelTextColor(tag.color), backgroundColor: tag.color }} className="text-blue-700">
-                        {tag.name}
-                      </Badge>
-                    ))}
-                  </CardFooter>
-                </CardHeader>
-              </Card>
-            ))}
+            {items.map((item, index) => {
+              const isPast = item.date < new Date();
+              return (
+                <Card
+                  key={index}
+                  className={`bg-white shadow-md ${isPast ? 'opacity-50' : ''}`}
+                >
+                  <CardHeader>
+                    <CardTitle>{icon(item.type)}{item.title}</CardTitle>
+                    <CardDescription>
+                      <Calendar className="inline mr-1" />
+                      {formatDate(item.date)}
+                    </CardDescription>
+                    <CardFooter className="flex gap-1">
+                      {item.tags.map((tag, index) => (
+                        <Badge key={index} style={{ color: pickLabelTextColor(tag.color), backgroundColor: tag.color }} className="text-blue-700">
+                          {tag.name}
+                        </Badge>
+                      ))}
+                    </CardFooter>
+                  </CardHeader>
+                </Card>
+              );
+            })}
           </div>
         ))}
       </div>
