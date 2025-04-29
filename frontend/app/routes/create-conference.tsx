@@ -91,11 +91,14 @@ export default function CreateConference() {
         <div></div>
         {
           [...Array(numMilestones)].map((_, index) => (
-            <div key={index} className="space-y-1">
-              <Label htmlFor={`milestone-${index}`}>Milestone {index + 1}</Label>
-              <div className="flex flex-row space-x-2">
-                <Input id={`milestone-name-${index}`} name={`milestone_name__${index}`} type="text" placeholder="Milestone Name" />
-                <Input id={`milestone-date-${index}`} name={`milestone_date__${index}`} type="date" placeholder="Milestone" />
+            <div key={index} className="flex flex-row space-x-4 items-end">
+              <div className="flex flex-col flex-3 space-y-1">
+                <Label htmlFor={`milestone_name__${index}`}>Milestone Name</Label>
+                <Input id={`milestone_name__${index}`} name={`milestone_name__${index}`} type="text" placeholder="Milestone Name" />
+              </div>
+              <div className="flex flex-col flex-2 space-y-1">
+                <Label htmlFor={`milestone_date__${index}`}>Milestone Date</Label>
+                <Input id={`milestone_date__${index}`} name={`milestone_date__${index}`} type="date" placeholder="YYYY-MM-DD" />
               </div>
             </div>
           ))

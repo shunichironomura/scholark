@@ -104,11 +104,15 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
           <Input id="website-url" name="website_url" type="url" defaultValue={conference.website_url ?? ""} placeholder="https://example.com" />
         </div>
         {Array.from({ length: numMilestones }).map((_, index) => (
-          <div key={index} className="space-y-1">
-            <Label htmlFor={`milestone_name__${index}`}>Milestone Name</Label>
-            <Input id={`milestone_name__${index}`} name={`milestone_name__${index}`} type="text" defaultValue={conference.milestones[index]?.name ?? ""} placeholder="Milestone Name" />
-            <Label htmlFor={`milestone_date__${index}`}>Milestone Date</Label>
-            <Input id={`milestone_date__${index}`} name={`milestone_date__${index}`} type="date" defaultValue={conference.milestones[index]?.date ?? ""} placeholder="YYYY-MM-DD" />
+          <div key={index} className="flex flex-row space-x-4 items-end">
+            <div className="flex flex-col flex-3 space-y-1">
+              <Label htmlFor={`milestone_name__${index}`}>Milestone Name</Label>
+              <Input id={`milestone_name__${index}`} name={`milestone_name__${index}`} type="text" defaultValue={conference.milestones[index]?.name ?? ""} placeholder="Milestone Name" />
+            </div>
+            <div className="flex flex-col flex-2 space-y-1">
+              <Label htmlFor={`milestone_date__${index}`}>Milestone Date</Label>
+              <Input id={`milestone_date__${index}`} name={`milestone_date__${index}`} type="date" defaultValue={conference.milestones[index]?.date ?? ""} placeholder="YYYY-MM-DD" />
+            </div>
           </div>
         ))}
         <div className="flex items-center space-x-2">
