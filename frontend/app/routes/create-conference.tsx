@@ -62,6 +62,9 @@ export default function CreateConference() {
   const [numMilestones, setNumMilestones] = useState(0);
   return (
     <Form id="new-conference-form" method="post">
+      <p className="text-sm text-yellow-600 mb-4">
+        Conferences you create here will be shared and visible to all users.
+      </p>
       <div>
         <Label htmlFor="name">Conference Name</Label>
         <Input id="name" name="name" type="text" placeholder="Conference Name" defaultValue="New Conference" />

@@ -77,6 +77,9 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
 
   return (
     <Form key={conference.id} id="conference-form" method="post">
+      <p className="text-sm text-yellow-600 mb-4">
+        Changes made here are shared and will affect all users.
+      </p>
       <div>
         <Label htmlFor="name">Conference Name</Label>
         <Input id="name" name="name" type="text" defaultValue={conference.name} placeholder="Conference Name" />
