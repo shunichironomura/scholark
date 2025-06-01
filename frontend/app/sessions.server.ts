@@ -25,7 +25,7 @@ const { getSession, commitSession, destroySession } =
         //
         // expires: new Date(Date.now() + 60_000),
         httpOnly: true,
-        maxAge: 3600,
+        maxAge: 3600 * 24, // 1 day
         path: "/",
         sameSite: "lax",
         secrets: ["s3cret1"],
