@@ -28,7 +28,11 @@ const { getSession, commitSession, destroySession } =
         maxAge: 3600 * 24, // 1 day
         path: "/",
         sameSite: "lax",
-        secrets: ["s3cret1"],
+        secrets: [
+          process.env.SESSION_SECRET ?? (() => {
+            throw new Error("SESSION_SECRET is not set");
+          })()
+        ],
         secure: true,
       },
     }
