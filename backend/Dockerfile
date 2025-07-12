@@ -34,8 +34,10 @@ ENV PYTHONPATH=/app
 COPY ./pyproject.toml ./uv.lock ./alembic.ini ./README.md /app/
 
 COPY ./src /app/src
+COPY ./scripts /app/scripts
+COPY ./alembic /app/alembic
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync
 
-CMD ["fastapi", "run", "src/scholark/main.py"]
+CMD ["/app/scripts/startup.sh"]
