@@ -19,5 +19,9 @@
     "mypy-type-checker.importStrategy": "fromEnvironment",
     "[markdown]": {
         "editor.tabSize": 4
-    }
+    },
+    "ty.interpreter": [
+        "${workspaceFolder}/backend/.venv/bin/python"
+    ],
+    "python.ty.disableLanguageServices": true
 }
