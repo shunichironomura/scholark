@@ -1,3 +1,4 @@
+import logging
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
@@ -9,6 +10,8 @@ from scholark.api.main import api_router
 from scholark.core.config import settings
 from scholark.core.db import engine, init_db
 
+logger = logging.getLogger(__name__)
+
 
 def custom_generate_unique_id(route: APIRoute) -> str:
     return f"{route.tags[0]}-{route.name}"
@@ -17,8 +20,24 @@ def custom_generate_unique_id(route: APIRoute) -> str:
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None]:  # noqa: ARG001
     with Session(engine) as session:
-        session.exec(select(1))
-        init_db(session)
+        # Test database connection
+        try:
+            session.exec(select(1))
+            logger.info("Database connection established successfully.")
+        except Exception:
+            logger.exception("Failed to connect to database.")
+            raise
+
+        # Initialize database with default data
+        try:
+            init_db(session)
+            logger.info("Database initialization completed successfully.")
+        except Exception:
+            logger.exception("Database initialization failed")
+            logger.exception("This might happen if migrations haven't been run yet.")
+            logger.exception("In production, ensure migrations are run before starting the application.")
+            logger.exception("For development, auto-migration can be enabled with SCHOLARK_DB_AUTO_MIGRATE=true")
+            raise
     yield
 
 
