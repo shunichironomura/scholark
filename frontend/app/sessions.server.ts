@@ -23,7 +23,7 @@ const { getSession, commitSession, destroySession } = createCookieSessionStorage
     //
     // expires: new Date(Date.now() + 60_000),
     httpOnly: true,
-    maxAge: 3600 * 24, // 1 day
+    maxAge: 3600 * 24 * 365, // 1 year
     path: "/",
     sameSite: "lax",
     secrets: [
