@@ -38,7 +38,9 @@ def read_conferences(
     for conference in conferences:
         conference.tags = [tag for tag in conference.tags if tag.user_id == current_user.id]
 
-    return ConferencesPublic(data=conferences, count=count)
+    conferences_public = [ConferencePublic.model_validate(conference) for conference in conferences]
+
+    return ConferencesPublic(data=conferences_public, count=count)
 
 
 @router.post("/", response_model=ConferencePublic)
