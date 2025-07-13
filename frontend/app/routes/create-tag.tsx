@@ -1,12 +1,12 @@
-import { Form, data, redirect, useNavigate } from "react-router";
-import type { Route } from "./+types/create-tag";
-import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
 import { useState } from "react";
-import { tagsReadTag, tagsUpdateTag, tagsDeleteTag, tagsCreateTag } from "~/client";
-import type { TagPublic, TagUpdate, TagCreate } from "~/client";
+import { data, Form, redirect, useNavigate } from "react-router";
+import type { TagCreate, TagPublic, TagUpdate } from "~/client";
+import { tagsCreateTag, tagsDeleteTag, tagsReadTag, tagsUpdateTag } from "~/client";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import { getSession } from "~/sessions.server";
+import type { Route } from "./+types/create-tag";
 
 // export async function loader({ request, params }: Route.LoaderArgs) {
 //   const session = await getSession(request.headers.get("Cookie"));
@@ -36,7 +36,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   const tagCreate: TagCreate = {
     name: tagName,
     color: tagColor ?? "#000000",
-  }
+  };
 
   const { data: tag, error } = await tagsCreateTag({
     headers: { Authorization: `Bearer ${session.get("accessToken")}` },

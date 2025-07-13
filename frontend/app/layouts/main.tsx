@@ -1,7 +1,6 @@
-import { Outlet } from "react-router";
+import { isRouteErrorResponse, Outlet } from "react-router";
 import { getSession } from "~/sessions.server";
 import type { Route } from "./+types/main";
-import { isRouteErrorResponse } from "react-router";
 import { MainFrame } from "./main-frame";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -20,10 +19,7 @@ export default function MainLayout({ loaderData }: Route.ComponentProps) {
   );
 }
 
-export function ErrorBoundary({
-  error,
-  loaderData
-}: Route.ErrorBoundaryProps) {
+export function ErrorBoundary({ error, loaderData }: Route.ErrorBoundaryProps) {
   // Fetch `username` from the possibly-undefined loaderData
   const username = loaderData?.username;
 

@@ -1,22 +1,8 @@
-import { Form, data, redirect, useNavigate, useNavigation } from "react-router";
-import type { Route } from "./+types/settings";
-import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
+import { Calendar, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { usersReadUserMe, tagsReadTags } from "~/client";
-import { getSession } from "~/sessions.server";
+import { data, Form, redirect, useNavigate, useNavigation } from "react-router";
 import type { TagCreate, TagUpdate } from "~/client";
-import { MapPin, Calendar, Plus, Trash2, Pencil } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog"
+import { tagsReadTags, usersReadUserMe } from "~/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,8 +13,22 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "~/components/ui/alert-dialog"
+} from "~/components/ui/alert-dialog";
+import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import { pickLabelTextColor } from "~/lib/color";
+import { getSession } from "~/sessions.server";
+import type { Route } from "./+types/settings";
 // User settings
 // - Add/edit/delete user tags
 // - iCal feed
@@ -109,8 +109,7 @@ function TagDialog({
           <DialogHeader>
             <DialogTitle>{tag.id ? "Edit tag" : "Add new tag"}</DialogTitle>
             <DialogDescription>
-              Color must be a HEX value such as <code>#ff00ff</code> or{" "}
-              <code>#0f0</code>.
+              Color must be a HEX value such as <code>#ff00ff</code> or <code>#0f0</code>.
             </DialogDescription>
           </DialogHeader>
 
@@ -150,11 +149,7 @@ function TagDialog({
               >
                 {name || "Preview"}
               </span>
-              {!colourIsValid && (
-                <p className="mt-2 text-sm text-destructive">
-                  Invalid HEX color
-                </p>
-              )}
+              {!colourIsValid && <p className="mt-2 text-sm text-destructive">Invalid HEX color</p>}
             </div>
           </div>
 
@@ -170,26 +165,18 @@ function TagDialog({
                   <Form action={`/tags/${tag.id}/delete`} method="post">
                     <AlertDialogHeader>
                       <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This will permanently delete the tag.
-                      </AlertDialogDescription>
+                      <AlertDialogDescription>This will permanently delete the tag.</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction type="submit">
-                        Delete
-                      </AlertDialogAction>
+                      <AlertDialogAction type="submit">Delete</AlertDialogAction>
                     </AlertDialogFooter>
                   </Form>
                 </AlertDialogContent>
               </AlertDialog>
             )}
 
-            <Button
-              type="submit"
-              disabled={!colourIsValid}
-              aria-disabled={!colourIsValid}
-            >
+            <Button type="submit" disabled={!colourIsValid} aria-disabled={!colourIsValid}>
               {tag.id ? "Save changes" : "Add"}
             </Button>
           </DialogFooter>

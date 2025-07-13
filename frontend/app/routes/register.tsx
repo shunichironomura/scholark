@@ -1,9 +1,9 @@
 import { data, redirect, useFetcher } from "react-router";
-import type { Route } from "./+types/register";
-import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
 import { usersRegisterUser } from "~/client";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import type { Route } from "./+types/register";
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
@@ -45,8 +45,8 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Register(_: Route.ComponentProps) {
-  let fetcher = useFetcher();
-  let errors = fetcher.data?.errors;
+  const fetcher = useFetcher();
+  const errors = fetcher.data?.errors;
 
   return (
     <div>
@@ -63,20 +63,10 @@ export default function Register(_: Route.ComponentProps) {
         <div className="mb-4">
           <Label htmlFor="confirm-password">Confirm Password</Label>
           <Input type="password" id="confirm-password" name="confirm_password" required />
-          {errors?.password ? (
-            <div className="text-red-500">
-              {errors.password}
-            </div>
-          ) : null}
+          {errors?.password ? <div className="text-red-500">{errors.password}</div> : null}
         </div>
-        {errors?.general ? (
-          <div className="mb-4 text-red-500">
-            {errors.general}
-          </div>
-        ) : null}
-        <Button type="submit">
-          Register
-        </Button>
+        {errors?.general ? <div className="mb-4 text-red-500">{errors.general}</div> : null}
+        <Button type="submit">Register</Button>
       </fetcher.Form>
     </div>
   );

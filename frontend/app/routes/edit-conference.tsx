@@ -1,13 +1,13 @@
-import { Form, data, redirect, useNavigate } from "react-router";
-import type { Route } from "./+types/edit-conference";
-import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import { useState } from "react";
-import { conferencesUpdateConference, conferencesReadConference } from "~/client";
-import type { ConferencesUpdateConferenceData, ConferenceMilestoneCreate, ConferenceCreate } from "~/client";
-import { getSession } from "~/sessions.server";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import { data, Form, redirect, useNavigate } from "react-router";
+import type { ConferenceCreate, ConferenceMilestoneCreate, ConferencesUpdateConferenceData } from "~/client";
+import { conferencesReadConference, conferencesUpdateConference } from "~/client";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { getSession } from "~/sessions.server";
+import type { Route } from "./+types/edit-conference";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -42,16 +42,17 @@ export async function action({ request, params }: Route.ActionArgs) {
   const milestoneIndices = Object.keys(updates)
     .filter((key) => key.startsWith("milestone_name__"))
     .map((key) => parseInt(key.split("__")[1], 10))
-    .filter((index) => (updates[`milestone_name__${index}`] && updates[`milestone_date__${index}`]));
+    .filter((index) => updates[`milestone_name__${index}`] && updates[`milestone_date__${index}`]);
 
-  const milestones: ConferenceMilestoneCreate[] = milestoneIndices.map((index): ConferenceMilestoneCreate | null => {
-    const name = updates[`milestone_name__${index}`];
-    const date = updates[`milestone_date__${index}`];
-    if (name == null || date == null) {
-      return null;
-    }
-    return { name, date };
-  })
+  const milestones: ConferenceMilestoneCreate[] = milestoneIndices
+    .map((index): ConferenceMilestoneCreate | null => {
+      const name = updates[`milestone_name__${index}`];
+      const date = updates[`milestone_date__${index}`];
+      if (name == null || date == null) {
+        return null;
+      }
+      return { name, date };
+    })
     .filter((milestone): milestone is ConferenceMilestoneCreate => milestone !== null);
   const requestBody: ConferenceCreate = {
     name: updates.name ?? "New Conference",
@@ -90,29 +91,65 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
         </div>
         <div className="space-y-1">
           <Label htmlFor="start-date">Start Date</Label>
-          <Input id="start-date" name="start_date" type="date" defaultValue={conference.start_date ?? ""} placeholder="YYYY-MM-DD" />
+          <Input
+            id="start-date"
+            name="start_date"
+            type="date"
+            defaultValue={conference.start_date ?? ""}
+            placeholder="YYYY-MM-DD"
+          />
         </div>
         <div className="space-y-1">
           <Label htmlFor="end-date">End Date</Label>
-          <Input id="end-date" name="end_date" type="date" defaultValue={conference.end_date ?? ""} placeholder="YYYY-MM-DD" />
+          <Input
+            id="end-date"
+            name="end_date"
+            type="date"
+            defaultValue={conference.end_date ?? ""}
+            placeholder="YYYY-MM-DD"
+          />
         </div>
         <div className="space-y-1">
           <Label htmlFor="location">Location</Label>
-          <Input id="location" name="location" type="text" defaultValue={conference.location ?? ""} placeholder="Location" />
+          <Input
+            id="location"
+            name="location"
+            type="text"
+            defaultValue={conference.location ?? ""}
+            placeholder="Location"
+          />
         </div>
         <div className="space-y-1">
           <Label htmlFor="website-url">Website URL</Label>
-          <Input id="website-url" name="website_url" type="url" defaultValue={conference.website_url ?? ""} placeholder="https://example.com" />
+          <Input
+            id="website-url"
+            name="website_url"
+            type="url"
+            defaultValue={conference.website_url ?? ""}
+            placeholder="https://example.com"
+          />
         </div>
         {milestones.map((milestoneIndex, index) => (
           <div key={milestoneIndex} className="flex flex-row space-x-4 items-end">
             <div className="flex flex-col flex-3 space-y-1">
               <Label htmlFor={`milestone_name__${milestoneIndex}`}>Milestone Name</Label>
-              <Input id={`milestone_name__${milestoneIndex}`} name={`milestone_name__${milestoneIndex}`} type="text" defaultValue={conference.milestones[milestoneIndex]?.name ?? ""} placeholder="Milestone Name" />
+              <Input
+                id={`milestone_name__${milestoneIndex}`}
+                name={`milestone_name__${milestoneIndex}`}
+                type="text"
+                defaultValue={conference.milestones[milestoneIndex]?.name ?? ""}
+                placeholder="Milestone Name"
+              />
             </div>
             <div className="flex flex-col flex-2 space-y-1">
               <Label htmlFor={`milestone_date__${milestoneIndex}`}>Milestone Date</Label>
-              <Input id={`milestone_date__${milestoneIndex}`} name={`milestone_date__${milestoneIndex}`} type="date" defaultValue={conference.milestones[milestoneIndex]?.date ?? ""} placeholder="YYYY-MM-DD" />
+              <Input
+                id={`milestone_date__${milestoneIndex}`}
+                name={`milestone_date__${milestoneIndex}`}
+                type="date"
+                defaultValue={conference.milestones[milestoneIndex]?.date ?? ""}
+                placeholder="YYYY-MM-DD"
+              />
             </div>
             <Button
               type="button"
@@ -125,19 +162,20 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
           </div>
         ))}
         <div className="flex items-center space-x-2">
-          <Button type="button" onClick={() => setMilestones([...milestones, milestones.length > 0 ? Math.max(...milestones) + 1 : 0])}>
+          <Button
+            type="button"
+            onClick={() => setMilestones([...milestones, milestones.length > 0 ? Math.max(...milestones) + 1 : 0])}
+          >
             Add Milestone
           </Button>
         </div>
         <div className="flex items-center space-x-2">
-          <Button type="submit">
-            Save
-          </Button>
+          <Button type="submit">Save</Button>
           <Button onClick={() => navigate(-1)} type="button" variant="outline">
             Cancel
           </Button>
         </div>
       </div>
-    </Form >
-  )
+    </Form>
+  );
 }

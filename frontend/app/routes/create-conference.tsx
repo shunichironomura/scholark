@@ -1,14 +1,19 @@
-import type { Route } from "./+types/create-conference";
-import { Form, redirect, useNavigate } from "react-router";
-import { useState } from "react";
-import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import { conferencesCreateConference } from "~/client";
-import type { ConferenceMilestoneCreate, ConferenceCreate, ConferencesCreateConferenceData, ConferencesCreateConferenceResponses, ConferencesUpdateConferenceData } from "~/client";
-import { getSession } from "~/sessions.server";
 import { Trash2 } from "lucide-react";
-
+import { useState } from "react";
+import { Form, redirect, useNavigate } from "react-router";
+import type {
+  ConferenceCreate,
+  ConferenceMilestoneCreate,
+  ConferencesCreateConferenceData,
+  ConferencesCreateConferenceResponses,
+  ConferencesUpdateConferenceData,
+} from "~/client";
+import { conferencesCreateConference } from "~/client";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { getSession } from "~/sessions.server";
+import type { Route } from "./+types/create-conference";
 
 export async function action({ request, params }: Route.ActionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -29,16 +34,17 @@ export async function action({ request, params }: Route.ActionArgs) {
   const milestoneIndices = Object.keys(updates)
     .filter((key) => key.startsWith("milestone_name__"))
     .map((key) => parseInt(key.split("__")[1], 10))
-    .filter((index) => (updates[`milestone_name__${index}`] && updates[`milestone_date__${index}`]))
+    .filter((index) => updates[`milestone_name__${index}`] && updates[`milestone_date__${index}`]);
 
-  const milestones: ConferenceMilestoneCreate[] = milestoneIndices.map((index): ConferenceMilestoneCreate | null => {
-    const name = updates[`milestone_name__${index}`];
-    const date = updates[`milestone_date__${index}`];
-    if (name == null || date == null) {
-      return null;
-    }
-    return { name, date };
-  })
+  const milestones: ConferenceMilestoneCreate[] = milestoneIndices
+    .map((index): ConferenceMilestoneCreate | null => {
+      const name = updates[`milestone_name__${index}`];
+      const date = updates[`milestone_date__${index}`];
+      if (name == null || date == null) {
+        return null;
+      }
+      return { name, date };
+    })
     .filter((milestone): milestone is ConferenceMilestoneCreate => milestone !== null);
 
   const requestBody: ConferenceCreate = {
@@ -101,44 +107,49 @@ export default function CreateConference() {
           <Input id="website-url" name="website_url" type="url" placeholder="https://example.com" />
         </div>
         <div></div>
-        {
-          milestones.map((milestoneIndex, index) => (
-            <div key={milestoneIndex} className="flex flex-row space-x-4 items-end">
-              <div className="flex flex-col flex-3 space-y-1">
-                <Label htmlFor={`milestone_name__${milestoneIndex}`}>Milestone Name</Label>
-                <Input id={`milestone_name__${milestoneIndex}`} name={`milestone_name__${milestoneIndex}`} type="text" placeholder="Milestone Name" />
-              </div>
-              <div className="flex flex-col flex-2 space-y-1">
-                <Label htmlFor={`milestone_date__${milestoneIndex}`}>Milestone Date</Label>
-                <Input id={`milestone_date__${milestoneIndex}`} name={`milestone_date__${milestoneIndex}`} type="date" placeholder="YYYY-MM-DD" />
-              </div>
-              <Button
-                type="button"
-                size="icon"
-                variant="ghost"
-                onClick={() => removeMilestone(index)}
-                aria-label="Remove milestone"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
+        {milestones.map((milestoneIndex, index) => (
+          <div key={milestoneIndex} className="flex flex-row space-x-4 items-end">
+            <div className="flex flex-col flex-3 space-y-1">
+              <Label htmlFor={`milestone_name__${milestoneIndex}`}>Milestone Name</Label>
+              <Input
+                id={`milestone_name__${milestoneIndex}`}
+                name={`milestone_name__${milestoneIndex}`}
+                type="text"
+                placeholder="Milestone Name"
+              />
             </div>
-          ))
-        }
+            <div className="flex flex-col flex-2 space-y-1">
+              <Label htmlFor={`milestone_date__${milestoneIndex}`}>Milestone Date</Label>
+              <Input
+                id={`milestone_date__${milestoneIndex}`}
+                name={`milestone_date__${milestoneIndex}`}
+                type="date"
+                placeholder="YYYY-MM-DD"
+              />
+            </div>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              onClick={() => removeMilestone(index)}
+              aria-label="Remove milestone"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
+        ))}
         <div className="flex items-center space-x-2">
           <Button type="button" onClick={addMilestone}>
             Add Milestone
           </Button>
         </div>
         <div className="flex items-center space-x-2">
-          <Button type="submit">
-            Create Conference
-          </Button>
+          <Button type="submit">Create Conference</Button>
           <Button onClick={() => navigate(-1)} type="button" variant="outline">
             Cancel
           </Button>
         </div>
       </div>
-    </Form >
-  )
-
+    </Form>
+  );
 }

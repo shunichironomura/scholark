@@ -1,4 +1,3 @@
-
 /**
  * Convert a hex color like "#abc" or "#aabbcc" to an RGB tuple.
  */
@@ -30,10 +29,7 @@ export function rgbToHex(r: number, g: number, b: number): string {
  * @param textColor Any valid 3‑ or 6‑digit hex color (e.g. "#0e8a16").
  * @param ratio Blend ratio (0–1). 0.15 roughly matches GitHub’s appearance.
  */
-export function generateLabelBackground(
-  textColor: string,
-  ratio = 0.15,
-): string {
+export function generateLabelBackground(textColor: string, ratio = 0.15): string {
   if (!textColor) return "";
   try {
     const [r, g, b] = hexToRgb(textColor);
@@ -55,7 +51,10 @@ export function pickLabelTextColor(hex: string): "white" | "black" {
   // ── 1. Normalise hex ──────────────────────────────────────────
   let clean = hex.replace(/^#/, "");
   if (clean.length === 3) {
-    clean = clean.split("").map(c => c + c).join("");
+    clean = clean
+      .split("")
+      .map((c) => c + c)
+      .join("");
   }
   if (!/^[0-9a-f]{6}$/i.test(clean)) {
     throw new Error(`Invalid hex color: ${hex}`);
@@ -69,15 +68,10 @@ export function pickLabelTextColor(hex: string): "white" | "black" {
   // ── 3. Convert to linear-sRGB and compute relative luminance ─
   const toLinear = (v: number) => {
     const srgb = v / 255;
-    return srgb <= 0.03928
-      ? srgb / 12.92
-      : Math.pow((srgb + 0.055) / 1.055, 2.4);
+    return srgb <= 0.03928 ? srgb / 12.92 : ((srgb + 0.055) / 1.055) ** 2.4;
   };
 
-  const luminance =
-    0.2126 * toLinear(r) +
-    0.7152 * toLinear(g) +
-    0.0722 * toLinear(b);
+  const luminance = 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
 
   // ── 4. Contrast ratios against white and black ───────────────
   const contrastWithWhite = (1 + 0.05) / (luminance + 0.05);

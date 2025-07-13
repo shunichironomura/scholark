@@ -1,10 +1,7 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card"
-import { Button } from "~/components/ui/button"
-import type { Route } from "./+types/conferences"
-import { conferencesReadConferences, conferencesCreateConference, tagsReadTags } from '~/client';
-import type { ConferencePublicReadable, ConferenceCreate } from "~/client";
-import { MapPin, Calendar, Plus, Trash2, Pencil } from "lucide-react";
-import { Form, redirect, useSubmit, data } from "react-router";
+import { Calendar, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
+import { data, Form, redirect, useSubmit } from "react-router";
+import type { ConferenceCreate, ConferencePublicReadable } from "~/client";
+import { conferencesCreateConference, conferencesReadConferences, tagsReadTags } from "~/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,10 +12,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "~/components/ui/alert-dialog"
-import { getSession } from "~/sessions.server";
+} from "~/components/ui/alert-dialog";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
 import MultipleSelector from "~/components/ui/multi-select";
 import { pickLabelTextColor } from "~/lib/color";
+import { getSession } from "~/sessions.server";
+import type { Route } from "./+types/conferences";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -45,21 +45,19 @@ export async function loader({ request }: Route.LoaderArgs) {
   return { conferences, tags, isSuperUser };
 }
 
-export default function Conferences({
-  loaderData,
-}: Route.ComponentProps) {
+export default function Conferences({ loaderData }: Route.ComponentProps) {
   const { conferences, tags, isSuperUser } = loaderData;
 
   const formatDate = (dateString?: string | null) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
-    return date.toISOString().slice(0, 10) // Format as YYYY-MM-DD
-  }
+    return date.toISOString().slice(0, 10); // Format as YYYY-MM-DD
+  };
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toISOString().slice(0, 19).replace("T", " "); // Format as YYYY-MM-DD HH:MM:SS
-  }
+  };
 
   // Determine deadline status for styling
   const getDeadlineStatus = (deadlineString: string) => {
@@ -73,24 +71,24 @@ export default function Conferences({
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays < 0) {
-      return 'text-zinc-500'; // Past deadline
+      return "text-zinc-500"; // Past deadline
     } else if (diffDays <= 7) {
-      return 'text-red-500 font-bold'; // Urgent (within a week)
+      return "text-red-500 font-bold"; // Urgent (within a week)
     } else if (diffDays <= 30) {
-      return 'text-orange-500'; // Approaching (within a month)
+      return "text-orange-500"; // Approaching (within a month)
     } else {
-      return 'text-black-500'; // Plenty of time
+      return "text-black-500"; // Plenty of time
     }
   };
 
   const formatDateRange = (start?: string | null, end?: string | null) => {
-    const s = start ? formatDate(start) : '';
-    const e = end ? formatDate(end) : '';
+    const s = start ? formatDate(start) : "";
+    const e = end ? formatDate(end) : "";
 
-    if (s && e) return `${s} – ${e}`;   // both present
-    if (s) return `${s} –`;       // only start
-    if (e) return `– ${e}`;       // only end
-    return '';                           // neither
+    if (s && e) return `${s} – ${e}`; // both present
+    if (s) return `${s} –`; // only start
+    if (e) return `– ${e}`; // only end
+    return ""; // neither
   };
 
   const submit = useSubmit();
@@ -136,10 +134,10 @@ export default function Conferences({
                           {milestone.name}: {formatDate(milestone.date)}
                         </li>
                       ))}
-                  </ul>) : (
+                  </ul>
+                ) : (
                   <div className="text-sm text-gray-500">No milestones available</div>
-                )
-                }
+                )}
               </CardContent>
               <CardFooter className="flex flex-col space-y-2">
                 <div className="flex w-full items-center justify-between">
@@ -153,8 +151,10 @@ export default function Conferences({
                     >
                       Visit Website
                     </a>
-                  ) : <div />} {/* Placeholder if no link */}
-
+                  ) : (
+                    <div />
+                  )}{" "}
+                  {/* Placeholder if no link */}
                   {/* Right side: Buttons */}
                   <div className="flex space-x-2">
                     <Form action={`${conference.id}/edit`}>
@@ -162,30 +162,29 @@ export default function Conferences({
                         <Pencil />
                       </Button>
                     </Form>
-                    {isSuperUser ? <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button type="button" variant="destructive" size="icon">
-                          <Trash2 />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <Form
-                          action={`${conference.id}/delete`}
-                          method="post"
-                        >
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete this conference.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction type="submit">Delete</AlertDialogAction>
-                          </AlertDialogFooter>
-                        </Form>
-                      </AlertDialogContent>
-                    </AlertDialog> : null}
+                    {isSuperUser ? (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button type="button" variant="destructive" size="icon">
+                            <Trash2 />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <Form action={`${conference.id}/delete`} method="post">
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete this conference.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction type="submit">Delete</AlertDialogAction>
+                            </AlertDialogFooter>
+                          </Form>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    ) : null}
                   </div>
                 </div>
                 {/* Display created_at and updated_at values in small text */}
@@ -196,31 +195,41 @@ export default function Conferences({
                 </div>
                 <hr className="w-full border-t border-gray-300 my-2" />
                 <div className="flex flex-col w-full">
-                  <div className="text-sm text-gray-500 mt-auto">
-                    Personal Tags:
-                  </div>
+                  <div className="text-sm text-gray-500 mt-auto">Personal Tags:</div>
                   <MultipleSelector
                     onChange={(options) => {
                       const formData = new FormData();
                       formData.append("tags", JSON.stringify(options));
-                      submit(formData, { method: "post", action: `${conference.id}/tags` });
+                      submit(formData, {
+                        method: "post",
+                        action: `${conference.id}/tags`,
+                      });
                     }}
-                    value={conference.tags ? conference.tags.map((tag) => ({ label: tag.name, value: tag.id, color: pickLabelTextColor(tag.color), bgColor: tag.color })) : []}
-                    defaultOptions={tags.data.map((tag) => ({ label: tag.name, value: tag.id, color: pickLabelTextColor(tag.color), bgColor: tag.color }))}
-                    placeholder="Select tags"
-                    emptyIndicator={
-                      <p className="text-center text-sm leading-1 text-gray-600">
-                        No tags available
-                      </p>
+                    value={
+                      conference.tags
+                        ? conference.tags.map((tag) => ({
+                            label: tag.name,
+                            value: tag.id,
+                            color: pickLabelTextColor(tag.color),
+                            bgColor: tag.color,
+                          }))
+                        : []
                     }
+                    defaultOptions={tags.data.map((tag) => ({
+                      label: tag.name,
+                      value: tag.id,
+                      color: pickLabelTextColor(tag.color),
+                      bgColor: tag.color,
+                    }))}
+                    placeholder="Select tags"
+                    emptyIndicator={<p className="text-center text-sm leading-1 text-gray-600">No tags available</p>}
                   />
                 </div>
               </CardFooter>
             </Card>
           ))}
         </div>
-      )
-      }
-    </div >
+      )}
+    </div>
   );
 }

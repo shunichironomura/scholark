@@ -1,5 +1,5 @@
 import type { RouteConfig } from "@react-router/dev/routes";
-import { route, index, layout } from "@react-router/dev/routes";
+import { index, layout, route } from "@react-router/dev/routes";
 
 export default [
   layout("layouts/main.tsx", [
@@ -17,5 +17,5 @@ export default [
     route("tags/new", "routes/create-tag.tsx"),
     route("tags/:tagId/edit", "routes/edit-tag.tsx"),
     route("tags/:tagId/delete", "routes/delete-tag.tsx"),
-  ])
+  ]),
 ] satisfies RouteConfig;
