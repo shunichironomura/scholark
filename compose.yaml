@@ -62,7 +62,7 @@ services:
     ports:
       - "${SCHOLARK_FRONTEND_PORT?Variable not set}:3000"
     environment:
-      - SESSION_SECRET=${SCHOLARK_SESSION_SECRET?Variable not set}
+      - SCHOLARK_SESSION_SECRET=${SCHOLARK_SESSION_SECRET?Variable not set}
 
 
 volumes:

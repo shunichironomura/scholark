@@ -29,8 +29,8 @@ const { getSession, commitSession, destroySession } =
         path: "/",
         sameSite: "lax",
         secrets: [
-          process.env.SESSION_SECRET ?? (() => {
-            throw new Error("SESSION_SECRET is not set");
+          process.env.SCHOLARK_SESSION_SECRET ?? (() => {
+            throw new Error("SCHOLARK_SESSION_SECRET is not set");
           })()
         ],
         secure: true,
