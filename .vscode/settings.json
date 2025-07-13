@@ -17,6 +17,20 @@
     },
     "python.languageServer": "Pylance",
     "mypy-type-checker.importStrategy": "fromEnvironment",
+    "[typescriptreact]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "biomejs.biome",
+        "editor.codeActionsOnSave": {
+            "source.fixAll.biome": "explicit"
+        }
+    },
+    "[typescript]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "biomejs.biome",
+        "editor.codeActionsOnSave": {
+            "source.fixAll.biome": "explicit"
+        }
+    },
     "[markdown]": {
         "editor.tabSize": 4
     },
