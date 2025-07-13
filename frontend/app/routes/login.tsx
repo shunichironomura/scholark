@@ -7,9 +7,7 @@ import { getSession, commitSession } from "~/sessions.server";
 import { loginLoginAccessToken, loginTestToken } from "~/client";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const session = await getSession(
-    request.headers.get("Cookie")
-  );
+  const session = await getSession(request.headers.get("Cookie"));
 
   if (session.has("accessToken")) {
     return redirect("/conferences");
@@ -21,7 +19,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       headers: {
         "Set-Cookie": await commitSession(session),
       },
-    }
+    },
   );
 }
 
@@ -75,11 +73,7 @@ export default function Login({ loaderData }: Route.ComponentProps) {
 
   return (
     <div>
-      {error && (
-        <div className="mb-4 text-red-500">
-          {error}
-        </div>
-      )}
+      {error && <div className="mb-4 text-red-500">{error}</div>}
       <h1 className="text-4xl font-bold mb-4">Login</h1>
       <Form method="post">
         <div className="mb-4">
@@ -90,9 +84,7 @@ export default function Login({ loaderData }: Route.ComponentProps) {
           <Label htmlFor="password">Password</Label>
           <Input type="password" id="password" name="password" required />
         </div>
-        <Button type="submit">
-          Login
-        </Button>
+        <Button type="submit">Login</Button>
       </Form>
       {/* Show the link to the registration page in the center */}
       <div className="mt-4 text-center">

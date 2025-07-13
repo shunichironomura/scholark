@@ -20,10 +20,7 @@ export default function MainLayout({ loaderData }: Route.ComponentProps) {
   );
 }
 
-export function ErrorBoundary({
-  error,
-  loaderData
-}: Route.ErrorBoundaryProps) {
+export function ErrorBoundary({ error, loaderData }: Route.ErrorBoundaryProps) {
   // Fetch `username` from the possibly-undefined loaderData
   const username = loaderData?.username;
 

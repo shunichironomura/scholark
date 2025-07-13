@@ -4,7 +4,6 @@ import { conferencesUpdateTagsForConference } from "~/client";
 import { getSession } from "~/sessions.server";
 import type { Option } from "~/components/ui/multi-select";
 
-
 export async function action({ request, params }: Route.ActionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
   if (!session.has("accessToken")) {

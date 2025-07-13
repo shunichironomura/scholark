@@ -63,20 +63,10 @@ export default function Register(_: Route.ComponentProps) {
         <div className="mb-4">
           <Label htmlFor="confirm-password">Confirm Password</Label>
           <Input type="password" id="confirm-password" name="confirm_password" required />
-          {errors?.password ? (
-            <div className="text-red-500">
-              {errors.password}
-            </div>
-          ) : null}
+          {errors?.password ? <div className="text-red-500">{errors.password}</div> : null}
         </div>
-        {errors?.general ? (
-          <div className="mb-4 text-red-500">
-            {errors.general}
-          </div>
-        ) : null}
-        <Button type="submit">
-          Register
-        </Button>
+        {errors?.general ? <div className="mb-4 text-red-500">{errors.general}</div> : null}
+        <Button type="submit">Register</Button>
       </fetcher.Form>
     </div>
   );

@@ -12,19 +12,9 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "~/components/ui/avatar"
-export function MainFrame({
-  username,
-  children
-}: {
-  username?: string;
-  children: React.ReactNode;
-}) {
+} from "~/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+export function MainFrame({ username, children }: { username?: string; children: React.ReactNode }) {
   const navigate = useNavigate();
 
   return (
@@ -33,30 +23,40 @@ export function MainFrame({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
-              <NavLink to="/" className="text-2xl font-bold text-blue-600">Scholark</NavLink>
+              <NavLink to="/" className="text-2xl font-bold text-blue-600">
+                Scholark
+              </NavLink>
             </div>
             <nav className="flex space-x-4 items-center">
-              {username ?
+              {username ? (
                 <div>
                   <NavLink
                     to="/conferences"
-                    className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
+                    className={({ isActive }) =>
+                      `px-3 py-2 rounded-md text-sm font-medium ${isActive ? "text-blue-600" : "text-zinc-600 hover:text-blue-600"}`
+                    }
                   >
                     Conferences
                   </NavLink>
                   <NavLink
                     to="/timeline"
-                    className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
+                    className={({ isActive }) =>
+                      `px-3 py-2 rounded-md text-sm font-medium ${isActive ? "text-blue-600" : "text-zinc-600 hover:text-blue-600"}`
+                    }
                   >
                     Timeline
-                  </NavLink></div>
-                :
+                  </NavLink>
+                </div>
+              ) : (
                 <NavLink
                   to="/login"
-                  className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'text-blue-600' : 'text-zinc-600 hover:text-blue-600'}`}
+                  className={({ isActive }) =>
+                    `px-3 py-2 rounded-md text-sm font-medium ${isActive ? "text-blue-600" : "text-zinc-600 hover:text-blue-600"}`
+                  }
                 >
                   Login
-                </NavLink>}
+                </NavLink>
+              )}
               {/* Display username and avatar if logged in */}
               {username && (
                 <DropdownMenu>
@@ -73,13 +73,9 @@ export function MainFrame({
                     {/* <DropdownMenuItem>
                       Profile
                     </DropdownMenuItem> */}
-                    <DropdownMenuItem onSelect={() => navigate("/settings")}>
-                      Settings
-                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => navigate("/settings")}>Settings</DropdownMenuItem>
                     {/* <DropdownMenuSeparator /> */}
-                    <DropdownMenuItem onSelect={() => navigate("/logout")}>
-                      Logout
-                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => navigate("/logout")}>Logout</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
@@ -87,14 +83,10 @@ export function MainFrame({
           </div>
         </div>
       </header>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {children}
-      </main>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">{children}</main>
       <footer className="bg-white border-t border-zinc-200 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-zinc-500 text-sm">
-            &copy; {new Date().getFullYear()} Shunichiro Nomura
-          </p>
+          <p className="text-center text-zinc-500 text-sm">&copy; {new Date().getFullYear()} Shunichiro Nomura</p>
         </div>
       </footer>
     </div>

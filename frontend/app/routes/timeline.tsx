@@ -1,7 +1,7 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card"
-import { Button } from "~/components/ui/button"
-import type { Route } from "./+types/timeline"
-import { conferencesReadConferences, conferencesCreateConference, tagsReadTags } from '~/client';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
+import { Button } from "~/components/ui/button";
+import type { Route } from "./+types/timeline";
+import { conferencesReadConferences, conferencesCreateConference, tagsReadTags } from "~/client";
 import type { ConferencePublicReadable, ConferenceCreate } from "~/client";
 import { MapPin, Calendar, Plus, Trash2, Pencil } from "lucide-react";
 import { Form, redirect, data, useSubmit, useSearchParams } from "react-router";
@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "~/components/ui/alert-dialog"
+} from "~/components/ui/alert-dialog";
 import { Label } from "~/components/ui/label";
 import {
   Select,
@@ -25,9 +25,9 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select"
+} from "~/components/ui/select";
 import { getSession } from "~/sessions.server";
-import { Badge } from "~/components/ui/badge"
+import { Badge } from "~/components/ui/badge";
 import { pickLabelTextColor } from "~/lib/color";
 // Define the schedule item interface
 interface Tag {
@@ -36,7 +36,7 @@ interface Tag {
 }
 interface ScheduleItem {
   date: Date;
-  type: 'conference_start' | 'conference_end' | 'milestone';
+  type: "conference_start" | "conference_end" | "milestone";
   title: string;
   tags: Tag[];
 }
@@ -84,7 +84,7 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
 
   const scheduleItems: ScheduleItem[] = [];
   const formatDate = (date: Date) => {
-    const dateString = date.toISOString().slice(0, 10) // Format as YYYY-MM-DD
+    const dateString = date.toISOString().slice(0, 10); // Format as YYYY-MM-DD
 
     const today = new Date();
 
@@ -92,9 +92,12 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
     today.setHours(0, 0, 0, 0); // Set time to midnight for comparison
     const diffDays = Math.floor((date.getTime() - today.getTime()) / (1000 * 3600 * 24));
 
-    const diffDaysText = diffDays === 0 ? "Today" : `${Math.abs(diffDays)} day${Math.abs(diffDays) > 1 ? 's' : ''} ${diffDays > 0 ? 'from now' : 'ago'}`;
+    const diffDaysText =
+      diffDays === 0
+        ? "Today"
+        : `${Math.abs(diffDays)} day${Math.abs(diffDays) > 1 ? "s" : ""} ${diffDays > 0 ? "from now" : "ago"}`;
     return `${dateString} (${diffDaysText})`;
-  }
+  };
   // Helper function to get month and year from date
   const getYearMonth = (date: Date): string => {
     return date.toISOString().slice(0, 7); // Format as YYYY-MM
@@ -106,7 +109,7 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
       if (conference.start_date) {
         scheduleItems.push({
           date: new Date(conference.start_date),
-          type: 'conference_start',
+          type: "conference_start",
           title: `${conference.name} – Start`,
           tags: conferenceTags,
         });
@@ -114,7 +117,7 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
       if (conference.end_date) {
         scheduleItems.push({
           date: new Date(conference.end_date),
-          type: 'conference_end',
+          type: "conference_end",
           title: `${conference.name} – End`,
           tags: conferenceTags,
         });
@@ -124,7 +127,7 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
           if (milestone.date) {
             scheduleItems.push({
               date: new Date(milestone.date),
-              type: 'milestone',
+              type: "milestone",
               title: `${conference.name} – ${milestone.name}`,
               tags: conferenceTags,
             });
@@ -132,7 +135,7 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
         });
       }
     }
-  })
+  });
 
   // Sort schedule items by date
   scheduleItems.sort((a, b) => a.date.getTime() - b.date.getTime());
@@ -149,16 +152,16 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
 
   const icon = (scheduleItemType: string) => {
     switch (scheduleItemType) {
-      case 'conference_start':
+      case "conference_start":
         return "🎯 ";
-      case 'conference_end':
+      case "conference_end":
         return "🏁 ";
-      case 'milestone':
+      case "milestone":
         return "📅 ";
       default:
         return null;
     }
-  }
+  };
 
   const tagComponent = (tag: Tag) => (
     <span
@@ -204,23 +207,30 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
           const isAllPast = items.every((item) => item.date < new Date());
           return (
             <div key={yearMonth} className="flex flex-col gap-2">
-              <h2 className={`text-2xl font-bold ${isAllPast ? 'opacity-50' : ''}`}>{yearMonth}</h2>
+              <h2 className={`text-2xl font-bold ${isAllPast ? "opacity-50" : ""}`}>{yearMonth}</h2>
               {items.map((item, index) => {
                 const isPast = item.date < new Date();
                 return (
-                  <Card
-                    key={index}
-                    className={`bg-white shadow-md ${isPast ? 'opacity-50' : ''}`}
-                  >
+                  <Card key={index} className={`bg-white shadow-md ${isPast ? "opacity-50" : ""}`}>
                     <CardHeader>
-                      <CardTitle>{icon(item.type)}{item.title}</CardTitle>
+                      <CardTitle>
+                        {icon(item.type)}
+                        {item.title}
+                      </CardTitle>
                       <CardDescription>
                         <Calendar className="inline mr-1" />
                         {formatDate(item.date)}
                       </CardDescription>
                       <CardFooter className="flex gap-1">
                         {item.tags.map((tag, index) => (
-                          <Badge key={index} style={{ color: pickLabelTextColor(tag.color), backgroundColor: tag.color }} className="text-blue-700">
+                          <Badge
+                            key={index}
+                            style={{
+                              color: pickLabelTextColor(tag.color),
+                              backgroundColor: tag.color,
+                            }}
+                            className="text-blue-700"
+                          >
                             {tag.name}
                           </Badge>
                         ))}
@@ -234,5 +244,5 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
         })}
       </div>
     </>
-  )
+  );
 }

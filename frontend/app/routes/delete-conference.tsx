@@ -3,7 +3,6 @@ import type { Route } from "./+types/delete-conference";
 import { conferencesDeleteConference } from "~/client";
 import { getSession } from "~/sessions.server";
 
-
 export async function action({ request, params }: Route.ActionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
   if (!session.has("accessToken")) {

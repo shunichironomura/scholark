@@ -1,4 +1,3 @@
-
 import { Form, data, Link, redirect, useNavigate } from "react-router";
 import type { Route } from "./+types/logout";
 import { Button } from "~/components/ui/button";

@@ -36,7 +36,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   const tagCreate: TagCreate = {
     name: tagName,
     color: tagColor ?? "#000000",
-  }
+  };
 
   const { data: tag, error } = await tagsCreateTag({
     headers: { Authorization: `Bearer ${session.get("accessToken")}` },

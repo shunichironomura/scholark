@@ -35,7 +35,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   const tagUpdate: TagUpdate = {
     name: tagName ?? undefined,
     color: tagColor ?? undefined,
-  }
+  };
 
   const { data: tag, error } = await tagsUpdateTag({
     path: { tag_id: params.tagId },
