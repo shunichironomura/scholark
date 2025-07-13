@@ -74,6 +74,10 @@ ignore = [
     #     "TRY003",  # Avoid specifying long messages outside the exception class
 ]
 
+unfixable = [
+    "F401", # Prevent auto-fix for unused imports
+]
+
 [tool.ruff.lint.per-file-ignores]
 "alembic/**.py" = [
     "D",      # Docstring
