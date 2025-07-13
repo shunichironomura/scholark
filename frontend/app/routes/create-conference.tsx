@@ -9,7 +9,7 @@ import { Label } from "~/components/ui/label";
 import { getSession } from "~/sessions.server";
 import type { Route } from "./+types/create-conference";
 
-export async function action({ request, params }: Route.ActionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
   if (!session.has("accessToken")) {
     return redirect("/login");

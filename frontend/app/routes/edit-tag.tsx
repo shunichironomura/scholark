@@ -33,7 +33,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     color: tagColor ?? undefined,
   };
 
-  const { data: tag, error } = await tagsUpdateTag({
+  const { error } = await tagsUpdateTag({
     path: { tag_id: params.tagId },
     headers: { Authorization: `Bearer ${session.get("accessToken")}` },
     body: tagUpdate,

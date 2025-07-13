@@ -24,7 +24,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     return redirect("/login");
   }
 
-  const { data: tag, error } = await tagsDeleteTag({
+  const { error } = await tagsDeleteTag({
     path: { tag_id: params.tagId },
     headers: { Authorization: `Bearer ${session.get("accessToken")}` },
   });

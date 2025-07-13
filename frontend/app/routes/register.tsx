@@ -27,7 +27,7 @@ export async function action({ request }: Route.ActionArgs) {
     return data({ errors }, { status: 400 });
   }
 
-  const { data: data_, error } = await usersRegisterUser({
+  const { error } = await usersRegisterUser({
     body: {
       username: username,
       password: password,
