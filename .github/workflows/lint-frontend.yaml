@@ -92,7 +92,7 @@ jobs:
       - name: Build the frontend
         run: pnpm run build
 
-  collect:
+  collect-lint-frontend:
     needs: [biome, typecheck, build]
     runs-on: ubuntu-latest
     steps:

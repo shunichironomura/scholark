@@ -25,7 +25,7 @@ jobs:
         run: |
           docker compose build
 
-  collect:
+  collect-docker-build:
     needs: [docker-compose-build]
     runs-on: ubuntu-latest
     steps:
