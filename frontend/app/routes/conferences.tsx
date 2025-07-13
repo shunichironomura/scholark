@@ -129,8 +129,11 @@ export default function Conferences({ loaderData }: Route.ComponentProps) {
                   <ul className="list-disc list-inside">
                     {conference.milestones
                       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-                      .map((milestone, index) => (
-                        <li key={index} className={`${getDeadlineStatus(milestone.date)} text-sm`}>
+                      .map((milestone) => (
+                        <li
+                          key={`${milestone.name}-${milestone.date}`}
+                          className={`${getDeadlineStatus(milestone.date)} text-sm`}
+                        >
                           {milestone.name}: {formatDate(milestone.date)}
                         </li>
                       ))}

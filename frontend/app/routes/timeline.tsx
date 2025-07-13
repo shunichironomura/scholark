@@ -196,10 +196,13 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
           return (
             <div key={yearMonth} className="flex flex-col gap-2">
               <h2 className={`text-2xl font-bold ${isAllPast ? "opacity-50" : ""}`}>{yearMonth}</h2>
-              {items.map((item, index) => {
+              {items.map((item) => {
                 const isPast = item.date < new Date();
                 return (
-                  <Card key={index} className={`bg-white shadow-md ${isPast ? "opacity-50" : ""}`}>
+                  <Card
+                    key={`${item.type}-${item.title}-${item.date.toISOString()}`}
+                    className={`bg-white shadow-md ${isPast ? "opacity-50" : ""}`}
+                  >
                     <CardHeader>
                       <CardTitle>
                         {icon(item.type)}
@@ -210,9 +213,9 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
                         {formatDate(item.date)}
                       </CardDescription>
                       <CardFooter className="flex gap-1">
-                        {item.tags.map((tag, index) => (
+                        {item.tags.map((tag) => (
                           <Badge
-                            key={index}
+                            key={tag.name}
                             style={{
                               color: pickLabelTextColor(tag.color),
                               backgroundColor: tag.color,

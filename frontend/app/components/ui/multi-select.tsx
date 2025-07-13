@@ -277,6 +277,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
         document.removeEventListener("mousedown", handleClickOutside);
         document.removeEventListener("touchend", handleClickOutside);
       };
+      // biome-ignore lint/correctness/useExhaustiveDependencies: handleClickOutside is stable
     }, [open, handleClickOutside]);
 
     useEffect(() => {
@@ -435,6 +436,8 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
         shouldFilter={commandProps?.shouldFilter !== undefined ? commandProps.shouldFilter : !onSearch} // When onSearch is provided, we don't want to filter the options. You can still override it.
         filter={commandFilter()}
       >
+        {/* biome-ignore lint/a11y/noStaticElementInteractions: This div acts as a click target for focus */}
+        {/* biome-ignore lint/a11y/useKeyWithClickEvents: Keyboard interaction handled by CommandInput */}
         <div
           className={cn(
             "min-h-10 rounded-md border border-input text-base ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 md:text-sm",

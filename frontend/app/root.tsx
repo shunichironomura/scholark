@@ -16,6 +16,7 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+// biome-ignore lint/correctness/noEmptyPattern: React Router v7 convention
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Scholark" }];
 }
