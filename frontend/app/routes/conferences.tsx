@@ -1,6 +1,6 @@
 import { Calendar, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
 import { data, Form, redirect, useSubmit } from "react-router";
-import type { ConferencePublicReadable } from "~/client";
+import type { ConferencePublic } from "~/client";
 import { conferencesReadConferences, tagsReadTags } from "~/client";
 import {
   AlertDialog,
@@ -106,7 +106,7 @@ export default function Conferences({ loaderData }: Route.ComponentProps) {
 
       {conferences && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {conferences.data.map((conference: ConferencePublicReadable) => (
+          {conferences.data.map((conference: ConferencePublic) => (
             <Card className="w-[300px] flex flex-col space-y-2" key={conference.id}>
               <CardHeader className="flex-none space-y-1">
                 <CardTitle>{conference.name}</CardTitle>
