@@ -14,7 +14,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 from scholark.core.config import settings  # noqa: E402
-from scholark.models import SQLModel  # noqa: E402
+from scholark.models import SQLModel  # type: ignore[attr-defined]  # noqa: E402
 
 target_metadata = SQLModel.metadata
 

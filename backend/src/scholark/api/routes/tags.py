@@ -30,7 +30,9 @@ def read_tags(
     count = session.exec(count_statement).one()
     tags = session.exec(statement).all()
 
-    return TagsPublic(data=tags, count=count)
+    tags_public = [TagPublic.model_validate(tag) for tag in tags]
+
+    return TagsPublic(data=tags_public, count=count)
 
 
 @router.post("/", response_model=TagPublic)

@@ -38,6 +38,7 @@ typing = [
     "pyright>=1.1.399",
     "types-ldap3>=2.9.13.20240205",
     "types-passlib>=1.7.7.20250408",
+    "pyrefly>=0.23.1",
 ]
 
 [tool.mypy]
@@ -72,6 +73,7 @@ ignore = [
     #     "EM101",   # raw-string-in-exception
     #     "TRY003",  # Avoid specifying long messages outside the exception class
 ]
+
 [tool.ruff.lint.per-file-ignores]
 "alembic/**.py" = [
     "D",      # Docstring

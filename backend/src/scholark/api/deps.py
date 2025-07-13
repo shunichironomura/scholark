@@ -76,6 +76,11 @@ def get_auth_provider(session: SessionDep) -> AuthProvider:
                 ldap_provider=LdapAuthProvider(session, settings.LDAP_SERVER, settings.LDAP_DN_PATTERN),
                 preserved_db_usernames=settings.PRESERVED_DB_USERNAMES,
             )
+        case _:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Unknown auth provider: {settings.AUTH_PROVIDER}",
+            )
 
 
 AuthProviderDep = Annotated[AuthProvider, Depends(get_auth_provider)]
