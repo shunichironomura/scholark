@@ -1,7 +1,7 @@
 import { Calendar, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
 import { data, Form, redirect, useSubmit } from "react-router";
-import type { ConferenceCreate, ConferencePublicReadable } from "~/client";
-import { conferencesCreateConference, conferencesReadConferences, tagsReadTags } from "~/client";
+import type { ConferencePublicReadable } from "~/client";
+import { conferencesReadConferences, tagsReadTags } from "~/client";
 import {
   AlertDialog,
   AlertDialogAction,

@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { data, Form, redirect, useNavigate } from "react-router";
-import type { ConferenceCreate, ConferenceMilestoneCreate, ConferencesUpdateConferenceData } from "~/client";
+import type { ConferenceCreate, ConferenceMilestoneCreate } from "~/client";
 import { conferencesReadConference, conferencesUpdateConference } from "~/client";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";

@@ -1,7 +1,6 @@
-import { Calendar, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { data, Form, redirect, useNavigate, useNavigation } from "react-router";
-import type { TagCreate, TagUpdate } from "~/client";
+import { data, Form, redirect, useNavigation } from "react-router";
 import { tagsReadTags, usersReadUserMe } from "~/client";
 import {
   AlertDialog,

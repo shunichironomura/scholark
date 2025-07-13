@@ -1,10 +1,6 @@
-import { useState } from "react";
-import { data, Form, redirect, useNavigate } from "react-router";
-import type { TagPublic, TagUpdate } from "~/client";
+import { data, redirect } from "react-router";
+import type { TagUpdate } from "~/client";
 import { tagsReadTag, tagsUpdateTag } from "~/client";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import { getSession } from "~/sessions.server";
 import type { Route } from "./+types/edit-tag";
 
