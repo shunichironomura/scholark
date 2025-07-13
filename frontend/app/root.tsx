@@ -16,7 +16,7 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [{ title: "Scholark" }];
 }
 
