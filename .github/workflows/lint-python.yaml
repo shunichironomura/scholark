@@ -18,7 +18,7 @@ concurrency:
 
 defaults:
   run:
-    working-directory: ./backend
+    working-directory: backend
 
 jobs:
   ruff:
@@ -131,5 +131,5 @@ jobs:
     needs: [ruff, mypy, pyright, ty, pyrefly]
     runs-on: ubuntu-latest
     steps:
-    - name: Collect results
-      run: echo "All checks passed!"
+      - name: Collect results
+        run: echo "All checks passed!"
