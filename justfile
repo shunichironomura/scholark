@@ -26,3 +26,8 @@ start-backend:
 [working-directory: 'frontend']
 start-frontend:
   dotenvx run -f {{envfile}} -- pnpm run dev
+
+[group('frontend')]
+[working-directory: 'frontend']
+typecheck:
+  pnpm run typecheck
