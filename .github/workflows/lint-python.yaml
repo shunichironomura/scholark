@@ -133,3 +133,4 @@ jobs:
     steps:
       - name: Collect results
         run: echo "All checks passed!"
+        working-directory: .
