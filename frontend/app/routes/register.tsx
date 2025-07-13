@@ -29,8 +29,8 @@ export async function action({ request }: Route.ActionArgs) {
 
   const { data: data_, error } = await usersRegisterUser({
     body: {
-      username: formData.get("username") as string,
-      password: formData.get("password") as string,
+      username: username,
+      password: password,
     },
   });
 
