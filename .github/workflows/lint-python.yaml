@@ -127,7 +127,7 @@ jobs:
       - name: Run mypy
         run: uv run -- pyrefly check
 
-  collect:
+  collect-lint-python:
     needs: [ruff, mypy, pyright, ty, pyrefly]
     runs-on: ubuntu-latest
     steps:
