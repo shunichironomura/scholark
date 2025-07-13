@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -Cue -o pipefail
 
 echo "Starting Scholark backend..."
 
