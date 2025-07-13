@@ -24,3 +24,10 @@ jobs:
       - name: Run Docker Compose Build
         run: |
           docker compose build
+
+  collect:
+    needs: [docker-compose-build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Collect results
+        run: echo "Docker images built successfully."
