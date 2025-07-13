@@ -1,10 +1,7 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
-import { Button } from "~/components/ui/button";
-import type { Route } from "./+types/timeline";
-import { conferencesReadConferences, conferencesCreateConference, tagsReadTags } from "~/client";
-import type { ConferencePublicReadable, ConferenceCreate } from "~/client";
-import { MapPin, Calendar, Plus, Trash2, Pencil } from "lucide-react";
-import { Form, redirect, data, useSubmit, useSearchParams } from "react-router";
+import { Calendar, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
+import { data, Form, redirect, useSearchParams, useSubmit } from "react-router";
+import type { ConferenceCreate, ConferencePublicReadable } from "~/client";
+import { conferencesCreateConference, conferencesReadConferences, tagsReadTags } from "~/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,6 +13,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
 import { Label } from "~/components/ui/label";
 import {
   Select,
@@ -26,9 +26,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { getSession } from "~/sessions.server";
-import { Badge } from "~/components/ui/badge";
 import { pickLabelTextColor } from "~/lib/color";
+import { getSession } from "~/sessions.server";
+import type { Route } from "./+types/timeline";
+
 // Define the schedule item interface
 interface Tag {
   name: string;

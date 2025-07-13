@@ -68,7 +68,7 @@ export function pickLabelTextColor(hex: string): "white" | "black" {
   // ── 3. Convert to linear-sRGB and compute relative luminance ─
   const toLinear = (v: number) => {
     const srgb = v / 255;
-    return srgb <= 0.03928 ? srgb / 12.92 : Math.pow((srgb + 0.055) / 1.055, 2.4);
+    return srgb <= 0.03928 ? srgb / 12.92 : ((srgb + 0.055) / 1.055) ** 2.4;
   };
 
   const luminance = 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);

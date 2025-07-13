@@ -1,7 +1,7 @@
-import { redirect, data } from "react-router";
-import type { Route } from "./+types/delete-conference";
+import { data, redirect } from "react-router";
 import { conferencesDeleteConference } from "~/client";
 import { getSession } from "~/sessions.server";
+import type { Route } from "./+types/delete-conference";
 
 export async function action({ request, params }: Route.ActionArgs) {
   const session = await getSession(request.headers.get("Cookie"));

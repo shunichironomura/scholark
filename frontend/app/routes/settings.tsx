@@ -1,22 +1,8 @@
-import { Form, data, redirect, useNavigate, useNavigation } from "react-router";
-import type { Route } from "./+types/settings";
-import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
+import { Calendar, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { usersReadUserMe, tagsReadTags } from "~/client";
-import { getSession } from "~/sessions.server";
+import { data, Form, redirect, useNavigate, useNavigation } from "react-router";
 import type { TagCreate, TagUpdate } from "~/client";
-import { MapPin, Calendar, Plus, Trash2, Pencil } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
+import { tagsReadTags, usersReadUserMe } from "~/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,7 +14,21 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
+import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import { pickLabelTextColor } from "~/lib/color";
+import { getSession } from "~/sessions.server";
+import type { Route } from "./+types/settings";
 // User settings
 // - Add/edit/delete user tags
 // - iCal feed

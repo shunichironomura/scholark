@@ -1,10 +1,10 @@
-import { Form, data, Link, redirect, useNavigate } from "react-router";
-import type { Route } from "./+types/logout";
-import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import { getSession, destroySession } from "~/sessions.server";
+import { data, Form, Link, redirect, useNavigate } from "react-router";
 import { loginLoginAccessToken } from "~/client";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { destroySession, getSession } from "~/sessions.server";
+import type { Route } from "./+types/logout";
 
 export async function action({ request }: Route.ActionArgs) {
   const session = await getSession(request.headers.get("Cookie"));

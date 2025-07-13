@@ -1,4 +1,5 @@
-import { useNavigate, NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +14,6 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 export function MainFrame({ username, children }: { username?: string; children: React.ReactNode }) {
   const navigate = useNavigate();
 

@@ -1,10 +1,7 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
-import { Button } from "~/components/ui/button";
-import type { Route } from "./+types/conferences";
-import { conferencesReadConferences, conferencesCreateConference, tagsReadTags } from "~/client";
-import type { ConferencePublicReadable, ConferenceCreate } from "~/client";
-import { MapPin, Calendar, Plus, Trash2, Pencil } from "lucide-react";
-import { Form, redirect, useSubmit, data } from "react-router";
+import { Calendar, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
+import { data, Form, redirect, useSubmit } from "react-router";
+import type { ConferenceCreate, ConferencePublicReadable } from "~/client";
+import { conferencesCreateConference, conferencesReadConferences, tagsReadTags } from "~/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,9 +13,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
-import { getSession } from "~/sessions.server";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
 import MultipleSelector from "~/components/ui/multi-select";
 import { pickLabelTextColor } from "~/lib/color";
+import { getSession } from "~/sessions.server";
+import type { Route } from "./+types/conferences";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));

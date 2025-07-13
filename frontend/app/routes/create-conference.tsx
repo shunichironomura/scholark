@@ -1,19 +1,19 @@
-import type { Route } from "./+types/create-conference";
-import { Form, redirect, useNavigate } from "react-router";
+import { Trash2 } from "lucide-react";
 import { useState } from "react";
-import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import { conferencesCreateConference } from "~/client";
+import { Form, redirect, useNavigate } from "react-router";
 import type {
-  ConferenceMilestoneCreate,
   ConferenceCreate,
+  ConferenceMilestoneCreate,
   ConferencesCreateConferenceData,
   ConferencesCreateConferenceResponses,
   ConferencesUpdateConferenceData,
 } from "~/client";
+import { conferencesCreateConference } from "~/client";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import { getSession } from "~/sessions.server";
-import { Trash2 } from "lucide-react";
+import type { Route } from "./+types/create-conference";
 
 export async function action({ request, params }: Route.ActionArgs) {
   const session = await getSession(request.headers.get("Cookie"));

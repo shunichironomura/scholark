@@ -1,9 +1,9 @@
 import { data, redirect, useFetcher } from "react-router";
-import type { Route } from "./+types/register";
-import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
 import { usersRegisterUser } from "~/client";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import type { Route } from "./+types/register";
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
@@ -45,8 +45,8 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Register(_: Route.ComponentProps) {
-  let fetcher = useFetcher();
-  let errors = fetcher.data?.errors;
+  const fetcher = useFetcher();
+  const errors = fetcher.data?.errors;
 
   return (
     <div>

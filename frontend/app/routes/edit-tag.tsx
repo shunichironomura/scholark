@@ -1,12 +1,12 @@
-import { Form, data, redirect, useNavigate } from "react-router";
-import type { Route } from "./+types/edit-tag";
-import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
 import { useState } from "react";
-import { tagsReadTag, tagsUpdateTag } from "~/client";
+import { data, Form, redirect, useNavigate } from "react-router";
 import type { TagPublic, TagUpdate } from "~/client";
+import { tagsReadTag, tagsUpdateTag } from "~/client";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import { getSession } from "~/sessions.server";
+import type { Route } from "./+types/edit-tag";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));

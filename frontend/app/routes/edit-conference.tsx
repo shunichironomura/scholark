@@ -1,13 +1,13 @@
-import { Form, data, redirect, useNavigate } from "react-router";
-import type { Route } from "./+types/edit-conference";
-import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import { useState } from "react";
-import { conferencesUpdateConference, conferencesReadConference } from "~/client";
-import type { ConferencesUpdateConferenceData, ConferenceMilestoneCreate, ConferenceCreate } from "~/client";
-import { getSession } from "~/sessions.server";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import { data, Form, redirect, useNavigate } from "react-router";
+import type { ConferenceCreate, ConferenceMilestoneCreate, ConferencesUpdateConferenceData } from "~/client";
+import { conferencesReadConference, conferencesUpdateConference } from "~/client";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { getSession } from "~/sessions.server";
+import type { Route } from "./+types/edit-conference";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
