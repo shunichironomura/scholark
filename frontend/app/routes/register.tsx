@@ -18,19 +18,19 @@ export async function action({ request }: Route.ActionArgs) {
     errors.password = "Passwords do not match.";
   }
   if (password.length < 8) {
-    errors.password = (errors.password ? errors.password + " " : "") + "Password must be at least 8 characters long.";
+    errors.password = `${errors.password ? `${errors.password} ` : ""}Password must be at least 8 characters long.`;
   }
   if (password.length > 40) {
-    errors.password = (errors.password ? errors.password + " " : "") + "Password must be at most 40 characters long.";
+    errors.password = `${errors.password ? `${errors.password} ` : ""}Password must be at most 40 characters long.`;
   }
   if (Object.keys(errors).length > 0) {
     return data({ errors }, { status: 400 });
   }
 
-  const { data: data_, error } = await usersRegisterUser({
+  const { error } = await usersRegisterUser({
     body: {
-      username: formData.get("username") as string,
-      password: formData.get("password") as string,
+      username: username,
+      password: password,
     },
   });
 

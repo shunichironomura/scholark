@@ -1,8 +1,5 @@
-import { data, Form, Link, redirect, useNavigate } from "react-router";
-import { loginLoginAccessToken } from "~/client";
+import { Form, redirect } from "react-router";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import { destroySession, getSession } from "~/sessions.server";
 import type { Route } from "./+types/logout";
 

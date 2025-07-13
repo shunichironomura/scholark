@@ -1,21 +1,8 @@
-import { Calendar, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
-import { data, Form, redirect, useSearchParams, useSubmit } from "react-router";
-import type { ConferenceCreate, ConferencePublicReadable } from "~/client";
-import { conferencesCreateConference, conferencesReadConferences, tagsReadTags } from "~/client";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
+import { Calendar } from "lucide-react";
+import { data, redirect, useSearchParams } from "react-router";
+import { conferencesReadConferences, tagsReadTags } from "~/client";
 import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
 import { Label } from "~/components/ui/label";
 import {
   Select,
@@ -75,7 +62,7 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   const formData = await request.formData();
-  const selectedTagId = formData.get("selectedTagId") as string | null;
+  const _selectedTagId = formData.get("selectedTagId") as string | null;
 }
 
 export default function Timeline({ loaderData }: Route.ComponentProps) {
@@ -209,10 +196,13 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
           return (
             <div key={yearMonth} className="flex flex-col gap-2">
               <h2 className={`text-2xl font-bold ${isAllPast ? "opacity-50" : ""}`}>{yearMonth}</h2>
-              {items.map((item, index) => {
+              {items.map((item) => {
                 const isPast = item.date < new Date();
                 return (
-                  <Card key={index} className={`bg-white shadow-md ${isPast ? "opacity-50" : ""}`}>
+                  <Card
+                    key={`${item.type}-${item.title}-${item.date.toISOString()}`}
+                    className={`bg-white shadow-md ${isPast ? "opacity-50" : ""}`}
+                  >
                     <CardHeader>
                       <CardTitle>
                         {icon(item.type)}
@@ -223,9 +213,9 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
                         {formatDate(item.date)}
                       </CardDescription>
                       <CardFooter className="flex gap-1">
-                        {item.tags.map((tag, index) => (
+                        {item.tags.map((tag) => (
                           <Badge
-                            key={index}
+                            key={tag.name}
                             style={{
                               color: pickLabelTextColor(tag.color),
                               backgroundColor: tag.color,

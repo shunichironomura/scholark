@@ -1,7 +1,6 @@
-import { Calendar, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { data, Form, redirect, useNavigate, useNavigation } from "react-router";
-import type { TagCreate, TagUpdate } from "~/client";
+import { data, Form, redirect, useNavigation } from "react-router";
 import { tagsReadTags, usersReadUserMe } from "~/client";
 import {
   AlertDialog,
@@ -44,7 +43,7 @@ import type { Route } from "./+types/settings";
 //   console.log("Form data:", formData);
 // }
 
-export async function loader({ request, params }: Route.LoaderArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
   if (!session.has("accessToken")) {
     return redirect("/login");
@@ -187,15 +186,6 @@ function TagDialog({
 }
 
 export default function Settings({ loaderData }: Route.ComponentProps) {
-  // Common interface between TagPublic, TagCreate, and TagUpdate
-  interface Tag {
-    id: string;
-    name: string;
-    color: string;
-    isAdded?: boolean;
-    toRemove?: boolean;
-  }
-
   const { user, userTags } = loaderData;
   const navigation = useNavigation();
   const [openTagId, setOpenTagId] = useState<string | null>(null);

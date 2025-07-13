@@ -16,7 +16,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   if (!params.conferenceId) {
     throw data("Conference ID is required", { status: 400 });
   }
-  const { data: conference, error } = await conferencesUpdateTagsForConference({
+  const { error } = await conferencesUpdateTagsForConference({
     path: { conference_id: params.conferenceId },
     headers: { Authorization: `Bearer ${session.get("accessToken")}` },
     body: tags.map((tag) => tag.value),

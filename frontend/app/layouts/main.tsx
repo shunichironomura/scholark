@@ -23,7 +23,7 @@ export function ErrorBoundary({ error, loaderData }: Route.ErrorBoundaryProps) {
   // Fetch `username` from the possibly-undefined loaderData
   const username = loaderData?.username;
 
-  let body;
+  let body: React.ReactNode;
   if (isRouteErrorResponse(error)) {
     body = (
       <>

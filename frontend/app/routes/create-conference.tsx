@@ -1,13 +1,7 @@
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Form, redirect, useNavigate } from "react-router";
-import type {
-  ConferenceCreate,
-  ConferenceMilestoneCreate,
-  ConferencesCreateConferenceData,
-  ConferencesCreateConferenceResponses,
-  ConferencesUpdateConferenceData,
-} from "~/client";
+import type { ConferenceCreate, ConferenceMilestoneCreate } from "~/client";
 import { conferencesCreateConference } from "~/client";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -15,7 +9,7 @@ import { Label } from "~/components/ui/label";
 import { getSession } from "~/sessions.server";
 import type { Route } from "./+types/create-conference";
 
-export async function action({ request, params }: Route.ActionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
   if (!session.has("accessToken")) {
     return redirect("/login");
