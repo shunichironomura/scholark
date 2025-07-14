@@ -31,3 +31,6 @@ start-frontend:
 [working-directory: 'frontend']
 typecheck:
   pnpm run typecheck
+
+lint-markdown:
+  pnpm dlx markdownlint-cli .
