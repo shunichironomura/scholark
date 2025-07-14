@@ -40,3 +40,8 @@ repos:
       - id: uv-lock
         files: backend/pyproject.toml
         args: [--project, backend]
+
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.45.0
+    hooks:
+      - id: markdownlint
