@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { data, redirect, useFetcher } from "react-router";
 import { usersRegisterUser } from "~/client";
 import { Button } from "~/components/ui/button";
@@ -47,22 +48,25 @@ export async function action({ request }: Route.ActionArgs) {
 export default function Register(_: Route.ComponentProps) {
   const fetcher = useFetcher();
   const errors = fetcher.data?.errors;
+  const usernameId = useId();
+  const passwordId = useId();
+  const confirmPasswordId = useId();
 
   return (
     <div>
       <h1 className="text-4xl font-bold mb-4">Register</h1>
       <fetcher.Form method="post">
         <div className="mb-4">
-          <Label htmlFor="username">Username</Label>
-          <Input type="username" id="username" name="username" required />
+          <Label htmlFor={usernameId}>Username</Label>
+          <Input type="username" id={usernameId} name="username" required />
         </div>
         <div className="mb-4">
-          <Label htmlFor="password">Password</Label>
-          <Input type="password" id="password" name="password" required />
+          <Label htmlFor={passwordId}>Password</Label>
+          <Input type="password" id={passwordId} name="password" required />
         </div>
         <div className="mb-4">
-          <Label htmlFor="confirm-password">Confirm Password</Label>
-          <Input type="password" id="confirm-password" name="confirm_password" required />
+          <Label htmlFor={confirmPasswordId}>Confirm Password</Label>
+          <Input type="password" id={confirmPasswordId} name="confirm_password" required />
           {errors?.password ? <div className="text-red-500">{errors.password}</div> : null}
         </div>
         {errors?.general ? <div className="mb-4 text-red-500">{errors.general}</div> : null}

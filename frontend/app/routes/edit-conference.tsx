@@ -1,5 +1,5 @@
 import { Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { data, Form, redirect, useNavigate } from "react-router";
 import type { ConferenceCreate, ConferenceMilestoneCreate } from "~/client";
 import { conferencesReadConference, conferencesUpdateConference } from "~/client";
@@ -74,11 +74,17 @@ export async function action({ request, params }: Route.ActionArgs) {
 export default function EditConference({ loaderData }: Route.ComponentProps) {
   const { conference } = loaderData;
   const navigate = useNavigate();
+  const formId = useId();
+  const nameId = useId();
+  const startDateId = useId();
+  const endDateId = useId();
+  const locationId = useId();
+  const websiteUrlId = useId();
 
   const [milestones, setMilestones] = useState<number[]>(conference.milestones.map((_, i) => i));
 
   return (
-    <Form key={conference.id} id="conference-form" method="post">
+    <Form key={conference.id} id={formId} method="post">
       <div className="max-w-2xl mx-auto space-y-6">
         <p className="text-sm text-yellow-600 mb-4">
           Changes made here are shared and will affect all users.
@@ -86,13 +92,13 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
           Only admins can delete a conference. If you want to delete a conference, please contact an admin.
         </p>
         <div className="space-y-1">
-          <Label htmlFor="name">Conference Name</Label>
-          <Input id="name" name="name" type="text" defaultValue={conference.name} placeholder="Conference Name" />
+          <Label htmlFor={nameId}>Conference Name</Label>
+          <Input id={nameId} name="name" type="text" defaultValue={conference.name} placeholder="Conference Name" />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="start-date">Start Date</Label>
+          <Label htmlFor={startDateId}>Start Date</Label>
           <Input
-            id="start-date"
+            id={startDateId}
             name="start_date"
             type="date"
             defaultValue={conference.start_date ?? ""}
@@ -100,9 +106,9 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
           />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="end-date">End Date</Label>
+          <Label htmlFor={endDateId}>End Date</Label>
           <Input
-            id="end-date"
+            id={endDateId}
             name="end_date"
             type="date"
             defaultValue={conference.end_date ?? ""}
@@ -110,9 +116,9 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
           />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="location">Location</Label>
+          <Label htmlFor={locationId}>Location</Label>
           <Input
-            id="location"
+            id={locationId}
             name="location"
             type="text"
             defaultValue={conference.location ?? ""}
@@ -120,9 +126,9 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
           />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="website-url">Website URL</Label>
+          <Label htmlFor={websiteUrlId}>Website URL</Label>
           <Input
-            id="website-url"
+            id={websiteUrlId}
             name="website_url"
             type="url"
             defaultValue={conference.website_url ?? ""}
