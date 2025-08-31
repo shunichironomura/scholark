@@ -21,6 +21,12 @@ apply-migrations:
 start-backend:
   dotenvx run -f {{envfile}} -- uv run fastapi dev src/scholark/main.py
 
+# Lint the backend code
+[group('backend')]
+[working-directory: 'backend']
+lint-backend:
+  dotenvx run -f {{envfile}} -- uv run ruff check
+
 # Start the frontend service for development
 [group('frontend')]
 [working-directory: 'frontend']
@@ -31,6 +37,11 @@ start-frontend:
 [working-directory: 'frontend']
 typecheck:
   pnpm run typecheck
+
+[group('frontend')]
+[working-directory: 'frontend']
+lint-frontend:
+  pnpm exec biome check
 
 lint-markdown:
   pnpm dlx markdownlint-cli .
