@@ -1,5 +1,5 @@
 import { Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Form, redirect, useNavigate } from "react-router";
 import type { ConferenceCreate, ConferenceMilestoneCreate } from "~/client";
 import { conferencesCreateConference } from "~/client";
@@ -59,6 +59,13 @@ export async function action({ request }: Route.ActionArgs) {
 
 export default function CreateConference() {
   const navigate = useNavigate();
+  // Generate unique IDs for form fields
+  const formId = useId();
+  const nameId = useId();
+  const startDateId = useId();
+  const endDateId = useId();
+  const locationId = useId();
+  const websiteUrlId = useId();
   // Milestones
   const [milestones, setMilestones] = useState<number[]>([]);
 
@@ -73,7 +80,7 @@ export default function CreateConference() {
   };
 
   return (
-    <Form id="new-conference-form" method="post">
+    <Form id={formId} method="post">
       <div className="max-w-2xl mx-auto space-y-6">
         <p className="text-sm text-yellow-600 mb-4">
           Conferences you create here will be shared and visible to all users.
@@ -81,24 +88,24 @@ export default function CreateConference() {
           Only admins can delete a conference after it is created.
         </p>
         <div className="space-y-1">
-          <Label htmlFor="name">Conference Name</Label>
-          <Input id="name" name="name" type="text" placeholder="Conference Name" defaultValue="New Conference" />
+          <Label htmlFor={nameId}>Conference Name</Label>
+          <Input id={nameId} name="name" type="text" placeholder="Conference Name" defaultValue="New Conference" />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="start-date">Start Date</Label>
-          <Input id="start-date" name="start_date" type="date" placeholder="YYYY-MM-DD" />
+          <Label htmlFor={startDateId}>Start Date</Label>
+          <Input id={startDateId} name="start_date" type="date" placeholder="YYYY-MM-DD" />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="end-date">End Date</Label>
-          <Input id="end-date" name="end_date" type="date" placeholder="YYYY-MM-DD" />
+          <Label htmlFor={endDateId}>End Date</Label>
+          <Input id={endDateId} name="end_date" type="date" placeholder="YYYY-MM-DD" />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="location">Location</Label>
-          <Input id="location" name="location" type="text" placeholder="Location" />
+          <Label htmlFor={locationId}>Location</Label>
+          <Input id={locationId} name="location" type="text" placeholder="Location" />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="website-url">Website URL</Label>
-          <Input id="website-url" name="website_url" type="url" placeholder="https://example.com" />
+          <Label htmlFor={websiteUrlId}>Website URL</Label>
+          <Input id={websiteUrlId} name="website_url" type="url" placeholder="https://example.com" />
         </div>
         <div></div>
         {milestones.map((milestoneIndex, index) => (

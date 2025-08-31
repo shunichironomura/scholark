@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { data, Form, Link, redirect } from "react-router";
 import { loginLoginAccessToken, loginTestToken } from "~/client";
 import { Button } from "~/components/ui/button";
@@ -70,6 +71,8 @@ export async function action({ request }: Route.ActionArgs) {
 
 export default function Login({ loaderData }: Route.ComponentProps) {
   const { error } = loaderData;
+  const usernameId = useId();
+  const passwordId = useId();
 
   return (
     <div>
@@ -77,12 +80,12 @@ export default function Login({ loaderData }: Route.ComponentProps) {
       <h1 className="text-4xl font-bold mb-4">Login</h1>
       <Form method="post">
         <div className="mb-4">
-          <Label htmlFor="username">Username</Label>
-          <Input type="username" id="username" name="username" required />
+          <Label htmlFor={usernameId}>Username</Label>
+          <Input type="username" id={usernameId} name="username" required />
         </div>
         <div className="mb-4">
-          <Label htmlFor="password">Password</Label>
-          <Input type="password" id="password" name="password" required />
+          <Label htmlFor={passwordId}>Password</Label>
+          <Input type="password" id={passwordId} name="password" required />
         </div>
         <Button type="submit">Login</Button>
       </Form>
