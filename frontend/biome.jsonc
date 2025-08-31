@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.1.1/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -7,8 +7,20 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!app/client/**"]
+    "includes": ["**", "!app/client"]
   },
+  "overrides": [
+    {
+      "includes": ["app/components/ui/calendar.tsx", "app/components/ui/multi-select.tsx"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noNestedComponentDefinitions": "off"
+          }
+        }
+      }
+    }
+  ],
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
@@ -17,7 +29,10 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "suspicious": {
+        "noUnknownAtRules": "off"
+      }
     }
   },
   "javascript": {
