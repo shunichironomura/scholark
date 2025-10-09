@@ -77,7 +77,7 @@ importers:
         version: 2.2.5
       '@hey-api/openapi-ts':
         specifier: ^0.85.0
-        version: 0.85.0(typescript@5.9.3)
+        version: 0.85.1(typescript@5.9.3)
       '@react-router/dev':
         specifier: ^7.6.3
         version: 7.9.3(@react-router/serve@7.9.3(react-router@7.9.3(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3))(@types/node@24.7.0)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.30.1)(react-router@7.9.3(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(vite@7.1.9(@types/node@24.7.0)(jiti@2.6.1)(lightningcss@1.30.1))
@@ -540,8 +540,8 @@ packages:
     resolution: {integrity: sha512-BMnIuhVgNmSudadw1GcTsP18Yk5l8FrYrg/OSYNxz0D2E0vf4D5e4j5nUbuY8MU6p1vp7ev0xrfP6A/NWazkzQ==}
     engines: {node: '>= 16'}
 
-  '@hey-api/openapi-ts@0.85.0':
-    resolution: {integrity: sha512-LSBHP2/wTF1BnaccHGX1t+0Ss+2VJQxotrLz/0+LK2z8ocuyVZXOYhfBSd7FP8sK78MDJVDBYrPCsBUvNSlH1g==}
+  '@hey-api/openapi-ts@0.85.1':
+    resolution: {integrity: sha512-1pWQzOO/MXiE6BhyIZ88xJAVt82WJ775wNwRKjvQesNdUsFOJm4SKxzKEu/rn6mlpfiDkdxWlEHJ0SrcM2CUXQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=22.10.0}
     hasBin: true
     peerDependencies:
@@ -2439,6 +2439,11 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  semver@7.7.3:
+    resolution: {integrity: sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==}
+    engines: {node: '>=10'}
+    hasBin: true
+
   send@0.19.0:
     resolution: {integrity: sha512-dW41u5VfLXu8SJh5bwRmyYUbAoSB3c9uQh6L8h/KtsFREPWpbX1lrljJo186Jc4nmci/sGUZ9a0a0J2zgfq2hw==}
     engines: {node: '>= 0.8.0'}
@@ -3173,7 +3178,7 @@ snapshots:
       js-yaml: 4.1.0
       lodash: 4.17.21
 
-  '@hey-api/openapi-ts@0.85.0(typescript@5.9.3)':
+  '@hey-api/openapi-ts@0.85.1(typescript@5.9.3)':
     dependencies:
       '@hey-api/codegen-core': 0.2.0(typescript@5.9.3)
       '@hey-api/json-schema-ref-parser': 1.2.0
@@ -4261,7 +4266,7 @@ snapshots:
       '@one-ini/wasm': 0.1.1
       commander: 10.0.1
       minimatch: 9.0.1
-      semver: 7.7.2
+      semver: 7.7.3
 
   ee-first@1.1.1: {}
 
@@ -5052,6 +5057,8 @@ snapshots:
   semver@6.3.1: {}
 
   semver@7.7.2: {}
+
+  semver@7.7.3: {}
 
   send@0.19.0:
     dependencies:
