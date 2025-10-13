@@ -33,7 +33,7 @@
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.5",
+    "@biomejs/biome": "2.2.6",
     "@hey-api/openapi-ts": "^0.85.0",
     "@react-router/dev": "^7.6.3",
     "@tailwindcss/vite": "^4.1.11",
