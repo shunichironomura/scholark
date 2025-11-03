@@ -52,7 +52,7 @@ importers:
         version: 4.1.0
       isbot:
         specifier: ^5.1.28
-        version: 5.1.31
+        version: 5.1.32
       lucide-react:
         specifier: 0.552.0
         version: 0.552.0(react@19.2.0)
@@ -1888,8 +1888,8 @@ packages:
   isarray@1.0.0:
     resolution: {integrity: sha512-VLghIWNM6ELQzo7zwmcg0NmTVyWKYjvIeM83yjp0wRDTmUnrM678fQbcKBo6n2CJEF0szoG//ytg+TKla89ALQ==}
 
-  isbot@5.1.31:
-    resolution: {integrity: sha512-DPgQshehErHAqSCKDb3rNW03pa2wS/v5evvUqtxt6TTnHRqAG8FdzcSSJs9656pK6Y+NT7K9R4acEYXLHYfpUQ==}
+  isbot@5.1.32:
+    resolution: {integrity: sha512-VNfjM73zz2IBZmdShMfAUg10prm6t7HFUQmNAEOAVS4YH92ZrZcvkMcGX6cIgBJAzWDzPent/EeAtYEHNPNPBQ==}
     engines: {node: '>=18'}
 
   isexe@2.0.0:
@@ -3678,7 +3678,7 @@ snapshots:
       dedent: 1.7.0(babel-plugin-macros@3.1.0)
       es-module-lexer: 1.7.0
       exit-hook: 2.2.1
-      isbot: 5.1.31
+      isbot: 5.1.32
       jsesc: 3.0.2
       lodash: 4.17.21
       p-map: 7.0.3
@@ -4523,7 +4523,7 @@ snapshots:
 
   isarray@1.0.0: {}
 
-  isbot@5.1.31: {}
+  isbot@5.1.32: {}
 
   isexe@2.0.0: {}
 
