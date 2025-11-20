@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.7",
-    "@hey-api/openapi-ts": "^0.87.0",
+    "@hey-api/openapi-ts": "^0.88.0",
     "@react-router/dev": "^7.6.3",
     "@tailwindcss/vite": "^4.1.11",
     "@types/node": "^24.0.13",
