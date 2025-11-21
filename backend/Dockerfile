@@ -9,7 +9,7 @@ RUN apt-get update \
     g++ \
     && apt-get -y clean && rm -rf /var/lib/apt/lists/*
 
-COPY --from=ghcr.io/astral-sh/uv:0.9.10 /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.9.11 /uv /bin/uv
 RUN curl -fsS https://dotenvx.sh | sh
 
 # Python-related environment variables
