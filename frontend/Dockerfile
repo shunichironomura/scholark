@@ -16,6 +16,8 @@ ENV VITE_API_URL=$VITE_API_URL
 RUN pnpm run build
 
 FROM base
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 COPY --from=prod-deps /app/node_modules /app/node_modules
 COPY --from=build /app/build /app/build
 EXPOSE 3000
