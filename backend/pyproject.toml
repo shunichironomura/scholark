@@ -9,9 +9,9 @@ authors = [
 ]
 dependencies = [
   "alembic>=1.15.2",
+  "bcrypt>=5.0.0",
   "fastapi[standard]>=0.115.12",
   "ldap3>=2.9.1",
-  "passlib[bcrypt]>=1.7.4",
   "psycopg[binary]>=3.2.6",
   "pydantic>=2.11.3",
   "pydantic-extra-types>=2.10.3",
