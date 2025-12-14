@@ -7,7 +7,14 @@ default:
 
 # Start the database service
 start-db:
-  docker compose up -d db
+  #!/usr/bin/env nu
+  # Raise error if the database is already running
+  let db_state = (^docker compose ps db --format json | from json | get -o State | default "")
+  if $db_state == "running" {
+      print "Database is already running."
+      exit 1
+  }
+  ^docker compose up -d db
 
 # Apply database migrations
 [group('backend')]
