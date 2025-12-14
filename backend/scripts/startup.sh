@@ -26,4 +26,8 @@ fi
 
 # Start the FastAPI application
 echo "Starting FastAPI application..."
-exec fastapi run src/scholark/main.py
+if [ "${SCHOLARK_DEV_MODE:-false}" = "true" ]; then
+    exec fastapi dev src/scholark/main.py
+else
+    exec fastapi run src/scholark/main.py
+fi
