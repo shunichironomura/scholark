@@ -19,7 +19,7 @@ repos:
       - id: check-yaml
         args: ["--allow-multiple-documents", "--unsafe"]
       - id: check-json
-        exclude: "\\.vscode/launch\\.json"
+        exclude: "\\.vscode/launch\\.json|\\.zed/settings\\.json"
       - id: check-added-large-files
         args: ["--enforce-all"]
       - id: check-merge-conflict
