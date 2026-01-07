@@ -95,7 +95,7 @@ importers:
         version: 19.2.3(@types/react@19.2.7)
       react-router-devtools:
         specifier: ^6.0.0
-        version: 6.0.2(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(csstype@3.2.3)(react-dom@19.2.3(react@19.2.3))(react-router@7.11.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)(vite@7.3.1(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2))
+        version: 6.1.0(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(csstype@3.2.3)(react-dom@19.2.3(react@19.2.3))(react-router@7.11.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)(vite@7.3.1(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2))
       tailwindcss:
         specifier: ^4.1.11
         version: 4.1.18
@@ -1673,8 +1673,8 @@ packages:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
 
-  framer-motion@12.24.7:
-    resolution: {integrity: sha512-EolFLm7NdEMhWO/VTMZ0LlR4fLHGDiJItTx3i8dlyQooOOBoYAaysK4paGD4PrwqnoDdeDOS+TxnSBIAnNHs3w==}
+  framer-motion@12.24.10:
+    resolution: {integrity: sha512-8yoyMkCn2RmV9UB9mfmMuzKyenQe909hRQRl0yGBhbZJjZZ9bSU87NIGAruqCXCuTNCA0qHw2LWLrcXLL9GF6A==}
     peerDependencies:
       '@emotion/is-prop-valid': '*'
       react: ^18.0.0 || ^19.0.0
@@ -1936,11 +1936,11 @@ packages:
     resolution: {integrity: sha512-223dMRJtI/l25dJKWpgij2cMtywuG/WiUKXdvwfbhGKBhy1puASqXwFzmWZ7+K73vUPoR7SS2Qz2cI/g9MKw0A==}
     engines: {node: '>= 0.8.0'}
 
-  motion-dom@12.24.3:
-    resolution: {integrity: sha512-ZjMZCwhTglim0LM64kC1iFdm4o+2P9IKk3rl/Nb4RKsb5p4O9HJ1C2LWZXOFdsRtp6twpqWRXaFKOduF30ntow==}
+  motion-dom@12.24.10:
+    resolution: {integrity: sha512-H3HStYaJ6wANoZVNT0ZmYZHGvrpvi9pKJRzsgNEHkdITR4Qd9FFu2e9sH4e2Phr4tKCmyyloex6SOSmv0Tlq+g==}
 
-  motion-utils@12.23.28:
-    resolution: {integrity: sha512-0W6cWd5Okoyf8jmessVK3spOmbyE0yTdNKujHctHH9XdAE4QDuZ1/LjSXC68rrhsJU+TkzXURC5OdSWh9ibOwQ==}
+  motion-utils@12.24.10:
+    resolution: {integrity: sha512-x5TFgkCIP4pPsRLpKoI86jv/q8t8FQOiM/0E8QKBzfMozWHfkKap2gA1hOki+B5g3IsBNpxbUnfOum1+dgvYww==}
 
   ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
@@ -2117,8 +2117,8 @@ packages:
       '@types/react':
         optional: true
 
-  react-router-devtools@6.0.2:
-    resolution: {integrity: sha512-Ifc8WPbpYuSTDjrZo93apPG36sk1VnEaHhJ0xgU9fnYfUdvjWI0Lax41hw7/tsHSKIkWZHAJO1/3/Q6GGcB3Zg==}
+  react-router-devtools@6.1.0:
+    resolution: {integrity: sha512-8roDJlN4pf+5K1d9H6kAc/GkeKJlPjFvGHPgu7YoBPS0+1r8WTP12SHFF6kB43o1fiYiFKx9uStCi/amHAFs/w==}
     peerDependencies:
       '@types/react': '>=17'
       '@types/react-dom': '>=17'
@@ -3973,10 +3973,10 @@ snapshots:
 
   forwarded@0.2.0: {}
 
-  framer-motion@12.24.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+  framer-motion@12.24.10(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
-      motion-dom: 12.24.3
-      motion-utils: 12.23.28
+      motion-dom: 12.24.10
+      motion-utils: 12.24.10
       tslib: 2.8.1
     optionalDependencies:
       react: 19.2.3
@@ -4182,11 +4182,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  motion-dom@12.24.3:
+  motion-dom@12.24.10:
     dependencies:
-      motion-utils: 12.23.28
+      motion-utils: 12.24.10
 
-  motion-utils@12.23.28: {}
+  motion-utils@12.24.10: {}
 
   ms@2.0.0: {}
 
@@ -4352,7 +4352,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.7
 
-  react-router-devtools@6.0.2(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(csstype@3.2.3)(react-dom@19.2.3(react@19.2.3))(react-router@7.11.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)(vite@7.3.1(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)):
+  react-router-devtools@6.1.0(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(csstype@3.2.3)(react-dom@19.2.3(react@19.2.3))(react-router@7.11.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)(vite@7.3.1(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)):
     dependencies:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
@@ -4367,7 +4367,7 @@ snapshots:
       '@types/react-dom': 19.2.3(@types/react@19.2.7)
       chalk: 5.6.2
       clsx: 2.1.1
-      framer-motion: 12.24.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      framer-motion: 12.24.10(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       goober: 2.1.18(csstype@3.2.3)
       react: 19.2.3
       react-d3-tree: 3.6.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
