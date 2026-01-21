@@ -77,7 +77,7 @@ importers:
         version: 2.3.11
       '@hey-api/openapi-ts':
         specifier: ^0.90.0
-        version: 0.90.4(typescript@5.9.3)
+        version: 0.90.6(typescript@5.9.3)
       '@react-router/dev':
         specifier: ^7.6.3
         version: 7.12.0(@react-router/serve@7.12.0(react-router@7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(typescript@5.9.3))(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.30.2))
@@ -490,8 +490,8 @@ packages:
     resolution: {integrity: sha512-oS+5yAdwnK20lSeFO1d53Ku+yaGCsY8PcrmSq2GtSs3bsBfRnHAbpPKSVzQcaxAOrzj5NB+f34WhZglVrNayBA==}
     engines: {node: '>= 16'}
 
-  '@hey-api/openapi-ts@0.90.4':
-    resolution: {integrity: sha512-9l++kjcb0ui4JqPlueZ6OZ9zKn6eK/8//Z2jHcIXb5MRwDRgubOOSpTU5llEv3uvWfT10VzcMp99dySWq0AASw==}
+  '@hey-api/openapi-ts@0.90.6':
+    resolution: {integrity: sha512-ByE2BUkiV5bEA6hKGpcB1ZzHG2ybzQ/3qX/1xMSy5ylkN6uVlp53+OCoh6L3/53bSyKXD7TmfAF0m6q8cU9zkA==}
     engines: {node: '>=20.19.0'}
     hasBin: true
     peerDependencies:
@@ -1406,6 +1406,9 @@ packages:
   citty@0.1.6:
     resolution: {integrity: sha512-tskPPKEs8D2KPafUypv2gxwJP8h/OaJmC82QQGGDQcHvXX43xF2VDACcJVmZ0EuSxkpO9Kc4MlrA3q0+FG58AQ==}
 
+  citty@0.2.0:
+    resolution: {integrity: sha512-8csy5IBFI2ex2hTVpaHN2j+LNE199AgiI7y4dMintrr8i0lQiFn+0AWMZrWdHKIgMOer65f8IThysYhoReqjWA==}
+
   class-variance-authority@0.7.1:
     resolution: {integrity: sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg==}
 
@@ -1962,9 +1965,9 @@ packages:
   node-releases@2.0.27:
     resolution: {integrity: sha512-nmh3lCkYZ3grZvqcCH+fjmQ7X+H0OeZgP40OierEaAptX4XofMh5kwNbWh7lBduUzCcV/8kZ+NDLCwm2iorIlA==}
 
-  nypm@0.6.2:
-    resolution: {integrity: sha512-7eM+hpOtrKrBDCh7Ypu2lJ9Z7PNZBdi/8AT3AX8xoCj43BBVHD0hPSTEvMtkMpfs8FCqBGhxB+uToIQimA111g==}
-    engines: {node: ^14.16.0 || >=16.10.0}
+  nypm@0.6.4:
+    resolution: {integrity: sha512-1TvCKjZyyklN+JJj2TS3P4uSQEInrM/HkkuSXsEzm1ApPgBffOn8gFguNnZf07r/1X6vlryfIqMUkJKQMzlZiw==}
+    engines: {node: '>=18'}
     hasBin: true
 
   object-assign@4.1.1:
@@ -2778,7 +2781,7 @@ snapshots:
       js-yaml: 4.1.1
       lodash: 4.17.21
 
-  '@hey-api/openapi-ts@0.90.4(typescript@5.9.3)':
+  '@hey-api/openapi-ts@0.90.6(typescript@5.9.3)':
     dependencies:
       '@hey-api/codegen-core': 0.5.2(typescript@5.9.3)
       '@hey-api/json-schema-ref-parser': 1.2.2
@@ -3699,6 +3702,8 @@ snapshots:
     dependencies:
       consola: 3.4.2
 
+  citty@0.2.0: {}
+
   class-variance-authority@0.7.1:
     dependencies:
       clsx: 2.1.1
@@ -4014,7 +4019,7 @@ snapshots:
       consola: 3.4.2
       defu: 6.1.4
       node-fetch-native: 1.6.7
-      nypm: 0.6.2
+      nypm: 0.6.4
       pathe: 2.0.3
 
   globrex@0.1.2: {}
@@ -4195,12 +4200,10 @@ snapshots:
 
   node-releases@2.0.27: {}
 
-  nypm@0.6.2:
+  nypm@0.6.4:
     dependencies:
-      citty: 0.1.6
-      consola: 3.4.2
+      citty: 0.2.0
       pathe: 2.0.3
-      pkg-types: 2.3.0
       tinyexec: 1.0.2
 
   object-assign@4.1.1: {}
