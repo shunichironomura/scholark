@@ -59,7 +59,7 @@ class TagsPublic(SQLModel):
 class ConferenceMilestoneBase(SQLModel):
     name: str
     date: date_
-    time: time_ | None = Field(default=None, sa_type=sa.Time(timezone=True))  # type: ignore[call-overload]
+    time: time_ | None = Field(default=None, sa_type=sa.Time(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
 
     @computed_field
     def as_datetime(self) -> datetime:
@@ -106,8 +106,8 @@ class ConferenceUpdate(ConferenceBase):
 
 class Conference(ConferenceBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload]
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload]
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
     created_by_user_id: uuid.UUID | None = Field(foreign_key="user.id", ondelete="SET NULL")
 
     tags: list[Tag] = Relationship(back_populates="conferences", link_model=TagConferenceLink)
@@ -150,8 +150,8 @@ class UserRegister(SQLModel):
 
 class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload]
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload]
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
     disabled: bool = Field(default=False)
     role: str = Field(default="member")
 
