@@ -32,6 +32,9 @@ jobs:
           working-directory: frontend
           cache: true
 
+      - name: Generate React Router types
+        run: vp exec react-router typegen
+
       - name: Run Vite+ check
         run: vp check
 
