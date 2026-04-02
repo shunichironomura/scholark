@@ -13,7 +13,7 @@
     "oxfmt": {
       "initialization_options": {
         "settings": {
-          "configPath": "./vite.config.ts",
+          "configPath": "./frontend/vite.config.ts",
           "run": "onSave"
         }
       }
