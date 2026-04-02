@@ -74,7 +74,7 @@ typecheck:
 [group('frontend')]
 [working-directory: 'frontend']
 lint-frontend:
-  pnpm exec biome check
+  vp check
 
 lint-markdown:
   pnpm dlx markdownlint-cli .

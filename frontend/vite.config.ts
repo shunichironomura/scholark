@@ -5,6 +5,9 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   fmt: {},
-  lint: {"options":{"typeAware":true,"typeCheck":true}},
+  lint: {
+    plugins: ["react", "jsx-a11y"],
+    options: { typeAware: true, typeCheck: true },
+  },
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
 });

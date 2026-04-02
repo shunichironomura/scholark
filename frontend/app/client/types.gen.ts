@@ -4,1016 +4,1037 @@
  * Body_login-login_access_token
  */
 export type BodyLoginLoginAccessToken = {
-    /**
-     * Grant Type
-     */
-    grant_type?: string | null;
-    /**
-     * Username
-     */
-    username: string;
-    /**
-     * Password
-     */
-    password: string;
-    /**
-     * Scope
-     */
-    scope?: string;
-    /**
-     * Client Id
-     */
-    client_id?: string | null;
-    /**
-     * Client Secret
-     */
-    client_secret?: string | null;
+  /**
+   * Grant Type
+   */
+  grant_type?: string | null;
+  /**
+   * Username
+   */
+  username: string;
+  /**
+   * Password
+   */
+  password: string;
+  /**
+   * Scope
+   */
+  scope?: string;
+  /**
+   * Client Id
+   */
+  client_id?: string | null;
+  /**
+   * Client Secret
+   */
+  client_secret?: string | null;
 };
 
 /**
  * ConferenceCreate
  */
 export type ConferenceCreate = {
-    /**
-     * Name
-     */
-    name: string;
-    /**
-     * Start Date
-     */
-    start_date?: string | null;
-    /**
-     * End Date
-     */
-    end_date?: string | null;
-    /**
-     * Location
-     */
-    location?: string | null;
-    /**
-     * Website Url
-     */
-    website_url?: string | null;
-    /**
-     * Milestones
-     */
-    milestones?: Array<ConferenceMilestoneCreate> | null;
+  /**
+   * Name
+   */
+  name: string;
+  /**
+   * Start Date
+   */
+  start_date?: string | null;
+  /**
+   * End Date
+   */
+  end_date?: string | null;
+  /**
+   * Location
+   */
+  location?: string | null;
+  /**
+   * Website Url
+   */
+  website_url?: string | null;
+  /**
+   * Milestones
+   */
+  milestones?: Array<ConferenceMilestoneCreate> | null;
 };
 
 /**
  * ConferenceMilestoneCreate
  */
 export type ConferenceMilestoneCreate = {
-    /**
-     * Name
-     */
-    name: string;
-    /**
-     * Date
-     */
-    date: string;
-    /**
-     * Time
-     */
-    time?: string | null;
+  /**
+   * Name
+   */
+  name: string;
+  /**
+   * Date
+   */
+  date: string;
+  /**
+   * Time
+   */
+  time?: string | null;
 };
 
 /**
  * ConferenceMilestonePublic
  */
 export type ConferenceMilestonePublic = {
-    /**
-     * Name
-     */
-    name: string;
-    /**
-     * Date
-     */
-    date: string;
-    /**
-     * Time
-     */
-    time?: string | null;
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Conference Id
-     */
-    conference_id: string;
-    /**
-     * As Datetime
-     * Convert date and time to datetime.
-     *
-     * If time is not provided, it defaults to midnight (00:00).
-     */
-    readonly as_datetime: string;
+  /**
+   * Name
+   */
+  name: string;
+  /**
+   * Date
+   */
+  date: string;
+  /**
+   * Time
+   */
+  time?: string | null;
+  /**
+   * Id
+   */
+  id: string;
+  /**
+   * Conference Id
+   */
+  conference_id: string;
+  /**
+   * As Datetime
+   * Convert date and time to datetime.
+   *
+   * If time is not provided, it defaults to midnight (00:00).
+   */
+  readonly as_datetime: string;
 };
 
 /**
  * ConferencePublic
  */
 export type ConferencePublic = {
-    /**
-     * Name
-     */
-    name: string;
-    /**
-     * Start Date
-     */
-    start_date?: string | null;
-    /**
-     * End Date
-     */
-    end_date?: string | null;
-    /**
-     * Location
-     */
-    location?: string | null;
-    /**
-     * Website Url
-     */
-    website_url?: string | null;
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Updated At
-     */
-    updated_at: string;
-    /**
-     * Created By User Id
-     */
-    created_by_user_id: string;
-    /**
-     * Tags
-     */
-    tags?: Array<TagPublic>;
-    /**
-     * Milestones
-     */
-    milestones: Array<ConferenceMilestonePublic>;
+  /**
+   * Name
+   */
+  name: string;
+  /**
+   * Start Date
+   */
+  start_date?: string | null;
+  /**
+   * End Date
+   */
+  end_date?: string | null;
+  /**
+   * Location
+   */
+  location?: string | null;
+  /**
+   * Website Url
+   */
+  website_url?: string | null;
+  /**
+   * Id
+   */
+  id: string;
+  /**
+   * Created At
+   */
+  created_at: string;
+  /**
+   * Updated At
+   */
+  updated_at: string;
+  /**
+   * Created By User Id
+   */
+  created_by_user_id: string;
+  /**
+   * Tags
+   */
+  tags?: Array<TagPublic>;
+  /**
+   * Milestones
+   */
+  milestones: Array<ConferenceMilestonePublic>;
 };
 
 /**
  * ConferenceUpdate
  */
 export type ConferenceUpdate = {
-    /**
-     * Name
-     */
-    name: string;
-    /**
-     * Start Date
-     */
-    start_date?: string | null;
-    /**
-     * End Date
-     */
-    end_date?: string | null;
-    /**
-     * Location
-     */
-    location?: string | null;
-    /**
-     * Website Url
-     */
-    website_url?: string | null;
-    /**
-     * Milestones
-     */
-    milestones?: Array<ConferenceMilestoneCreate> | null;
+  /**
+   * Name
+   */
+  name: string;
+  /**
+   * Start Date
+   */
+  start_date?: string | null;
+  /**
+   * End Date
+   */
+  end_date?: string | null;
+  /**
+   * Location
+   */
+  location?: string | null;
+  /**
+   * Website Url
+   */
+  website_url?: string | null;
+  /**
+   * Milestones
+   */
+  milestones?: Array<ConferenceMilestoneCreate> | null;
 };
 
 /**
  * ConferencesPublic
  */
 export type ConferencesPublic = {
-    /**
-     * Data
-     */
-    data: Array<ConferencePublic>;
-    /**
-     * Count
-     */
-    count: number;
+  /**
+   * Data
+   */
+  data: Array<ConferencePublic>;
+  /**
+   * Count
+   */
+  count: number;
 };
 
 /**
  * HTTPValidationError
  */
 export type HttpValidationError = {
-    /**
-     * Detail
-     */
-    detail?: Array<ValidationError>;
+  /**
+   * Detail
+   */
+  detail?: Array<ValidationError>;
 };
 
 /**
  * Message
  */
 export type Message = {
-    /**
-     * Message
-     */
-    message: string;
+  /**
+   * Message
+   */
+  message: string;
 };
 
 /**
  * TagCreate
  */
 export type TagCreate = {
-    /**
-     * Name
-     */
-    name: string;
-    /**
-     * Color
-     */
-    color: string;
+  /**
+   * Name
+   */
+  name: string;
+  /**
+   * Color
+   */
+  color: string;
 };
 
 /**
  * TagPublic
  */
 export type TagPublic = {
-    /**
-     * Name
-     */
-    name: string;
-    /**
-     * Color
-     */
-    color: string;
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * User Id
-     */
-    user_id: string;
+  /**
+   * Name
+   */
+  name: string;
+  /**
+   * Color
+   */
+  color: string;
+  /**
+   * Id
+   */
+  id: string;
+  /**
+   * User Id
+   */
+  user_id: string;
 };
 
 /**
  * TagUpdate
  */
 export type TagUpdate = {
-    /**
-     * Name
-     */
-    name?: string | null;
-    /**
-     * Color
-     */
-    color?: string | null;
+  /**
+   * Name
+   */
+  name?: string | null;
+  /**
+   * Color
+   */
+  color?: string | null;
 };
 
 /**
  * TagsPublic
  */
 export type TagsPublic = {
-    /**
-     * Data
-     */
-    data: Array<TagPublic>;
-    /**
-     * Count
-     */
-    count: number;
+  /**
+   * Data
+   */
+  data: Array<TagPublic>;
+  /**
+   * Count
+   */
+  count: number;
 };
 
 /**
  * Token
  */
 export type Token = {
-    /**
-     * Access Token
-     */
-    access_token: string;
-    /**
-     * Token Type
-     */
-    token_type?: string;
+  /**
+   * Access Token
+   */
+  access_token: string;
+  /**
+   * Token Type
+   */
+  token_type?: string;
 };
 
 /**
  * UserCreate
  */
 export type UserCreate = {
-    /**
-     * Username
-     */
-    username: string;
-    /**
-     * Is Superuser
-     */
-    is_superuser?: boolean;
-    /**
-     * Password
-     */
-    password?: string | null;
+  /**
+   * Username
+   */
+  username: string;
+  /**
+   * Is Superuser
+   */
+  is_superuser?: boolean;
+  /**
+   * Password
+   */
+  password?: string | null;
 };
 
 /**
  * UserPublic
  */
 export type UserPublic = {
-    /**
-     * Username
-     */
-    username: string;
-    /**
-     * Is Superuser
-     */
-    is_superuser?: boolean;
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Updated At
-     */
-    updated_at: string;
+  /**
+   * Username
+   */
+  username: string;
+  /**
+   * Is Superuser
+   */
+  is_superuser?: boolean;
+  /**
+   * Id
+   */
+  id: string;
+  /**
+   * Created At
+   */
+  created_at: string;
+  /**
+   * Updated At
+   */
+  updated_at: string;
 };
 
 /**
  * UserRegister
  */
 export type UserRegister = {
-    /**
-     * Username
-     */
-    username: string;
-    /**
-     * Password
-     */
-    password: string;
+  /**
+   * Username
+   */
+  username: string;
+  /**
+   * Password
+   */
+  password: string;
 };
 
 /**
  * UsersPublic
  */
 export type UsersPublic = {
-    /**
-     * Data
-     */
-    data: Array<UserPublic>;
-    /**
-     * Count
-     */
-    count: number;
+  /**
+   * Data
+   */
+  data: Array<UserPublic>;
+  /**
+   * Count
+   */
+  count: number;
 };
 
 /**
  * ValidationError
  */
 export type ValidationError = {
-    /**
-     * Location
-     */
-    loc: Array<string | number>;
-    /**
-     * Message
-     */
-    msg: string;
-    /**
-     * Error Type
-     */
-    type: string;
+  /**
+   * Location
+   */
+  loc: Array<string | number>;
+  /**
+   * Message
+   */
+  msg: string;
+  /**
+   * Error Type
+   */
+  type: string;
 };
 
 export type ConferencesReadConferencesData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Skip
-         */
-        skip?: number;
-        /**
-         * Limit
-         */
-        limit?: number;
-    };
-    url: '/api/v1/conferences/';
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Skip
+     */
+    skip?: number;
+    /**
+     * Limit
+     */
+    limit?: number;
+  };
+  url: "/api/v1/conferences/";
 };
 
 export type ConferencesReadConferencesErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type ConferencesReadConferencesError = ConferencesReadConferencesErrors[keyof ConferencesReadConferencesErrors];
+export type ConferencesReadConferencesError =
+  ConferencesReadConferencesErrors[keyof ConferencesReadConferencesErrors];
 
 export type ConferencesReadConferencesResponses = {
-    /**
-     * Successful Response
-     */
-    200: ConferencesPublic;
+  /**
+   * Successful Response
+   */
+  200: ConferencesPublic;
 };
 
-export type ConferencesReadConferencesResponse = ConferencesReadConferencesResponses[keyof ConferencesReadConferencesResponses];
+export type ConferencesReadConferencesResponse =
+  ConferencesReadConferencesResponses[keyof ConferencesReadConferencesResponses];
 
 export type ConferencesCreateConferenceData = {
-    body: ConferenceCreate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/conferences/';
+  body: ConferenceCreate;
+  path?: never;
+  query?: never;
+  url: "/api/v1/conferences/";
 };
 
 export type ConferencesCreateConferenceErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type ConferencesCreateConferenceError = ConferencesCreateConferenceErrors[keyof ConferencesCreateConferenceErrors];
+export type ConferencesCreateConferenceError =
+  ConferencesCreateConferenceErrors[keyof ConferencesCreateConferenceErrors];
 
 export type ConferencesCreateConferenceResponses = {
-    /**
-     * Successful Response
-     */
-    200: ConferencePublic;
+  /**
+   * Successful Response
+   */
+  200: ConferencePublic;
 };
 
-export type ConferencesCreateConferenceResponse = ConferencesCreateConferenceResponses[keyof ConferencesCreateConferenceResponses];
+export type ConferencesCreateConferenceResponse =
+  ConferencesCreateConferenceResponses[keyof ConferencesCreateConferenceResponses];
 
 export type ConferencesDeleteConferenceData = {
-    body?: never;
-    path: {
-        /**
-         * Conference Id
-         */
-        conference_id: string;
-    };
-    query?: never;
-    url: '/api/v1/conferences/{conference_id}';
+  body?: never;
+  path: {
+    /**
+     * Conference Id
+     */
+    conference_id: string;
+  };
+  query?: never;
+  url: "/api/v1/conferences/{conference_id}";
 };
 
 export type ConferencesDeleteConferenceErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type ConferencesDeleteConferenceError = ConferencesDeleteConferenceErrors[keyof ConferencesDeleteConferenceErrors];
+export type ConferencesDeleteConferenceError =
+  ConferencesDeleteConferenceErrors[keyof ConferencesDeleteConferenceErrors];
 
 export type ConferencesDeleteConferenceResponses = {
-    /**
-     * Successful Response
-     */
-    200: ConferencePublic;
+  /**
+   * Successful Response
+   */
+  200: ConferencePublic;
 };
 
-export type ConferencesDeleteConferenceResponse = ConferencesDeleteConferenceResponses[keyof ConferencesDeleteConferenceResponses];
+export type ConferencesDeleteConferenceResponse =
+  ConferencesDeleteConferenceResponses[keyof ConferencesDeleteConferenceResponses];
 
 export type ConferencesReadConferenceData = {
-    body?: never;
-    path: {
-        /**
-         * Conference Id
-         */
-        conference_id: string;
-    };
-    query?: never;
-    url: '/api/v1/conferences/{conference_id}';
+  body?: never;
+  path: {
+    /**
+     * Conference Id
+     */
+    conference_id: string;
+  };
+  query?: never;
+  url: "/api/v1/conferences/{conference_id}";
 };
 
 export type ConferencesReadConferenceErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type ConferencesReadConferenceError = ConferencesReadConferenceErrors[keyof ConferencesReadConferenceErrors];
+export type ConferencesReadConferenceError =
+  ConferencesReadConferenceErrors[keyof ConferencesReadConferenceErrors];
 
 export type ConferencesReadConferenceResponses = {
-    /**
-     * Successful Response
-     */
-    200: ConferencePublic;
+  /**
+   * Successful Response
+   */
+  200: ConferencePublic;
 };
 
-export type ConferencesReadConferenceResponse = ConferencesReadConferenceResponses[keyof ConferencesReadConferenceResponses];
+export type ConferencesReadConferenceResponse =
+  ConferencesReadConferenceResponses[keyof ConferencesReadConferenceResponses];
 
 export type ConferencesUpdateConferenceData = {
-    body: ConferenceUpdate;
-    path: {
-        /**
-         * Conference Id
-         */
-        conference_id: string;
-    };
-    query?: never;
-    url: '/api/v1/conferences/{conference_id}';
+  body: ConferenceUpdate;
+  path: {
+    /**
+     * Conference Id
+     */
+    conference_id: string;
+  };
+  query?: never;
+  url: "/api/v1/conferences/{conference_id}";
 };
 
 export type ConferencesUpdateConferenceErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type ConferencesUpdateConferenceError = ConferencesUpdateConferenceErrors[keyof ConferencesUpdateConferenceErrors];
+export type ConferencesUpdateConferenceError =
+  ConferencesUpdateConferenceErrors[keyof ConferencesUpdateConferenceErrors];
 
 export type ConferencesUpdateConferenceResponses = {
-    /**
-     * Successful Response
-     */
-    200: ConferencePublic;
+  /**
+   * Successful Response
+   */
+  200: ConferencePublic;
 };
 
-export type ConferencesUpdateConferenceResponse = ConferencesUpdateConferenceResponses[keyof ConferencesUpdateConferenceResponses];
+export type ConferencesUpdateConferenceResponse =
+  ConferencesUpdateConferenceResponses[keyof ConferencesUpdateConferenceResponses];
 
 export type ConferencesAddTagToConferenceData = {
-    body?: never;
-    path: {
-        /**
-         * Conference Id
-         */
-        conference_id: string;
-    };
-    query: {
-        /**
-         * Tag Id
-         */
-        tag_id: string;
-    };
-    url: '/api/v1/conferences/{conference_id}/tags';
+  body?: never;
+  path: {
+    /**
+     * Conference Id
+     */
+    conference_id: string;
+  };
+  query: {
+    /**
+     * Tag Id
+     */
+    tag_id: string;
+  };
+  url: "/api/v1/conferences/{conference_id}/tags";
 };
 
 export type ConferencesAddTagToConferenceErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type ConferencesAddTagToConferenceError = ConferencesAddTagToConferenceErrors[keyof ConferencesAddTagToConferenceErrors];
+export type ConferencesAddTagToConferenceError =
+  ConferencesAddTagToConferenceErrors[keyof ConferencesAddTagToConferenceErrors];
 
 export type ConferencesAddTagToConferenceResponses = {
-    /**
-     * Successful Response
-     */
-    200: ConferencePublic;
+  /**
+   * Successful Response
+   */
+  200: ConferencePublic;
 };
 
-export type ConferencesAddTagToConferenceResponse = ConferencesAddTagToConferenceResponses[keyof ConferencesAddTagToConferenceResponses];
+export type ConferencesAddTagToConferenceResponse =
+  ConferencesAddTagToConferenceResponses[keyof ConferencesAddTagToConferenceResponses];
 
 export type ConferencesUpdateTagsForConferenceData = {
+  /**
+   * Tags
+   */
+  body: Array<string>;
+  path: {
     /**
-     * Tags
+     * Conference Id
      */
-    body: Array<string>;
-    path: {
-        /**
-         * Conference Id
-         */
-        conference_id: string;
-    };
-    query?: never;
-    url: '/api/v1/conferences/{conference_id}/tags';
+    conference_id: string;
+  };
+  query?: never;
+  url: "/api/v1/conferences/{conference_id}/tags";
 };
 
 export type ConferencesUpdateTagsForConferenceErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type ConferencesUpdateTagsForConferenceError = ConferencesUpdateTagsForConferenceErrors[keyof ConferencesUpdateTagsForConferenceErrors];
+export type ConferencesUpdateTagsForConferenceError =
+  ConferencesUpdateTagsForConferenceErrors[keyof ConferencesUpdateTagsForConferenceErrors];
 
 export type ConferencesUpdateTagsForConferenceResponses = {
-    /**
-     * Successful Response
-     */
-    200: ConferencePublic;
+  /**
+   * Successful Response
+   */
+  200: ConferencePublic;
 };
 
-export type ConferencesUpdateTagsForConferenceResponse = ConferencesUpdateTagsForConferenceResponses[keyof ConferencesUpdateTagsForConferenceResponses];
+export type ConferencesUpdateTagsForConferenceResponse =
+  ConferencesUpdateTagsForConferenceResponses[keyof ConferencesUpdateTagsForConferenceResponses];
 
 export type ConferencesRemoveTagFromConferenceData = {
-    body?: never;
-    path: {
-        /**
-         * Conference Id
-         */
-        conference_id: string;
-        /**
-         * Tag Id
-         */
-        tag_id: string;
-    };
-    query?: never;
-    url: '/api/v1/conferences/{conference_id}/tags/{tag_id}';
+  body?: never;
+  path: {
+    /**
+     * Conference Id
+     */
+    conference_id: string;
+    /**
+     * Tag Id
+     */
+    tag_id: string;
+  };
+  query?: never;
+  url: "/api/v1/conferences/{conference_id}/tags/{tag_id}";
 };
 
 export type ConferencesRemoveTagFromConferenceErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type ConferencesRemoveTagFromConferenceError = ConferencesRemoveTagFromConferenceErrors[keyof ConferencesRemoveTagFromConferenceErrors];
+export type ConferencesRemoveTagFromConferenceError =
+  ConferencesRemoveTagFromConferenceErrors[keyof ConferencesRemoveTagFromConferenceErrors];
 
 export type ConferencesRemoveTagFromConferenceResponses = {
-    /**
-     * Successful Response
-     */
-    200: ConferencePublic;
+  /**
+   * Successful Response
+   */
+  200: ConferencePublic;
 };
 
-export type ConferencesRemoveTagFromConferenceResponse = ConferencesRemoveTagFromConferenceResponses[keyof ConferencesRemoveTagFromConferenceResponses];
+export type ConferencesRemoveTagFromConferenceResponse =
+  ConferencesRemoveTagFromConferenceResponses[keyof ConferencesRemoveTagFromConferenceResponses];
 
 export type LoginLoginAccessTokenData = {
-    body: BodyLoginLoginAccessToken;
-    path?: never;
-    query?: never;
-    url: '/api/v1/login/access-token';
+  body: BodyLoginLoginAccessToken;
+  path?: never;
+  query?: never;
+  url: "/api/v1/login/access-token";
 };
 
 export type LoginLoginAccessTokenErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type LoginLoginAccessTokenError = LoginLoginAccessTokenErrors[keyof LoginLoginAccessTokenErrors];
+export type LoginLoginAccessTokenError =
+  LoginLoginAccessTokenErrors[keyof LoginLoginAccessTokenErrors];
 
 export type LoginLoginAccessTokenResponses = {
-    /**
-     * Successful Response
-     */
-    200: Token;
+  /**
+   * Successful Response
+   */
+  200: Token;
 };
 
-export type LoginLoginAccessTokenResponse = LoginLoginAccessTokenResponses[keyof LoginLoginAccessTokenResponses];
+export type LoginLoginAccessTokenResponse =
+  LoginLoginAccessTokenResponses[keyof LoginLoginAccessTokenResponses];
 
 export type LoginTestTokenData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/login/test-token';
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/v1/login/test-token";
 };
 
 export type LoginTestTokenResponses = {
-    /**
-     * Successful Response
-     */
-    200: UserPublic;
+  /**
+   * Successful Response
+   */
+  200: UserPublic;
 };
 
 export type LoginTestTokenResponse = LoginTestTokenResponses[keyof LoginTestTokenResponses];
 
 export type UsersReadUsersData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Skip
-         */
-        skip?: number;
-        /**
-         * Limit
-         */
-        limit?: number;
-    };
-    url: '/api/v1/users/';
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Skip
+     */
+    skip?: number;
+    /**
+     * Limit
+     */
+    limit?: number;
+  };
+  url: "/api/v1/users/";
 };
 
 export type UsersReadUsersErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
 export type UsersReadUsersError = UsersReadUsersErrors[keyof UsersReadUsersErrors];
 
 export type UsersReadUsersResponses = {
-    /**
-     * Successful Response
-     */
-    200: UsersPublic;
+  /**
+   * Successful Response
+   */
+  200: UsersPublic;
 };
 
 export type UsersReadUsersResponse = UsersReadUsersResponses[keyof UsersReadUsersResponses];
 
 export type UsersCreateUserData = {
-    body: UserCreate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/users/';
+  body: UserCreate;
+  path?: never;
+  query?: never;
+  url: "/api/v1/users/";
 };
 
 export type UsersCreateUserErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
 export type UsersCreateUserError = UsersCreateUserErrors[keyof UsersCreateUserErrors];
 
 export type UsersCreateUserResponses = {
-    /**
-     * Successful Response
-     */
-    200: UserPublic;
+  /**
+   * Successful Response
+   */
+  200: UserPublic;
 };
 
 export type UsersCreateUserResponse = UsersCreateUserResponses[keyof UsersCreateUserResponses];
 
 export type UsersReadUserMeData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/users/me';
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/v1/users/me";
 };
 
 export type UsersReadUserMeResponses = {
-    /**
-     * Successful Response
-     */
-    200: UserPublic;
+  /**
+   * Successful Response
+   */
+  200: UserPublic;
 };
 
 export type UsersReadUserMeResponse = UsersReadUserMeResponses[keyof UsersReadUserMeResponses];
 
 export type UsersRegisterUserData = {
-    body: UserRegister;
-    path?: never;
-    query?: never;
-    url: '/api/v1/users/signup';
+  body: UserRegister;
+  path?: never;
+  query?: never;
+  url: "/api/v1/users/signup";
 };
 
 export type UsersRegisterUserErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
 export type UsersRegisterUserError = UsersRegisterUserErrors[keyof UsersRegisterUserErrors];
 
 export type UsersRegisterUserResponses = {
-    /**
-     * Successful Response
-     */
-    200: UserPublic;
+  /**
+   * Successful Response
+   */
+  200: UserPublic;
 };
 
-export type UsersRegisterUserResponse = UsersRegisterUserResponses[keyof UsersRegisterUserResponses];
+export type UsersRegisterUserResponse =
+  UsersRegisterUserResponses[keyof UsersRegisterUserResponses];
 
 export type UsersDeleteUserData = {
-    body?: never;
-    path: {
-        /**
-         * User Id
-         */
-        user_id: string;
-    };
-    query?: never;
-    url: '/api/v1/users/{user_id}';
+  body?: never;
+  path: {
+    /**
+     * User Id
+     */
+    user_id: string;
+  };
+  query?: never;
+  url: "/api/v1/users/{user_id}";
 };
 
 export type UsersDeleteUserErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
 export type UsersDeleteUserError = UsersDeleteUserErrors[keyof UsersDeleteUserErrors];
 
 export type UsersDeleteUserResponses = {
-    /**
-     * Successful Response
-     */
-    200: Message;
+  /**
+   * Successful Response
+   */
+  200: Message;
 };
 
 export type UsersDeleteUserResponse = UsersDeleteUserResponses[keyof UsersDeleteUserResponses];
 
 export type UsersReadUserByIdData = {
-    body?: never;
-    path: {
-        /**
-         * User Id
-         */
-        user_id: string;
-    };
-    query?: never;
-    url: '/api/v1/users/{user_id}';
+  body?: never;
+  path: {
+    /**
+     * User Id
+     */
+    user_id: string;
+  };
+  query?: never;
+  url: "/api/v1/users/{user_id}";
 };
 
 export type UsersReadUserByIdErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
 export type UsersReadUserByIdError = UsersReadUserByIdErrors[keyof UsersReadUserByIdErrors];
 
 export type UsersReadUserByIdResponses = {
-    /**
-     * Successful Response
-     */
-    200: UserPublic;
+  /**
+   * Successful Response
+   */
+  200: UserPublic;
 };
 
-export type UsersReadUserByIdResponse = UsersReadUserByIdResponses[keyof UsersReadUserByIdResponses];
+export type UsersReadUserByIdResponse =
+  UsersReadUserByIdResponses[keyof UsersReadUserByIdResponses];
 
 export type TagsReadTagsData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Skip
-         */
-        skip?: number;
-        /**
-         * Limit
-         */
-        limit?: number;
-        /**
-         * All Users
-         */
-        all_users?: boolean;
-    };
-    url: '/api/v1/tags/';
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Skip
+     */
+    skip?: number;
+    /**
+     * Limit
+     */
+    limit?: number;
+    /**
+     * All Users
+     */
+    all_users?: boolean;
+  };
+  url: "/api/v1/tags/";
 };
 
 export type TagsReadTagsErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
 export type TagsReadTagsError = TagsReadTagsErrors[keyof TagsReadTagsErrors];
 
 export type TagsReadTagsResponses = {
-    /**
-     * Successful Response
-     */
-    200: TagsPublic;
+  /**
+   * Successful Response
+   */
+  200: TagsPublic;
 };
 
 export type TagsReadTagsResponse = TagsReadTagsResponses[keyof TagsReadTagsResponses];
 
 export type TagsCreateTagData = {
-    body: TagCreate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/tags/';
+  body: TagCreate;
+  path?: never;
+  query?: never;
+  url: "/api/v1/tags/";
 };
 
 export type TagsCreateTagErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
 export type TagsCreateTagError = TagsCreateTagErrors[keyof TagsCreateTagErrors];
 
 export type TagsCreateTagResponses = {
-    /**
-     * Successful Response
-     */
-    200: TagPublic;
+  /**
+   * Successful Response
+   */
+  200: TagPublic;
 };
 
 export type TagsCreateTagResponse = TagsCreateTagResponses[keyof TagsCreateTagResponses];
 
 export type TagsDeleteTagData = {
-    body?: never;
-    path: {
-        /**
-         * Tag Id
-         */
-        tag_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tags/{tag_id}';
+  body?: never;
+  path: {
+    /**
+     * Tag Id
+     */
+    tag_id: string;
+  };
+  query?: never;
+  url: "/api/v1/tags/{tag_id}";
 };
 
 export type TagsDeleteTagErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
 export type TagsDeleteTagError = TagsDeleteTagErrors[keyof TagsDeleteTagErrors];
 
 export type TagsDeleteTagResponses = {
-    /**
-     * Successful Response
-     */
-    200: TagPublic;
+  /**
+   * Successful Response
+   */
+  200: TagPublic;
 };
 
 export type TagsDeleteTagResponse = TagsDeleteTagResponses[keyof TagsDeleteTagResponses];
 
 export type TagsReadTagData = {
-    body?: never;
-    path: {
-        /**
-         * Tag Id
-         */
-        tag_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tags/{tag_id}';
+  body?: never;
+  path: {
+    /**
+     * Tag Id
+     */
+    tag_id: string;
+  };
+  query?: never;
+  url: "/api/v1/tags/{tag_id}";
 };
 
 export type TagsReadTagErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
 export type TagsReadTagError = TagsReadTagErrors[keyof TagsReadTagErrors];
 
 export type TagsReadTagResponses = {
-    /**
-     * Successful Response
-     */
-    200: TagPublic;
+  /**
+   * Successful Response
+   */
+  200: TagPublic;
 };
 
 export type TagsReadTagResponse = TagsReadTagResponses[keyof TagsReadTagResponses];
 
 export type TagsUpdateTagData = {
-    body: TagUpdate;
-    path: {
-        /**
-         * Tag Id
-         */
-        tag_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tags/{tag_id}';
+  body: TagUpdate;
+  path: {
+    /**
+     * Tag Id
+     */
+    tag_id: string;
+  };
+  query?: never;
+  url: "/api/v1/tags/{tag_id}";
 };
 
 export type TagsUpdateTagErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
 export type TagsUpdateTagError = TagsUpdateTagErrors[keyof TagsUpdateTagErrors];
 
 export type TagsUpdateTagResponses = {
-    /**
-     * Successful Response
-     */
-    200: TagPublic;
+  /**
+   * Successful Response
+   */
+  200: TagPublic;
 };
 
 export type TagsUpdateTagResponse = TagsUpdateTagResponses[keyof TagsUpdateTagResponses];
 
 export type HealthHealthCheckData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/health/';
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/v1/health/";
 };
 
 export type HealthHealthCheckResponses = {
-    /**
-     * Successful Response
-     */
-    200: Message;
+  /**
+   * Successful Response
+   */
+  200: Message;
 };
 
-export type HealthHealthCheckResponse = HealthHealthCheckResponses[keyof HealthHealthCheckResponses];
+export type HealthHealthCheckResponse =
+  HealthHealthCheckResponses[keyof HealthHealthCheckResponses];
 
 export type ClientOptions = {
-    baseUrl: 'http://localhost:8000' | (string & {});
+  baseUrl: "http://localhost:8000" | (string & {});
 };

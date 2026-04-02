@@ -100,7 +100,10 @@ function TagDialog({
   const colourIsValid = HEX_RE.test(color);
 
   return (
-    <Dialog open={openTagId === dialogKey} onOpenChange={(open) => setOpenTagId(open ? dialogKey : null)}>
+    <Dialog
+      open={openTagId === dialogKey}
+      onOpenChange={(open) => setOpenTagId(open ? dialogKey : null)}
+    >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogContent>
@@ -164,7 +167,9 @@ function TagDialog({
                   <Form action={`/tags/${tag.id}/delete`} method="post">
                     <AlertDialogHeader>
                       <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                      <AlertDialogDescription>This will permanently delete the tag.</AlertDialogDescription>
+                      <AlertDialogDescription>
+                        This will permanently delete the tag.
+                      </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>

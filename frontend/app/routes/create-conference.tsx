@@ -89,7 +89,13 @@ export default function CreateConference() {
         </p>
         <div className="space-y-1">
           <Label htmlFor={nameId}>Conference Name</Label>
-          <Input id={nameId} name="name" type="text" placeholder="Conference Name" defaultValue="New Conference" />
+          <Input
+            id={nameId}
+            name="name"
+            type="text"
+            placeholder="Conference Name"
+            defaultValue="New Conference"
+          />
         </div>
         <div className="space-y-1">
           <Label htmlFor={startDateId}>Start Date</Label>
@@ -105,7 +111,12 @@ export default function CreateConference() {
         </div>
         <div className="space-y-1">
           <Label htmlFor={websiteUrlId}>Website URL</Label>
-          <Input id={websiteUrlId} name="website_url" type="url" placeholder="https://example.com" />
+          <Input
+            id={websiteUrlId}
+            name="website_url"
+            type="url"
+            placeholder="https://example.com"
+          />
         </div>
         <div></div>
         {milestones.map((milestoneIndex, index) => (

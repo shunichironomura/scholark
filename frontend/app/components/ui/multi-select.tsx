@@ -150,23 +150,24 @@ function isOptionsExist(groupOption: GroupOption, targetOption: Option[]) {
  *
  * @reference: https://github.com/hsuanyi-chou/shadcn-ui-expansions/issues/34#issuecomment-1949561607
  **/
-const CommandEmpty = forwardRef<HTMLDivElement, React.ComponentProps<typeof CommandPrimitive.Empty>>(
-  ({ className, ...props }, forwardedRef) => {
-    const render = useCommandState((state) => state.filtered.count === 0);
+const CommandEmpty = forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<typeof CommandPrimitive.Empty>
+>(({ className, ...props }, forwardedRef) => {
+  const render = useCommandState((state) => state.filtered.count === 0);
 
-    if (!render) return null;
+  if (!render) return null;
 
-    return (
-      <div
-        ref={forwardedRef}
-        className={cn("py-6 text-center text-sm", className)}
-        cmdk-empty=""
-        role="presentation"
-        {...props}
-      />
-    );
-  },
-);
+  return (
+    <div
+      ref={forwardedRef}
+      className={cn("py-6 text-center text-sm", className)}
+      cmdk-empty=""
+      role="presentation"
+      {...props}
+    />
+  );
+});
 
 CommandEmpty.displayName = "CommandEmpty";
 
@@ -206,7 +207,9 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
     const dropdownRef = React.useRef<HTMLDivElement>(null); // Added this
 
     const [selected, setSelected] = React.useState<Option[]>(value || []);
-    const [options, setOptions] = React.useState<GroupOption>(transToGroupOption(arrayDefaultOptions, groupBy));
+    const [options, setOptions] = React.useState<GroupOption>(
+      transToGroupOption(arrayDefaultOptions, groupBy),
+    );
     const [inputValue, setInputValue] = React.useState("");
     const debouncedSearchTerm = useDebounce(inputValue, delay || 500);
 
@@ -277,7 +280,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
         document.removeEventListener("mousedown", handleClickOutside);
         document.removeEventListener("touchend", handleClickOutside);
       };
-      // biome-ignore lint/correctness/useExhaustiveDependencies: handleClickOutside is stable
+      // oxlint-disable-next-line react/exhaustive-deps -- handleClickOutside is stable
     }, [open, handleClickOutside]);
 
     useEffect(() => {
@@ -407,7 +410,10 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
       return <CommandEmpty>{emptyIndicator}</CommandEmpty>;
     }, [creatable, emptyIndicator, onSearch, options]);
 
-    const selectables = React.useMemo<GroupOption>(() => removePickedOption(options, selected), [options, selected]);
+    const selectables = React.useMemo<GroupOption>(
+      () => removePickedOption(options, selected),
+      [options, selected],
+    );
 
     /** Avoid Creatable Selector freezing or lagging when paste a long string. */
     const commandFilter = React.useCallback(() => {
@@ -433,11 +439,12 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
           commandProps?.onKeyDown?.(e);
         }}
         className={cn("h-auto overflow-visible bg-transparent", commandProps?.className)}
-        shouldFilter={commandProps?.shouldFilter !== undefined ? commandProps.shouldFilter : !onSearch} // When onSearch is provided, we don't want to filter the options. You can still override it.
+        shouldFilter={
+          commandProps?.shouldFilter !== undefined ? commandProps.shouldFilter : !onSearch
+        } // When onSearch is provided, we don't want to filter the options. You can still override it.
         filter={commandFilter()}
       >
-        {/* biome-ignore lint/a11y/noStaticElementInteractions: This div acts as a click target for focus */}
-        {/* biome-ignore lint/a11y/useKeyWithClickEvents: Keyboard interaction handled by CommandInput */}
+        {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- Keyboard interaction handled by CommandInput */}
         <div
           className={cn(
             "min-h-10 rounded-md border border-input text-base ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 md:text-sm",
@@ -585,7 +592,10 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                               setSelected(newOptions);
                               onChange?.(newOptions);
                             }}
-                            className={cn("cursor-pointer", option.disable && "cursor-default text-muted-foreground")}
+                            className={cn(
+                              "cursor-pointer",
+                              option.disable && "cursor-default text-muted-foreground",
+                            )}
                           >
                             <Badge
                               className="rounded-sm px-2 py-1"

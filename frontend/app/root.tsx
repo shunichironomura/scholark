@@ -1,4 +1,11 @@
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import {
+  isRouteErrorResponse,
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -16,7 +23,7 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-// biome-ignore lint/correctness/noEmptyPattern: React Router v7 convention
+// oxlint-disable-next-line eslint/no-empty-pattern -- React Router v7 convention
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Scholark" }];
 }

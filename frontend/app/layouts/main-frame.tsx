@@ -8,7 +8,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-export function MainFrame({ username, children }: { username?: string; children: React.ReactNode }) {
+export function MainFrame({
+  username,
+  children,
+}: {
+  username?: string;
+  children: React.ReactNode;
+}) {
   const navigate = useNavigate();
 
   return (
@@ -67,7 +73,9 @@ export function MainFrame({ username, children }: { username?: string; children:
                     {/* <DropdownMenuItem>
                       Profile
                     </DropdownMenuItem> */}
-                    <DropdownMenuItem onSelect={() => navigate("/settings")}>Settings</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => navigate("/settings")}>
+                      Settings
+                    </DropdownMenuItem>
                     {/* <DropdownMenuSeparator /> */}
                     <DropdownMenuItem onSelect={() => navigate("/logout")}>Logout</DropdownMenuItem>
                   </DropdownMenuContent>
@@ -80,7 +88,9 @@ export function MainFrame({ username, children }: { username?: string; children:
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">{children}</main>
       <footer className="bg-white border-t border-zinc-200 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-zinc-500 text-sm">&copy; {new Date().getFullYear()} Shunichiro Nomura</p>
+          <p className="text-center text-zinc-500 text-sm">
+            &copy; {new Date().getFullYear()} Shunichiro Nomura
+          </p>
         </div>
       </footer>
     </div>

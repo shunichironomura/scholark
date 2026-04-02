@@ -14,7 +14,14 @@ import {
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
 import MultipleSelector from "~/components/ui/multi-select";
 import { pickLabelTextColor } from "~/lib/color";
 import { getSession } from "~/sessions.server";
@@ -177,7 +184,8 @@ export default function Conferences({ loaderData }: Route.ComponentProps) {
                             <AlertDialogHeader>
                               <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                               <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete this conference.
+                                This action cannot be undone. This will permanently delete this
+                                conference.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -225,7 +233,11 @@ export default function Conferences({ loaderData }: Route.ComponentProps) {
                       bgColor: tag.color,
                     }))}
                     placeholder="Select tags"
-                    emptyIndicator={<p className="text-center text-sm leading-1 text-gray-600">No tags available</p>}
+                    emptyIndicator={
+                      <p className="text-center text-sm leading-1 text-gray-600">
+                        No tags available
+                      </p>
+                    }
                   />
                 </div>
               </CardFooter>
