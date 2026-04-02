@@ -52,7 +52,7 @@ start-frontend:
   }
   mkdir ../logs
   rm -f ../logs/frontend.log
-  ^dotenvx run -f {{envfile}} -- pnpm run dev o+e>| tee { save ../logs/frontend.log }
+  ^dotenvx run -f {{envfile}} -- vp run dev o+e>| tee { save ../logs/frontend.log }
 
 # Apply database migrations
 [group('backend')]
@@ -69,12 +69,12 @@ lint-backend:
 [group('frontend')]
 [working-directory: 'frontend']
 typecheck:
-  pnpm run typecheck
+  vp exec react-router typegen && vp exec tsc
 
 [group('frontend')]
 [working-directory: 'frontend']
 lint-frontend:
-  pnpm exec biome check
+  vp check
 
 lint-markdown:
   pnpm dlx markdownlint-cli .

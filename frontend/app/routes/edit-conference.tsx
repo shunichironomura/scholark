@@ -89,11 +89,18 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
         <p className="text-sm text-yellow-600 mb-4">
           Changes made here are shared and will affect all users.
           <br />
-          Only admins can delete a conference. If you want to delete a conference, please contact an admin.
+          Only admins can delete a conference. If you want to delete a conference, please contact an
+          admin.
         </p>
         <div className="space-y-1">
           <Label htmlFor={nameId}>Conference Name</Label>
-          <Input id={nameId} name="name" type="text" defaultValue={conference.name} placeholder="Conference Name" />
+          <Input
+            id={nameId}
+            name="name"
+            type="text"
+            defaultValue={conference.name}
+            placeholder="Conference Name"
+          />
         </div>
         <div className="space-y-1">
           <Label htmlFor={startDateId}>Start Date</Label>
@@ -170,7 +177,12 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
         <div className="flex items-center space-x-2">
           <Button
             type="button"
-            onClick={() => setMilestones([...milestones, milestones.length > 0 ? Math.max(...milestones) + 1 : 0])}
+            onClick={() =>
+              setMilestones([
+                ...milestones,
+                milestones.length > 0 ? Math.max(...milestones) + 1 : 0,
+              ])
+            }
           >
             Add Milestone
           </Button>
