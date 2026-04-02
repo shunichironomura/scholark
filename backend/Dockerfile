@@ -1,4 +1,4 @@
-FROM python:3.14-slim
+FROM python:3.14-slim@sha256:fb83750094b46fd6b8adaa80f66e2302ecbe45d513f6cece637a841e1025b4ca
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -9,7 +9,7 @@ RUN apt-get update \
     g++ \
     && apt-get -y clean && rm -rf /var/lib/apt/lists/*
 
-COPY --from=ghcr.io/astral-sh/uv:0.11.3 /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.11.3@sha256:90bbb3c16635e9627f49eec6539f956d70746c409209041800a0280b93152823 /uv /bin/uv
 RUN curl -fsS https://dotenvx.sh | sh
 
 # Python-related environment variables
