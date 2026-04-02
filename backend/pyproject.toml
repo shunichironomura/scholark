@@ -82,3 +82,6 @@ unfixable = [
   "INP001",
   "ERA001",
 ]
+
+[tool.uv]
+exclude-newer = "7 days"
