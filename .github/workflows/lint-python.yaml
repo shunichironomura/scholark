@@ -33,7 +33,7 @@ jobs:
           version: ${{ env.UV_VERSION }}
 
       - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version-file: backend/.python-version
 
@@ -54,7 +54,7 @@ jobs:
           version: ${{ env.UV_VERSION }}
 
       - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version-file: backend/.python-version
 
@@ -75,7 +75,7 @@ jobs:
           version: ${{ env.UV_VERSION }}
 
       - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version-file: backend/.python-version
 
@@ -96,7 +96,7 @@ jobs:
           version: ${{ env.UV_VERSION }}
 
       - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version-file: backend/.python-version
 
@@ -117,7 +117,7 @@ jobs:
           version: ${{ env.UV_VERSION }}
 
       - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version-file: backend/.python-version
 
