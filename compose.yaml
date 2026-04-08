@@ -64,7 +64,6 @@ services:
     environment:
       - SCHOLARK_SESSION_SECRET=${SCHOLARK_SESSION_SECRET?Variable not set}
 
-
 volumes:
   db-data:
     name: scholark_db-data-${SCHOLARK_ENV?Variable not set}
