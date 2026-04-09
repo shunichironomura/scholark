@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@hey-api/openapi-ts": "0.94.5",
-    "@react-router/dev": "7.13.2",
+    "@react-router/dev": "7.14.0",
     "@tailwindcss/vite": "4.2.2",
     "@types/node": "24.12.0",
     "@types/react": "19.2.14",
