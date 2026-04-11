@@ -1,5 +1,5 @@
 import { Calendar, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
-import { data, Form, redirect, useSubmit } from "react-router";
+import { data, Form, redirect, useSearchParams, useSubmit } from "react-router";
 import type { ConferencePublic } from "~/client";
 import { conferencesReadConferences, tagsReadTags } from "~/client";
 import {
@@ -14,6 +14,7 @@ import {
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
+import { Label } from "~/components/ui/label";
 import {
   Card,
   CardContent,
@@ -23,6 +24,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import MultipleSelector from "~/components/ui/multi-select";
+import { Switch } from "~/components/ui/switch";
 import { pickLabelTextColor } from "~/lib/color";
 import { getSession } from "~/sessions.server";
 import type { Route } from "./+types/conferences";
@@ -52,8 +54,26 @@ export async function loader({ request }: Route.LoaderArgs) {
   return { conferences, tags, isSuperUser };
 }
 
+function isConferencePast(conference: ConferencePublic): boolean {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const refDate = conference.end_date ?? conference.start_date;
+  if (!refDate) return false;
+  const d = new Date(refDate);
+  d.setHours(0, 0, 0, 0);
+  return d < today;
+}
+
 export default function Conferences({ loaderData }: Route.ComponentProps) {
   const { conferences, tags, isSuperUser } = loaderData;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const showPast = searchParams.get("showPast") === "true";
+
+  const filteredConferences = conferences
+    ? conferences.data.filter(
+        (conference: ConferencePublic) => showPast || !isConferencePast(conference),
+      )
+    : [];
 
   const formatDate = (dateString?: string | null) => {
     if (!dateString) return "N/A";
@@ -104,6 +124,23 @@ export default function Conferences({ loaderData }: Route.ComponentProps) {
     <div className="flex flex-col items-center justify-center min-h-svh p-4">
       <div className="flex justify-between items-center mb-6 space-x-3">
         <h1 className="text-3xl font-bold text-zinc-900">Conferences</h1>
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="show-past"
+            checked={showPast}
+            onCheckedChange={(checked) => {
+              setSearchParams((prev) => {
+                if (checked) {
+                  prev.set("showPast", "true");
+                } else {
+                  prev.delete("showPast");
+                }
+                return prev;
+              });
+            }}
+          />
+          <Label htmlFor="show-past">Show past</Label>
+        </div>
         <Form action="new">
           <Button type="submit" variant="outline">
             <Plus /> Add Conference
@@ -111,9 +148,9 @@ export default function Conferences({ loaderData }: Route.ComponentProps) {
         </Form>
       </div>
 
-      {conferences && (
+      {filteredConferences.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {conferences.data.map((conference: ConferencePublic) => (
+          {filteredConferences.map((conference: ConferencePublic) => (
             <Card className="w-[300px] flex flex-col space-y-2" key={conference.id}>
               <CardHeader className="flex-none space-y-1">
                 <CardTitle>{conference.name}</CardTitle>
@@ -244,6 +281,8 @@ export default function Conferences({ loaderData }: Route.ComponentProps) {
             </Card>
           ))}
         </div>
+      ) : (
+        <p className="text-zinc-500">No upcoming conferences.</p>
       )}
     </div>
   );

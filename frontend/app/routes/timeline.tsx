@@ -4,6 +4,7 @@ import { conferencesReadConferences, tagsReadTags } from "~/client";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
 import { Label } from "~/components/ui/label";
+import { Switch } from "~/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -69,6 +70,10 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
   const { conferences, userTags } = loaderData;
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedTagId = searchParams.get("selectedTagId") ?? "_all";
+  const showPast = searchParams.get("showPast") === "true";
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const scheduleItems: ScheduleItem[] = [];
   const formatDate = (date: Date) => {
@@ -128,9 +133,14 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
   // Sort schedule items by date
   scheduleItems.sort((a, b) => a.date.getTime() - b.date.getTime());
 
+  // Filter out past items unless showPast is enabled
+  const visibleItems = showPast
+    ? scheduleItems
+    : scheduleItems.filter((item) => item.date >= today);
+
   // Group schedule items by month
   const groupedScheduleItems: Record<string, ScheduleItem[]> = {};
-  scheduleItems.forEach((item) => {
+  visibleItems.forEach((item) => {
     const yearMonth = getYearMonth(item.date);
     if (!groupedScheduleItems[yearMonth]) {
       groupedScheduleItems[yearMonth] = [];
@@ -166,7 +176,24 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <h1 className="text-3xl font-bold mb-6 text-center">Timeline</h1>
-      <div className="p-4 flex justify-end space-x-2 items-center">
+      <div className="p-4 flex justify-end space-x-4 items-center">
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="show-past"
+            checked={showPast}
+            onCheckedChange={(checked) => {
+              setSearchParams((prev) => {
+                if (checked) {
+                  prev.set("showPast", "true");
+                } else {
+                  prev.delete("showPast");
+                }
+                return prev;
+              });
+            }}
+          />
+          <Label htmlFor="show-past">Show past</Label>
+        </div>
         <Label>Filter by tag</Label>
         <Select
           defaultValue={searchParams.get("selectedTagId") ?? "_all"}
