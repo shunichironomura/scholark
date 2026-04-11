@@ -81,6 +81,16 @@ For GitHub Actions, consider using [`voidzero-dev/setup-vp`](https://github.com/
 - run: vp test
 ```
 
+## shadcn/ui Components
+
+The frontend uses [shadcn/ui](https://ui.shadcn.com/) for UI components. When adding a new component, use the shadcn CLI from the `frontend/` directory:
+
+```bash
+pnpm dlx shadcn@latest add <component>
+```
+
+Do not hand-write shadcn components. Use `--overwrite` if replacing an existing file.
+
 ## Review Checklist for Agents
 
 - [ ] Run `vp install` after pulling remote changes and before getting started.
