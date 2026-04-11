@@ -1,11 +1,19 @@
 [project]
 name = "scholark"
-version = "0.1.0"
+version = "0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 authors = [
   { name = "Shunichiro Nomura", email = "nomura@space.t.u-tokyo.ac.jp" },
+]
+classifiers = [
+  "Private :: Do Not Upload",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Typing :: Typed",
 ]
 dependencies = [
   "alembic>=1.15.2",
