@@ -7,7 +7,7 @@ resolution-markers = [
 ]
 
 [options]
-exclude-newer = "2026-03-30T01:36:32.603368523Z"
+exclude-newer = "2026-04-04T11:25:54.568741Z"
 exclude-newer-span = "P7D"
 
 [[package]]
@@ -1041,7 +1041,7 @@ wheels = [
 
 [[package]]
 name = "scholark"
-version = "0.1.0"
+version = "0"
 source = { editable = "." }
 dependencies = [
     { name = "alembic" },
