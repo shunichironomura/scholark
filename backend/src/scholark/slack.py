@@ -92,10 +92,10 @@ def send_milestone_reminders(session: Session) -> None:
         # Find subscribed users with slack_user_id
         sub_statement = (
             select(User)
-            .join(ConferenceSubscription, ConferenceSubscription.user_id == User.id)  # type: ignore[arg-type]
+            .join(ConferenceSubscription, ConferenceSubscription.user_id == User.id)  # type: ignore[arg-type] # ty: ignore[invalid-argument-type]
             .where(
-                ConferenceSubscription.conference_id == conference.id,  # type: ignore[arg-type]
-                User.slack_user_id.is_not(None),  # type: ignore[union-attr]
+                ConferenceSubscription.conference_id == conference.id,
+                User.slack_user_id.is_not(None),  # type: ignore[union-attr] # ty: ignore[unresolved-attribute]
             )
         )
         users = session.exec(sub_statement).all()
