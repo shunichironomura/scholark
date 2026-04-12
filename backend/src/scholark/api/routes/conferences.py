@@ -53,13 +53,13 @@ def read_conferences(
     return ConferencesPublic(data=conferences_public, count=count)
 
 
-@router.post("/", response_model=ConferencePublic)
+@router.post("/")
 def create_conference(
     *,
     current_user: CurrentUser,
     session: SessionDep,
     conference_in: ConferenceCreate,
-) -> Conference:
+) -> ConferencePublic:
     """Create a new conference."""
     milestones = conference_in.milestones or []
     conference = Conference.model_validate(
@@ -86,13 +86,13 @@ def create_conference(
     return _conference_to_public(conference, current_user.id)
 
 
-@router.get("/{conference_id}", response_model=ConferencePublic)
+@router.get("/{conference_id}")
 def read_conference(
     *,
     current_user: CurrentUser,
     session: SessionDep,
     conference_id: UUID,
-) -> Conference:
+) -> ConferencePublic:
     """Retrieve a conference by ID."""
     statement = select(Conference).where(Conference.id == conference_id)
     conference = session.exec(statement).one()

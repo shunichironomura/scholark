@@ -2,7 +2,7 @@ import logging
 from datetime import UTC, datetime, timedelta
 
 from slack_sdk import WebClient
-from sqlmodel import Session, select
+from sqlmodel import Session, col, select
 
 from scholark.core.config import settings
 from scholark.models import Conference, ConferenceMilestone, ConferenceSubscription, User
@@ -76,7 +76,7 @@ def send_milestone_reminders(session: Session) -> None:
         today + timedelta(days=7): 7,
     }
 
-    statement = select(ConferenceMilestone).where(ConferenceMilestone.date.in_(target_dates.keys()))  # type: ignore[attr-defined]
+    statement = select(ConferenceMilestone).where(col(ConferenceMilestone.date).in_(target_dates.keys()))
     milestones = session.exec(statement).all()
 
     if not milestones:
@@ -92,15 +92,17 @@ def send_milestone_reminders(session: Session) -> None:
         # Find subscribed users with slack_user_id
         sub_statement = (
             select(User)
-            .join(ConferenceSubscription, ConferenceSubscription.user_id == User.id)
+            .join(ConferenceSubscription, ConferenceSubscription.user_id == User.id)  # type: ignore[arg-type]
             .where(
-                ConferenceSubscription.conference_id == conference.id,
+                ConferenceSubscription.conference_id == conference.id,  # type: ignore[arg-type]
                 User.slack_user_id.is_not(None),  # type: ignore[union-attr]
             )
         )
         users = session.exec(sub_statement).all()
 
         for user in users:
+            if not user.slack_user_id:
+                continue
             try:
                 text = (
                     f":alarm_clock: Reminder: *{milestone.name}* for *{conference.name}* "
