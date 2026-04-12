@@ -59,6 +59,10 @@ class Settings(BaseSettings):
     LDAP_SERVER: str | None = None
     LDAP_DN_PATTERN: str | None = None
 
+    # Slack integration (optional)
+    SLACK_BOT_TOKEN: str | None = None
+    SLACK_CHANNEL_ID: str | None = None
+
 
 # Missing argument is intentional to allow environment variables to populate the settings.
 # The required fields will be validated at runtime.

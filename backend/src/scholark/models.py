@@ -13,6 +13,12 @@ class TagConferenceLink(SQLModel, table=True):
     conference_id: uuid.UUID = Field(foreign_key="conference.id", primary_key=True, ondelete="CASCADE")
 
 
+class ConferenceSubscription(SQLModel, table=True):
+    user_id: uuid.UUID = Field(foreign_key="user.id", primary_key=True, ondelete="CASCADE")
+    conference_id: uuid.UUID = Field(foreign_key="conference.id", primary_key=True, ondelete="CASCADE")
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
+
+
 class TagBase(SQLModel):
     name: str
     color: str
@@ -112,6 +118,7 @@ class Conference(ConferenceBase, table=True):
 
     tags: list[Tag] = Relationship(back_populates="conferences", link_model=TagConferenceLink)
     milestones: list[ConferenceMilestone] = Relationship(back_populates="conference", cascade_delete=True)
+    subscribers: list["User"] = Relationship(back_populates="subscribed_conferences", link_model=ConferenceSubscription)
 
 
 class ConferencePublic(ConferenceBase):
@@ -122,6 +129,7 @@ class ConferencePublic(ConferenceBase):
 
     tags: list[TagPublic] = Field(default=None)
     milestones: list[ConferenceMilestonePublic]
+    is_subscribed: bool = Field(default=False)
 
 
 class ConferencesPublic(SQLModel):
@@ -138,9 +146,8 @@ class UserCreate(UserBase):
     password: str | None = Field(default=None)
 
 
-class UserUpdate(UserBase):
-    # TODO: add password update
-    pass
+class UserUpdateMe(SQLModel):
+    slack_user_id: str | None = Field(default=None)
 
 
 class UserRegister(SQLModel):
@@ -154,14 +161,20 @@ class User(UserBase, table=True):
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
     disabled: bool = Field(default=False)
     role: str = Field(default="member")
+    slack_user_id: str | None = Field(default=None)
 
     tags: list[Tag] = Relationship(back_populates="user", cascade_delete=True)
+    subscribed_conferences: list["Conference"] = Relationship(
+        back_populates="subscribers",
+        link_model=ConferenceSubscription,
+    )
 
 
 class UserPublic(UserBase):
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
+    slack_user_id: str | None = None
 
 
 class UsersPublic(SQLModel):

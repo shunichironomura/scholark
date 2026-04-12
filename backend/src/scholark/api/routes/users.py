@@ -12,6 +12,7 @@ from scholark.models import (
     UserPublic,
     UserRegister,
     UsersPublic,
+    UserUpdateMe,
 )
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -55,6 +56,22 @@ def create_user(*, user_in: UserCreate, auth_provider: AuthProviderDep) -> Any:
 @router.get("/me", response_model=UserPublic)
 def read_user_me(current_user: CurrentUser) -> Any:
     """Get current user."""
+    return current_user
+
+
+@router.put("/me", response_model=UserPublic)
+def update_user_me(
+    *,
+    session: SessionDep,
+    current_user: CurrentUser,
+    user_in: UserUpdateMe,
+) -> Any:
+    """Update the current user's profile."""
+    update_dict = user_in.model_dump(exclude_unset=True)
+    current_user.sqlmodel_update(update_dict)
+    session.add(current_user)
+    session.commit()
+    session.refresh(current_user)
     return current_user
 
 

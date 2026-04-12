@@ -159,6 +159,10 @@ export type ConferencePublic = {
    * Milestones
    */
   milestones: Array<ConferenceMilestonePublic>;
+  /**
+   * Is Subscribed
+   */
+  is_subscribed?: boolean;
 };
 
 /**
@@ -324,6 +328,16 @@ export type UserCreate = {
 /**
  * UserPublic
  */
+/**
+ * UserUpdateMe
+ */
+export type UserUpdateMe = {
+  /**
+   * Slack User Id
+   */
+  slack_user_id?: string | null;
+};
+
 export type UserPublic = {
   /**
    * Username
@@ -345,6 +359,10 @@ export type UserPublic = {
    * Updated At
    */
   updated_at: string;
+  /**
+   * Slack User Id
+   */
+  slack_user_id?: string | null;
 };
 
 /**
@@ -1034,6 +1052,72 @@ export type HealthHealthCheckResponses = {
 
 export type HealthHealthCheckResponse =
   HealthHealthCheckResponses[keyof HealthHealthCheckResponses];
+
+export type ConferencesSubscribeToConferenceData = {
+  body?: never;
+  path: {
+    conference_id: string;
+  };
+  query?: never;
+  url: "/api/v1/conferences/{conference_id}/subscribe";
+};
+
+export type ConferencesSubscribeToConferenceErrors = {
+  422: HttpValidationError;
+};
+
+export type ConferencesSubscribeToConferenceError =
+  ConferencesSubscribeToConferenceErrors[keyof ConferencesSubscribeToConferenceErrors];
+
+export type ConferencesSubscribeToConferenceResponses = {
+  200: Message;
+};
+
+export type ConferencesSubscribeToConferenceResponse =
+  ConferencesSubscribeToConferenceResponses[keyof ConferencesSubscribeToConferenceResponses];
+
+export type ConferencesUnsubscribeFromConferenceData = {
+  body?: never;
+  path: {
+    conference_id: string;
+  };
+  query?: never;
+  url: "/api/v1/conferences/{conference_id}/subscribe";
+};
+
+export type ConferencesUnsubscribeFromConferenceErrors = {
+  422: HttpValidationError;
+};
+
+export type ConferencesUnsubscribeFromConferenceError =
+  ConferencesUnsubscribeFromConferenceErrors[keyof ConferencesUnsubscribeFromConferenceErrors];
+
+export type ConferencesUnsubscribeFromConferenceResponses = {
+  200: Message;
+};
+
+export type ConferencesUnsubscribeFromConferenceResponse =
+  ConferencesUnsubscribeFromConferenceResponses[keyof ConferencesUnsubscribeFromConferenceResponses];
+
+export type UsersUpdateUserMeData = {
+  body: UserUpdateMe;
+  path?: never;
+  query?: never;
+  url: "/api/v1/users/me";
+};
+
+export type UsersUpdateUserMeErrors = {
+  422: HttpValidationError;
+};
+
+export type UsersUpdateUserMeError = UsersUpdateUserMeErrors[keyof UsersUpdateUserMeErrors];
+
+export type UsersUpdateUserMeResponses = {
+  200: UserPublic;
+};
+
+export type UsersUpdateUserMeResponse =
+  UsersUpdateUserMeResponses[keyof UsersUpdateUserMeResponses];
 
 export type ClientOptions = {
   baseUrl: "http://localhost:8000" | (string & {});

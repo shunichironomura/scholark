@@ -12,6 +12,7 @@ export default [
     route("conferences/:conferenceId/edit", "routes/edit-conference.tsx"),
     route("conferences/:conferenceId/delete", "routes/delete-conference.tsx"),
     route("conferences/:conferenceId/tags", "routes/conference-tags.tsx"),
+    route("conferences/:conferenceId/subscribe", "routes/conference-subscribe.tsx"),
     route("timeline", "routes/timeline.tsx"),
     route("settings", "routes/settings.tsx"),
     route("tags/new", "routes/create-tag.tsx"),
