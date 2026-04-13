@@ -1,7 +1,7 @@
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { data, Form, redirect, useNavigation } from "react-router";
-import { tagsReadTags, usersReadUserMe } from "~/client";
+import { tagsReadTags, usersReadUserMe, usersUpdateUserMe } from "~/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,14 +34,23 @@ import type { Route } from "./+types/settings";
 // - Change password
 // - Change username
 
-// export async function action({ request, params }: Route.ActionArgs) {
-//   const session = await getSession(request.headers.get("Cookie"));
-//   if (!session.has("accessToken")) {
-//     return redirect("/login");
-//   }
-//   const formData = await request.formData();
-//   console.log("Form data:", formData);
-// }
+export async function action({ request }: Route.ActionArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  if (!session.has("accessToken")) {
+    return redirect("/login");
+  }
+  const formData = await request.formData();
+  const slackUserId = formData.get("slack_user_id") as string | null;
+
+  const { error } = await usersUpdateUserMe({
+    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
+    body: { slack_user_id: slackUserId || null },
+  });
+  if (error) {
+    throw data("Failed to update profile", { status: 500 });
+  }
+  return redirect("/settings");
+}
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -208,6 +217,26 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
         <p className="text-lg font-medium">Username: {user.username}</p>
         <p className="text-sm text-zinc-500">User ID: {user.id}</p>
       </div>
+
+      <h2 className="text-2xl font-bold mb-4">Slack Integration</h2>
+      <p className="text-sm text-gray-500 mb-2">
+        Enter your Slack Member ID to receive milestone reminders via DM. You can find your Member
+        ID in Slack by clicking your profile picture, then "Profile", then the three-dot menu, and
+        "Copy member ID".
+      </p>
+      <Form method="post" className="flex items-end gap-2 mb-6">
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="slack_user_id">Slack Member ID</Label>
+          <Input
+            id="slack_user_id"
+            name="slack_user_id"
+            placeholder="e.g. U01ABCDEF"
+            defaultValue={user.slack_user_id ?? ""}
+            className="w-64"
+          />
+        </div>
+        <Button type="submit">Save</Button>
+      </Form>
 
       <h2 className="text-2xl font-bold mb-4">Tags</h2>
       <p className="text-sm text-gray-500 mb-2">

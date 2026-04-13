@@ -7,6 +7,15 @@ import {
   urlSearchParamsBodySerializer,
 } from "./client";
 import type {
+  ConferencesSubscribeToConferenceData,
+  ConferencesSubscribeToConferenceResponses,
+  ConferencesSubscribeToConferenceErrors,
+  ConferencesUnsubscribeFromConferenceData,
+  ConferencesUnsubscribeFromConferenceResponses,
+  ConferencesUnsubscribeFromConferenceErrors,
+  UsersUpdateUserMeData,
+  UsersUpdateUserMeResponses,
+  UsersUpdateUserMeErrors,
   ConferencesReadConferencesData,
   ConferencesReadConferencesResponses,
   ConferencesReadConferencesErrors,
@@ -572,6 +581,79 @@ export const tagsUpdateTag = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/api/v1/tags/{tag_id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Subscribe To Conference
+ * Subscribe the current user to a conference.
+ */
+export const conferencesSubscribeToConference = <ThrowOnError extends boolean = false>(
+  options: Options<ConferencesSubscribeToConferenceData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    ConferencesSubscribeToConferenceResponses,
+    ConferencesSubscribeToConferenceErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/v1/conferences/{conference_id}/subscribe",
+    ...options,
+  });
+};
+
+/**
+ * Unsubscribe From Conference
+ * Unsubscribe the current user from a conference.
+ */
+export const conferencesUnsubscribeFromConference = <ThrowOnError extends boolean = false>(
+  options: Options<ConferencesUnsubscribeFromConferenceData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    ConferencesUnsubscribeFromConferenceResponses,
+    ConferencesUnsubscribeFromConferenceErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/v1/conferences/{conference_id}/subscribe",
+    ...options,
+  });
+};
+
+/**
+ * Update User Me
+ * Update the current user's profile.
+ */
+export const usersUpdateUserMe = <ThrowOnError extends boolean = false>(
+  options: Options<UsersUpdateUserMeData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    UsersUpdateUserMeResponses,
+    UsersUpdateUserMeErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/v1/users/me",
     ...options,
     headers: {
       "Content-Type": "application/json",

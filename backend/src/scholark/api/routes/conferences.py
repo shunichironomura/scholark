@@ -12,12 +12,22 @@ from scholark.models import (
     ConferenceMilestone,
     ConferencePublic,
     ConferencesPublic,
+    ConferenceSubscription,
     ConferenceUpdate,
+    Message,
     Tag,
 )
+from scholark.slack import notify_new_conference
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/conferences", tags=["conferences"])
+
+
+def _conference_to_public(conference: Conference, user_id: UUID) -> ConferencePublic:
+    """Convert a Conference to ConferencePublic with is_subscribed computed for the given user."""
+    cp = ConferencePublic.model_validate(conference)
+    cp.is_subscribed = any(s.id == user_id for s in conference.subscribers)
+    return cp
 
 
 @router.get("/")
@@ -38,18 +48,18 @@ def read_conferences(
     for conference in conferences:
         conference.tags = [tag for tag in conference.tags if tag.user_id == current_user.id]
 
-    conferences_public = [ConferencePublic.model_validate(conference) for conference in conferences]
+    conferences_public = [_conference_to_public(conference, current_user.id) for conference in conferences]
 
     return ConferencesPublic(data=conferences_public, count=count)
 
 
-@router.post("/", response_model=ConferencePublic)
+@router.post("/")
 def create_conference(
     *,
     current_user: CurrentUser,
     session: SessionDep,
     conference_in: ConferenceCreate,
-) -> Conference:
+) -> ConferencePublic:
     """Create a new conference."""
     milestones = conference_in.milestones or []
     conference = Conference.model_validate(
@@ -62,18 +72,27 @@ def create_conference(
     ]
 
     session.add(conference)
+    session.flush()
+
+    # Auto-subscribe the creating user
+    subscription = ConferenceSubscription(user_id=current_user.id, conference_id=conference.id)
+    session.add(subscription)
+
     session.commit()
     session.refresh(conference)
-    return conference
+
+    notify_new_conference(conference)
+
+    return _conference_to_public(conference, current_user.id)
 
 
-@router.get("/{conference_id}", response_model=ConferencePublic)
+@router.get("/{conference_id}")
 def read_conference(
     *,
     current_user: CurrentUser,
     session: SessionDep,
     conference_id: UUID,
-) -> Conference:
+) -> ConferencePublic:
     """Retrieve a conference by ID."""
     statement = select(Conference).where(Conference.id == conference_id)
     conference = session.exec(statement).one()
@@ -82,7 +101,7 @@ def read_conference(
 
     # Filter tags by user
     conference.tags = [tag for tag in conference.tags if tag.user_id == current_user.id]
-    return conference
+    return _conference_to_public(conference, current_user.id)
 
 
 @router.delete(
@@ -225,3 +244,42 @@ def update_tags_for_conference(
     session.commit()
     session.refresh(conference)
     return conference
+
+
+@router.post("/{conference_id}/subscribe")
+def subscribe_to_conference(
+    *,
+    current_user: CurrentUser,
+    session: SessionDep,
+    conference_id: UUID,
+) -> Message:
+    """Subscribe the current user to a conference."""
+    conference = session.get(Conference, conference_id)
+    if not conference:
+        raise HTTPException(status_code=404, detail="Conference not found")
+
+    existing = session.get(ConferenceSubscription, (current_user.id, conference_id))
+    if existing:
+        return Message(message="Already subscribed")
+
+    subscription = ConferenceSubscription(user_id=current_user.id, conference_id=conference_id)
+    session.add(subscription)
+    session.commit()
+    return Message(message="Subscribed successfully")
+
+
+@router.delete("/{conference_id}/subscribe")
+def unsubscribe_from_conference(
+    *,
+    current_user: CurrentUser,
+    session: SessionDep,
+    conference_id: UUID,
+) -> Message:
+    """Unsubscribe the current user from a conference."""
+    subscription = session.get(ConferenceSubscription, (current_user.id, conference_id))
+    if not subscription:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+
+    session.delete(subscription)
+    session.commit()
+    return Message(message="Unsubscribed successfully")

@@ -1,4 +1,4 @@
-import { Calendar, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
+import { Bell, BellOff, Calendar, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
 import { data, Form, redirect, useSearchParams, useSubmit } from "react-router";
 import type { ConferencePublic } from "~/client";
 import { conferencesReadConferences, tagsReadTags } from "~/client";
@@ -204,6 +204,19 @@ export default function Conferences({ loaderData }: Route.ComponentProps) {
                   {/* Placeholder if no link */}
                   {/* Right side: Buttons */}
                   <div className="flex space-x-2">
+                    <Form
+                      action={`${conference.id}/subscribe`}
+                      method={conference.is_subscribed ? "delete" : "post"}
+                    >
+                      <Button
+                        type="submit"
+                        variant={conference.is_subscribed ? "default" : "outline"}
+                        size="icon"
+                        title={conference.is_subscribed ? "Unsubscribe" : "Subscribe"}
+                      >
+                        {conference.is_subscribed ? <Bell /> : <BellOff />}
+                      </Button>
+                    </Form>
                     <Form action={`${conference.id}/edit`}>
                       <Button type="submit" variant="secondary" size="icon">
                         <Pencil />
