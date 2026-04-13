@@ -60,6 +60,12 @@ start-frontend:
 apply-migrations:
   dotenvx run -f {{envfile}} -- uv run alembic upgrade head
 
+# Send Slack reminders
+[group('backend')]
+[working-directory: 'backend']
+send-reminders:
+  dotenvx run -f {{envfile}} -- uv run python -m scholark.cli.send_reminders
+
 # Lint the backend code
 [group('backend')]
 [working-directory: 'backend']
