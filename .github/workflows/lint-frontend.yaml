@@ -16,7 +16,7 @@ defaults:
     working-directory: frontend
 
 env:
-  PNPM_VERSION: 10
+  PNPM_VERSION: 11.1.2
   NODE_VERSION: 22
 
 jobs:
