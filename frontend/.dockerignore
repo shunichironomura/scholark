@@ -1,6 +1,7 @@
 .react-router
 build
 node_modules
+.pnpm-store
 .git
 .gitignore
 *.md
