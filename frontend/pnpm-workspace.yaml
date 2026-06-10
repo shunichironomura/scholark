@@ -3,14 +3,16 @@ ignoredBuiltDependencies:
   - esbuild
 minimumReleaseAge: 10080 # 7 days
 # Workaround: pnpm does not fall back to older mature versions within a semver range
-# for optional dependencies (platform-specific native binaries). Without these exclusions,
-# installation fails when the latest version of these packages is newer than minimumReleaseAge.
+# for optional dependencies (platform-specific native binaries) or toolchain helper packages.
+# Without these exclusions, installation fails when the latest version of these packages
+# is newer than minimumReleaseAge.
 # Related: https://github.com/pnpm/pnpm/issues/10270
 minimumReleaseAgeExclude:
   - "@rollup/rollup-*"
   - "@napi-rs/wasm-runtime"
   - vite-plus
   - "@voidzero-dev/*"
+  - "@oxc-project/*"
   - oxlint
   - "@oxlint/*"
   - oxlint-tsgolint
