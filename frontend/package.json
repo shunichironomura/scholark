@@ -38,7 +38,7 @@
     "@hey-api/openapi-ts": "0.98.1",
     "@react-router/dev": "7.17.0",
     "@tailwindcss/vite": "4.3.0",
-    "@types/node": "24.12.4",
+    "@types/node": "24.13.0",
     "@types/react": "19.2.16",
     "@types/react-dom": "19.2.3",
     "react-router-devtools": "6.2.1",
