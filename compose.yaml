@@ -1,7 +1,7 @@
 name: scholark-${SCHOLARK_ENV?Variable not set}
 services:
   db:
-    image: postgres:17.10@sha256:ef92240eff6b0bcce8ccf038c2edcd0d8fd8ef90621849993b8c8995881ab09a
+    image: postgres:18.3@sha256:7e32e9833a6fb1c92c32552794cb6ed569d51b445a54907d35fc112ef39684db
     restart: always
     container_name: scholark-db-ctr-${SCHOLARK_ENV?Variable not set}
     healthcheck:
