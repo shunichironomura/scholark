@@ -35,7 +35,7 @@
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
-    "@hey-api/openapi-ts": "0.98.1",
+    "@hey-api/openapi-ts": "0.98.2",
     "@react-router/dev": "7.17.0",
     "@tailwindcss/vite": "4.3.0",
     "@types/node": "24.13.1",
