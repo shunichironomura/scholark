@@ -2,27 +2,10 @@ ignoredBuiltDependencies:
   - "@tailwindcss/oxide"
   - esbuild
 minimumReleaseAge: 10080 # 7 days
-# Workaround: pnpm does not fall back to older mature versions within a semver range
-# for optional dependencies (platform-specific native binaries) or toolchain helper packages.
-# Without these exclusions, installation fails when the latest version of these packages
-# is newer than minimumReleaseAge.
-# Related: https://github.com/pnpm/pnpm/issues/10270
-minimumReleaseAgeExclude:
-  - "@rollup/rollup-*"
-  - "@napi-rs/wasm-runtime"
-  - vite-plus
-  - "@voidzero-dev/*"
-  - "@oxc-project/*"
-  - oxlint
-  - "@oxlint/*"
-  - oxlint-tsgolint
-  - "@oxlint-tsgolint/*"
-  - oxfmt
-  - "@oxfmt/*"
 catalog:
-  vite: npm:@voidzero-dev/vite-plus-core@latest
-  vitest: npm:@voidzero-dev/vite-plus-test@latest
-  vite-plus: latest
+  vite: npm:@voidzero-dev/vite-plus-core@0.1.24
+  vitest: npm:@voidzero-dev/vite-plus-test@0.1.24
+  vite-plus: 0.1.24
 overrides:
   vite: "catalog:"
   vitest: "catalog:"
