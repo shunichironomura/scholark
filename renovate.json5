@@ -19,6 +19,16 @@
       minimumReleaseAge: null,
     },
     {
+      // Vite+ publishes tightly coupled packages together. Keep the pnpm
+      // catalog aliases in sync so Renovate does not create incompatible
+      // standalone PRs for vite-plus and its Vite/Vitest core aliases.
+      matchDatasources: ["npm"],
+      matchDepNames: ["vite", "vitest", "vite-plus"],
+      groupName: "Vite+ packages",
+      groupSlug: "vite-plus",
+      minimumGroupSize: 2,
+    },
+    {
       matchCategories: ["ci"],
       addLabels: ["ci"],
     },
