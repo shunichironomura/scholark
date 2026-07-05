@@ -34,9 +34,11 @@ dependencies = [
 dev = [
   "pre-commit>=4.2.0",
   { include-group = "ruff" },
+  { include-group = "test" },
   { include-group = "typing" },
 ]
 ruff = ["ruff>=0.11.6"]
+test = ["pytest>=9.1.1"]
 typing = [
   "mypy>=1.15.0",
   "pyrefly>=0.23.1",
@@ -44,6 +46,8 @@ typing = [
   "ty>=0.0.1a14",
   "types-ldap3>=2.9.13.20240205",
   "types-passlib>=1.7.7.20250408",
+  # Type checkers also check tests/, which import pytest.
+  { include-group = "test" },
 ]
 
 [build-system]
@@ -52,6 +56,14 @@ build-backend = "uv_build"
 
 [tool.mypy]
 strict = true
+
+[tool.pyrefly]
+# The default src-layout search path cannot resolve the tests package.
+search_path = ["src", "."]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
 
 [tool.ruff]
 line-length = 120
@@ -90,6 +102,13 @@ unfixable = [
   "D",  # Docstring
   "INP001",
   "ERA001",
+]
+"tests/**.py" = [
+  "E402",  # conftest sets env vars before importing the app
+  "ARG001",  # fixtures are often requested only for their side effects
+  "PLR2004",  # literal expectations in asserts are fine
+  "S105",  # hardcoded test passwords
+  "S106",
 ]
 
 [tool.uv]
