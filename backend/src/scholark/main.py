@@ -2,12 +2,14 @@ import logging
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
 from sqlmodel import Session, select
 
 from scholark.api.main import api_router
+from scholark.auth.base import AuthProviderError
 from scholark.core.config import settings
 from scholark.core.db import engine, init_db
 
@@ -58,6 +60,12 @@ if settings.all_cors_origins:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+
+@app.exception_handler(AuthProviderError)
+def auth_provider_error_handler(request: Request, exc: AuthProviderError) -> JSONResponse:  # noqa: ARG001
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 

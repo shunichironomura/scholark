@@ -103,7 +103,7 @@ def read_user_by_id(
 ) -> Any:
     """Get a specific user by id."""
     user = session.get(User, user_id)
-    if user == current_user:
+    if user is not None and user.id == current_user.id:
         return user
     if not current_user.is_superuser:
         raise HTTPException(
@@ -125,13 +125,11 @@ def delete_user(
     user = session.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    if user == current_user:
+    if user.id == current_user.id:
         raise HTTPException(
             status_code=403,
             detail="Super users are not allowed to delete themselves",
         )
-    # statement = delete(Item).where(col(Item.owner_id) == user_id)
-    # session.exec(statement)
     session.delete(user)
     session.commit()
     return Message(message="User deleted successfully")
