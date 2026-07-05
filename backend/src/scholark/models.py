@@ -125,7 +125,7 @@ class ConferencePublic(ConferenceBase):
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
-    created_by_user_id: uuid.UUID
+    created_by_user_id: uuid.UUID | None
 
     tags: list[TagPublic] = Field(default=None)
     milestones: list[ConferenceMilestonePublic]
