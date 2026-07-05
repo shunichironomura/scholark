@@ -1,4 +1,5 @@
 from ldap3 import Connection
+from ldap3.utils.dn import escape_rdn
 from sqlmodel import Session, select
 
 from scholark.models import User, UserCreate, default_tags
@@ -24,9 +25,15 @@ class LdapAuthProvider(AuthProvider):
         raise AuthProviderError(status_code=400, detail="LDAP user creation not supported")
 
     def authenticate(self, username: str, password: str) -> User | None:
-        user_dn = self.dn_pattern.format(username=username)
-        # user_dn = f"uid={username},ou=users,dc=example,dc=com"
-        # server = Server("ldap://your-ldap-server-address")
+        # An empty password would raise LDAPPasswordIsMandatoryError at bind,
+        # and LDAP servers permitting unauthenticated binds would treat it as
+        # a successful anonymous bind - a classic authentication bypass.
+        if not password:
+            return None
+
+        # Escape DN metacharacters so a crafted username cannot alter the DN
+        # structure (e.g. "foo,ou=admins").
+        user_dn = self.dn_pattern.format(username=escape_rdn(username))
         conn = Connection(self.ldap_server, user=user_dn, password=password)
 
         if not conn.bind():

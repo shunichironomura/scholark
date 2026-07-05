@@ -76,8 +76,13 @@ def get_auth_provider(session: SessionDep) -> AuthProvider:
         case "db":
             return DbAuthProvider(session)
         case "ldap":
-            assert settings.LDAP_SERVER is not None
-            assert settings.LDAP_DN_PATTERN is not None
+            # Not asserts: those vanish under python -O and this is a
+            # deployment configuration error worth a clear message.
+            if not settings.LDAP_SERVER or not settings.LDAP_DN_PATTERN:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="LDAP auth is enabled but SCHOLARK_LDAP_SERVER or SCHOLARK_LDAP_DN_PATTERN is not set",
+                )
             return AuthRouter(
                 db_provider=DbAuthProvider(session),
                 ldap_provider=LdapAuthProvider(session, settings.LDAP_SERVER, settings.LDAP_DN_PATTERN),
