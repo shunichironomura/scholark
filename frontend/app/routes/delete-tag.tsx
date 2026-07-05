@@ -1,6 +1,6 @@
 import { data, redirect } from "react-router";
 import { tagsDeleteTag } from "~/client";
-import { getSession } from "~/sessions.server";
+import { requireSession } from "~/lib/auth.server";
 import type { Route } from "./+types/delete-tag";
 
 // export async function loader({ request, params }: Route.LoaderArgs) {
@@ -19,14 +19,11 @@ import type { Route } from "./+types/delete-tag";
 // }
 
 export async function action({ request, params }: Route.ActionArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  if (!session.has("accessToken")) {
-    return redirect("/login");
-  }
+  const { authHeaders } = await requireSession(request);
 
   const { error } = await tagsDeleteTag({
     path: { tag_id: params.tagId },
-    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
+    headers: authHeaders,
   });
   if (error) {
     throw data("Tag not found", { status: 404 });

@@ -25,8 +25,8 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { requireSession } from "~/lib/auth.server";
 import { pickLabelTextColor } from "~/lib/color";
-import { getSession } from "~/sessions.server";
 import type { Route } from "./+types/settings";
 // User settings
 // - Add/edit/delete user tags
@@ -35,15 +35,12 @@ import type { Route } from "./+types/settings";
 // - Change username
 
 export async function action({ request }: Route.ActionArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  if (!session.has("accessToken")) {
-    return redirect("/login");
-  }
+  const { authHeaders } = await requireSession(request);
   const formData = await request.formData();
   const slackUserId = formData.get("slack_user_id") as string | null;
 
   const { error } = await usersUpdateUserMe({
-    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
+    headers: authHeaders,
     body: { slack_user_id: slackUserId || null },
   });
   if (error) {
@@ -53,20 +50,17 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  if (!session.has("accessToken")) {
-    return redirect("/login");
-  }
+  const { authHeaders } = await requireSession(request);
 
   const { data: user, error: userError } = await usersReadUserMe({
-    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
+    headers: authHeaders,
   });
   if (userError || !user) {
     throw data("User not found", { status: 404 });
   }
 
   const { data: userTags, error: userTagsError } = await tagsReadTags({
-    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
+    headers: authHeaders,
   });
   if (userTagsError || !userTags) {
     throw data("User tags not found", { status: 404 });

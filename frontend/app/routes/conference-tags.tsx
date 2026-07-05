@@ -1,14 +1,11 @@
 import { data, redirect } from "react-router";
 import { conferencesUpdateTagsForConference } from "~/client";
 import type { Option } from "~/components/ui/multi-select";
-import { getSession } from "~/sessions.server";
+import { requireSession } from "~/lib/auth.server";
 import type { Route } from "./+types/conference-tags";
 
 export async function action({ request, params }: Route.ActionArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  if (!session.has("accessToken")) {
-    return redirect("/login");
-  }
+  const { authHeaders } = await requireSession(request);
 
   const formData = await request.formData();
   const tags = JSON.parse(formData.get("tags") as string) as Option[];
@@ -18,7 +15,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   }
   const { error } = await conferencesUpdateTagsForConference({
     path: { conference_id: params.conferenceId },
-    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
+    headers: authHeaders,
     body: tags.map((tag) => tag.value),
   });
   if (error) {

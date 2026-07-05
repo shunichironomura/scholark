@@ -1,5 +1,5 @@
 import { Calendar } from "lucide-react";
-import { data, redirect, useSearchParams } from "react-router";
+import { data, useSearchParams } from "react-router";
 import { conferencesReadConferences, tagsReadTags } from "~/client";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
@@ -14,8 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { requireSession } from "~/lib/auth.server";
 import { pickLabelTextColor } from "~/lib/color";
-import { getSession } from "~/sessions.server";
 import type { Route } from "./+types/timeline";
 
 // Define the schedule item interface
@@ -31,39 +31,23 @@ interface ScheduleItem {
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  if (!session.has("accessToken")) {
-    return redirect("/login");
-  }
-  const token = session.get("accessToken");
+  const { authHeaders } = await requireSession(request);
 
   const { data: conferences, error } = await conferencesReadConferences({
-    headers: { Authorization: `Bearer ${token}` },
+    headers: authHeaders,
   });
   if (error) {
     throw new Response("Error fetching conferences", { status: 500 });
   }
 
   const { data: userTags, error: userTagsError } = await tagsReadTags({
-    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
+    headers: authHeaders,
   });
   if (userTagsError || !userTags) {
     throw data("User tags not found", { status: 404 });
   }
 
-  // const formData = await request.formData();
-  // const selectedTagId = formData.get("selectedTagId") as string | null;
   return { conferences, userTags };
-}
-
-export async function action({ request }: Route.ActionArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  if (!session.has("accessToken")) {
-    return redirect("/login");
-  }
-
-  const formData = await request.formData();
-  const _selectedTagId = formData.get("selectedTagId") as string | null;
 }
 
 export default function Timeline({ loaderData }: Route.ComponentProps) {
