@@ -1,7 +1,7 @@
 import { data, redirect } from "react-router";
 import type { TagCreate } from "~/client";
 import { tagsCreateTag } from "~/client";
-import { requireSession } from "~/lib/auth.server";
+import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import type { Route } from "./+types/create-tag";
 
 // export async function loader({ request, params }: Route.LoaderArgs) {
@@ -20,7 +20,7 @@ import type { Route } from "./+types/create-tag";
 // }
 
 export async function action({ request }: Route.ActionArgs) {
-  const { authHeaders } = await requireSession(request);
+  const { session, authHeaders } = await requireSession(request);
 
   const formData = await request.formData();
   const tagName = formData.get("name") as string;
@@ -31,11 +31,12 @@ export async function action({ request }: Route.ActionArgs) {
     color: tagColor ?? "#000000",
   };
 
-  const { error } = await tagsCreateTag({
+  const { error, response } = await tagsCreateTag({
     headers: authHeaders,
     body: tagCreate,
   });
   if (error) {
+    await logoutIfUnauthorized(session, response);
     throw data("Tag not found", { status: 404 });
   }
   return redirect("/settings");

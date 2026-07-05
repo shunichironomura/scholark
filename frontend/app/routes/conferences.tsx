@@ -25,7 +25,7 @@ import {
 } from "~/components/ui/card";
 import MultipleSelector from "~/components/ui/multi-select";
 import { Switch } from "~/components/ui/switch";
-import { requireSession } from "~/lib/auth.server";
+import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import { pickLabelTextColor } from "~/lib/color";
 import type { Route } from "./+types/conferences";
 
@@ -33,17 +33,27 @@ export async function loader({ request }: Route.LoaderArgs) {
   const { session, authHeaders } = await requireSession(request);
   const isSuperUser = session.get("isSuperUser") ?? false;
 
-  const { data: conferences, error } = await conferencesReadConferences({
+  const {
+    data: conferences,
+    error,
+    response,
+  } = await conferencesReadConferences({
     headers: authHeaders,
   });
   if (error) {
+    await logoutIfUnauthorized(session, response);
     throw data("Error fetching conferences", { status: 500 });
   }
 
-  const { data: tags, error: tagsError } = await tagsReadTags({
+  const {
+    data: tags,
+    error: tagsError,
+    response: tagsResponse,
+  } = await tagsReadTags({
     headers: authHeaders,
   });
   if (tagsError) {
+    await logoutIfUnauthorized(session, tagsResponse);
     throw data("Error fetching tags", { status: 500 });
   }
 

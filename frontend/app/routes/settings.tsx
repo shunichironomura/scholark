@@ -25,7 +25,7 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { requireSession } from "~/lib/auth.server";
+import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import { pickLabelTextColor } from "~/lib/color";
 import type { Route } from "./+types/settings";
 // User settings
@@ -35,35 +35,46 @@ import type { Route } from "./+types/settings";
 // - Change username
 
 export async function action({ request }: Route.ActionArgs) {
-  const { authHeaders } = await requireSession(request);
+  const { session, authHeaders } = await requireSession(request);
   const formData = await request.formData();
   const slackUserId = formData.get("slack_user_id") as string | null;
 
-  const { error } = await usersUpdateUserMe({
+  const { error, response } = await usersUpdateUserMe({
     headers: authHeaders,
     body: { slack_user_id: slackUserId || null },
   });
   if (error) {
+    await logoutIfUnauthorized(session, response);
     throw data("Failed to update profile", { status: 500 });
   }
   return redirect("/settings");
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const { authHeaders } = await requireSession(request);
+  const { session, authHeaders } = await requireSession(request);
 
-  const { data: user, error: userError } = await usersReadUserMe({
+  const {
+    data: user,
+    error: userError,
+    response: userResponse,
+  } = await usersReadUserMe({
     headers: authHeaders,
   });
   if (userError || !user) {
-    throw data("User not found", { status: 404 });
+    await logoutIfUnauthorized(session, userResponse);
+    throw data("Error fetching user", { status: 500 });
   }
 
-  const { data: userTags, error: userTagsError } = await tagsReadTags({
+  const {
+    data: userTags,
+    error: userTagsError,
+    response: userTagsResponse,
+  } = await tagsReadTags({
     headers: authHeaders,
   });
   if (userTagsError || !userTags) {
-    throw data("User tags not found", { status: 404 });
+    await logoutIfUnauthorized(session, userTagsResponse);
+    throw data("Error fetching tags", { status: 500 });
   }
   return { user, userTags };
 }
