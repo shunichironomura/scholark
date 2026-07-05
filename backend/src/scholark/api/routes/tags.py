@@ -3,7 +3,7 @@ import uuid
 from fastapi import APIRouter, HTTPException
 from sqlmodel import col, func, select
 
-from scholark.api.deps import CurrentUser, SessionDep
+from scholark.api.deps import CurrentUser, LimitParam, SessionDep, SkipParam
 from scholark.models import Tag, TagCreate, TagPublic, TagsPublic, TagUpdate
 
 router = APIRouter(prefix="/tags", tags=["tags"])
@@ -14,8 +14,8 @@ def read_tags(
     session: SessionDep,
     current_user: CurrentUser,
     *,
-    skip: int = 0,
-    limit: int = 100,
+    skip: SkipParam = 0,
+    limit: LimitParam = 100,
     all_users: bool = False,
 ) -> TagsPublic:
     """Retrieve a list of tags."""
@@ -96,13 +96,13 @@ def update_tag(
     return tag
 
 
-@router.delete("/{tag_id}", response_model=TagPublic)
+@router.delete("/{tag_id}")
 def delete_tag(
     *,
     current_user: CurrentUser,
     session: SessionDep,
     tag_id: uuid.UUID,
-) -> Tag:
+) -> TagPublic:
     """Delete a tag."""
     tag = session.get(Tag, tag_id)
     if not tag:
@@ -110,6 +110,8 @@ def delete_tag(
     if not current_user.is_superuser and tag.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to delete this tag")
 
+    # Serialize before deleting; the ORM instance is unusable after the flush.
+    tag_public = TagPublic.model_validate(tag)
     session.delete(tag)
     session.commit()
-    return tag
+    return tag_public

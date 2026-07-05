@@ -11,14 +11,9 @@ if [ "$AUTO_MIGRATE" = "true" ]; then
 
     # Run alembic migrations
     # Using alembic directly since we're already in the container with dependencies installed
+    # set -e aborts the script if this fails
     alembic upgrade head
-
-    if [ $? -eq 0 ]; then
-        echo "Database migrations completed successfully."
-    else
-        echo "Error: Database migrations failed!"
-        exit 1
-    fi
+    echo "Database migrations completed successfully."
 else
     echo "Auto-migration is disabled. Skipping database migrations."
     echo "Please ensure migrations have been run manually before starting the backend."
