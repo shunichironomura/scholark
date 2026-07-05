@@ -121,6 +121,12 @@ export default function EditConference({ loaderData, actionData }: Route.Compone
         </div>
         {milestones.map((milestoneIndex, index) => (
           <div key={milestoneIndex} className="flex flex-row space-x-4 items-end">
+            {/* Preserve the milestone id so edits update the row in place */}
+            <input
+              type="hidden"
+              name={`milestone_id__${milestoneIndex}`}
+              value={conference.milestones[milestoneIndex]?.id ?? ""}
+            />
             <div className="flex flex-col flex-3 space-y-1">
               <Label htmlFor={`milestone_name__${milestoneIndex}`}>Milestone Name</Label>
               <Input
@@ -139,6 +145,15 @@ export default function EditConference({ loaderData, actionData }: Route.Compone
                 type="date"
                 defaultValue={conference.milestones[milestoneIndex]?.date ?? ""}
                 placeholder="YYYY-MM-DD"
+              />
+            </div>
+            <div className="flex flex-col flex-1 space-y-1">
+              <Label htmlFor={`milestone_time__${milestoneIndex}`}>Time (optional)</Label>
+              <Input
+                id={`milestone_time__${milestoneIndex}`}
+                name={`milestone_time__${milestoneIndex}`}
+                type="time"
+                defaultValue={conference.milestones[milestoneIndex]?.time?.slice(0, 5) ?? ""}
               />
             </div>
             <Button

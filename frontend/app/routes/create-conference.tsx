@@ -113,6 +113,14 @@ export default function CreateConference({ actionData }: Route.ComponentProps) {
                 placeholder="YYYY-MM-DD"
               />
             </div>
+            <div className="flex flex-col flex-1 space-y-1">
+              <Label htmlFor={`milestone_time__${milestoneIndex}`}>Time (optional)</Label>
+              <Input
+                id={`milestone_time__${milestoneIndex}`}
+                name={`milestone_time__${milestoneIndex}`}
+                type="time"
+              />
+            </div>
             <Button
               type="button"
               size="icon"
