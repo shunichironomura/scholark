@@ -82,6 +82,17 @@ class ConferenceMilestoneCreate(ConferenceMilestoneBase):
     pass
 
 
+class ConferenceMilestoneUpdate(ConferenceMilestoneBase):
+    """Milestone payload for conference updates.
+
+    Carrying the id lets the server update the existing row in place instead
+    of deleting and recreating all milestones; milestones without an id are
+    created.
+    """
+
+    id: uuid.UUID | None = Field(default=None)
+
+
 class ConferenceMilestone(ConferenceMilestoneBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     conference_id: uuid.UUID = Field(foreign_key="conference.id", ondelete="CASCADE")
@@ -107,7 +118,7 @@ class ConferenceCreate(ConferenceBase):
 
 
 class ConferenceUpdate(ConferenceBase):
-    milestones: list[ConferenceMilestoneCreate] | None = Field(default=None)
+    milestones: list[ConferenceMilestoneUpdate] | None = Field(default=None)
 
 
 class Conference(ConferenceBase, table=True):
