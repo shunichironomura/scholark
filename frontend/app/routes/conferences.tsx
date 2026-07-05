@@ -27,6 +27,7 @@ import MultipleSelector from "~/components/ui/multi-select";
 import { Switch } from "~/components/ui/switch";
 import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import { pickLabelTextColor } from "~/lib/color";
+import { diffCalendarDays, parseDateOnly, startOfToday } from "~/lib/date";
 import type { Route } from "./+types/conferences";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -61,13 +62,9 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 function isConferencePast(conference: ConferencePublic): boolean {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
   const refDate = conference.end_date ?? conference.start_date;
   if (!refDate) return false;
-  const d = new Date(refDate);
-  d.setHours(0, 0, 0, 0);
-  return d < today;
+  return parseDateOnly(refDate) < startOfToday();
 }
 
 export default function Conferences({ loaderData }: Route.ComponentProps) {
@@ -83,8 +80,7 @@ export default function Conferences({ loaderData }: Route.ComponentProps) {
 
   const formatDate = (dateString?: string | null) => {
     if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toISOString().slice(0, 10); // Format as YYYY-MM-DD
+    return dateString.slice(0, 10); // Already a date-only YYYY-MM-DD string
   };
 
   const formatDateTime = (dateString: string) => {
@@ -94,14 +90,7 @@ export default function Conferences({ loaderData }: Route.ComponentProps) {
 
   // Determine deadline status for styling
   const getDeadlineStatus = (deadlineString: string) => {
-    const deadline = new Date(deadlineString);
-    const today = new Date();
-
-    // Reset time part for accurate day calculation
-    deadline.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
-    const diffTime = deadline.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffDays = diffCalendarDays(deadlineString);
 
     if (diffDays < 0) {
       return "text-zinc-500"; // Past deadline
