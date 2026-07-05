@@ -45,6 +45,10 @@ export function generateLabelBackground(textColor: string, ratio = 0.15): string
  * Return `"white"` or `"black"` depending on which gives better
  * WCAG-2.1 contrast against the supplied background color.
  *
+ * Invalid input falls back to `"black"`: this runs during render for
+ * user-supplied colors, so throwing would take down the whole route for
+ * a single malformed tag.
+ *
  * @param hex - Background color in `#RRGGBB`, `RRGGBB`, `#RGB`, or `RGB` form.
  */
 export function pickLabelTextColor(hex: string): "white" | "black" {
@@ -57,7 +61,7 @@ export function pickLabelTextColor(hex: string): "white" | "black" {
       .join("");
   }
   if (!/^[0-9a-f]{6}$/i.test(clean)) {
-    throw new Error(`Invalid hex color: ${hex}`);
+    return "black";
   }
 
   // ── 2. Parse to 0‒255 integers ───────────────────────────────
