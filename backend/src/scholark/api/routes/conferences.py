@@ -111,30 +111,33 @@ def read_conference(
 @router.delete(
     "/{conference_id}",
     dependencies=[Depends(get_current_active_superuser)],
-    response_model=ConferencePublic,
 )
 def delete_conference(
     *,
+    current_user: CurrentUser,
     session: SessionDep,
     conference_id: UUID,
-) -> Conference:
+) -> ConferencePublic:
     """Delete a conference by ID."""
     # TODO: Implement soft delete
     conference = session.get(Conference, conference_id)
     if not conference:
         raise HTTPException(status_code=404, detail="Conference not found")
+    # Serialize before deleting; the ORM instance is unusable after the flush.
+    conference_public = _conference_to_public(conference, current_user.id)
     session.delete(conference)
     session.commit()
-    return conference
+    return conference_public
 
 
-@router.put("/{conference_id}", response_model=ConferencePublic)
+@router.put("/{conference_id}")
 def update_conference(
     *,
+    current_user: CurrentUser,
     session: SessionDep,
     conference_id: UUID,
     conference_in: ConferenceUpdate,
-) -> Conference:
+) -> ConferencePublic:
     """Update a conference by ID."""
     conference = session.get(Conference, conference_id)
     if not conference:
@@ -155,17 +158,17 @@ def update_conference(
     session.add(conference)
     session.commit()
     session.refresh(conference)
-    return conference
+    return _conference_to_public(conference, current_user.id)
 
 
-@router.post("/{conference_id}/tags", response_model=ConferencePublic)
+@router.post("/{conference_id}/tags")
 def add_tag_to_conference(
     *,
     current_user: CurrentUser,
     session: SessionDep,
     conference_id: UUID,
     tag_id: UUID,
-) -> Conference:
+) -> ConferencePublic:
     """Add a tag to a conference."""
     conference = session.get(Conference, conference_id)
     if not conference:
@@ -178,17 +181,17 @@ def add_tag_to_conference(
     session.add(conference)
     session.commit()
     session.refresh(conference)
-    return conference
+    return _conference_to_public(conference, current_user.id)
 
 
-@router.delete("/{conference_id}/tags/{tag_id}", response_model=ConferencePublic)
+@router.delete("/{conference_id}/tags/{tag_id}")
 def remove_tag_from_conference(
     *,
     current_user: CurrentUser,
     session: SessionDep,
     conference_id: UUID,
     tag_id: UUID,
-) -> Conference:
+) -> ConferencePublic:
     """Remove a tag from a conference."""
     conference = session.get(Conference, conference_id)
     if not conference:
@@ -201,17 +204,17 @@ def remove_tag_from_conference(
     session.add(conference)
     session.commit()
     session.refresh(conference)
-    return conference
+    return _conference_to_public(conference, current_user.id)
 
 
-@router.put("/{conference_id}/tags", response_model=ConferencePublic)
+@router.put("/{conference_id}/tags")
 def update_tags_for_conference(
     *,
     current_user: CurrentUser,
     session: SessionDep,
     conference_id: UUID,
     tags: list[UUID],
-) -> Conference:
+) -> ConferencePublic:
     """Update tags for a conference."""
     logger.info(f"Updating tags for conference {conference_id} with tags {tags}")
     conference = session.get(Conference, conference_id)
@@ -242,7 +245,7 @@ def update_tags_for_conference(
     session.add(conference)
     session.commit()
     session.refresh(conference)
-    return conference
+    return _conference_to_public(conference, current_user.id)
 
 
 @router.post("/{conference_id}/subscribe")
