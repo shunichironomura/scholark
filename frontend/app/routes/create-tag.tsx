@@ -4,21 +4,6 @@ import { tagsCreateTag } from "~/client";
 import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import type { Route } from "./+types/create-tag";
 
-// export async function loader({ request, params }: Route.LoaderArgs) {
-//   const session = await getSession(request.headers.get("Cookie"));
-//   if (!session.has("accessToken")) {
-//     return redirect("/login");
-//   }
-//   const { data: tag, error } = await tagsReadTag({
-//     path: { tag_id: params.tagId },
-//     headers: { Authorization: `Bearer ${session.get("accessToken")}` },
-//   });
-//   if (error) {
-//     throw data("Conference not found", { status: 404 });
-//   }
-//   return { tag };
-// }
-
 export async function action({ request }: Route.ActionArgs) {
   const { session, authHeaders } = await requireSession(request);
 
