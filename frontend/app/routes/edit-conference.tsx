@@ -5,6 +5,7 @@ import { conferencesReadConference, conferencesUpdateConference } from "~/client
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { apiErrorMessage } from "~/lib/api.server";
 import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import { parseConferenceForm } from "~/lib/conference-form";
 import type { Route } from "./+types/edit-conference";
@@ -27,19 +28,26 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
-  const { authHeaders } = await requireSession(request);
+  const { session, authHeaders } = await requireSession(request);
   const formData = await request.formData();
   const requestBody = parseConferenceForm(formData);
 
-  await conferencesUpdateConference({
+  const { error, response } = await conferencesUpdateConference({
     path: { conference_id: params.conferenceId },
     body: requestBody,
     headers: authHeaders,
   });
+  if (error) {
+    await logoutIfUnauthorized(session, response);
+    return data(
+      { error: apiErrorMessage(error, "Failed to save the conference. Please try again.") },
+      { status: response?.status ?? 500 },
+    );
+  }
   return redirect(`/conferences`);
 }
 
-export default function EditConference({ loaderData }: Route.ComponentProps) {
+export default function EditConference({ loaderData, actionData }: Route.ComponentProps) {
   const { conference } = loaderData;
   const navigate = useNavigate();
   const formId = useId();
@@ -54,6 +62,7 @@ export default function EditConference({ loaderData }: Route.ComponentProps) {
   return (
     <Form key={conference.id} id={formId} method="post">
       <div className="max-w-2xl mx-auto space-y-6">
+        {actionData?.error ? <div className="text-red-500">{actionData.error}</div> : null}
         <p className="text-sm text-yellow-600 mb-4">
           Changes made here are shared and will affect all users.
           <br />

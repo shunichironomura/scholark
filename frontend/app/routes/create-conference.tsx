@@ -1,28 +1,36 @@
 import { Trash2 } from "lucide-react";
 import { useId, useState } from "react";
-import { Form, redirect, useNavigate } from "react-router";
+import { data, Form, redirect, useNavigate } from "react-router";
 import { conferencesCreateConference } from "~/client";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { requireSession } from "~/lib/auth.server";
+import { apiErrorMessage } from "~/lib/api.server";
+import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import { parseConferenceForm } from "~/lib/conference-form";
 import type { Route } from "./+types/create-conference";
 
 export async function action({ request }: Route.ActionArgs) {
-  const { authHeaders } = await requireSession(request);
+  const { session, authHeaders } = await requireSession(request);
 
   const formData = await request.formData();
   const requestBody = parseConferenceForm(formData);
 
-  await conferencesCreateConference({
+  const { error, response } = await conferencesCreateConference({
     body: requestBody,
     headers: authHeaders,
   });
+  if (error) {
+    await logoutIfUnauthorized(session, response);
+    return data(
+      { error: apiErrorMessage(error, "Failed to create the conference. Please try again.") },
+      { status: response?.status ?? 500 },
+    );
+  }
   return redirect(`/conferences`);
 }
 
-export default function CreateConference() {
+export default function CreateConference({ actionData }: Route.ComponentProps) {
   const navigate = useNavigate();
   // Generate unique IDs for form fields
   const formId = useId();
@@ -47,6 +55,7 @@ export default function CreateConference() {
   return (
     <Form id={formId} method="post">
       <div className="max-w-2xl mx-auto space-y-6">
+        {actionData?.error ? <div className="text-red-500">{actionData.error}</div> : null}
         <p className="text-sm text-yellow-600 mb-4">
           Conferences you create here will be shared and visible to all users.
           <br />
