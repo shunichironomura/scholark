@@ -144,9 +144,15 @@ def update_conference(
         raise HTTPException(status_code=404, detail="Conference not found")
 
     new_milestones = conference_in.milestones or []
-    conference_in.milestones = None
     update_dict = conference_in.model_dump(exclude_unset=True)
-    update_dict["updated_at"] = datetime.now(UTC)
+    # milestones is a relationship, not a column; it is applied separately below.
+    update_dict.pop("milestones", None)
+
+    fields_changed = any(getattr(conference, field) != value for field, value in update_dict.items())
+    milestones_changed = [(m.name, m.date, m.time) for m in conference.milestones] != [
+        (m.name, m.date, m.time) for m in new_milestones
+    ]
+
     conference.sqlmodel_update(update_dict)
     for milestone in conference.milestones:
         session.delete(milestone)
@@ -155,6 +161,8 @@ def update_conference(
         ConferenceMilestone.model_validate(milestone, update={"conference_id": conference.id})
         for milestone in new_milestones
     ]
+    if fields_changed or milestones_changed:
+        conference.updated_at = datetime.now(UTC)
     session.add(conference)
     session.commit()
     session.refresh(conference)
