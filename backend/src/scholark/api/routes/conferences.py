@@ -94,8 +94,7 @@ def read_conference(
     conference_id: UUID,
 ) -> ConferencePublic:
     """Retrieve a conference by ID."""
-    statement = select(Conference).where(Conference.id == conference_id)
-    conference = session.exec(statement).one()
+    conference = session.get(Conference, conference_id)
     if not conference:
         raise HTTPException(status_code=404, detail="Conference not found")
 
@@ -116,8 +115,7 @@ def delete_conference(
 ) -> Conference:
     """Delete a conference by ID."""
     # TODO: Implement soft delete
-    statement = select(Conference).where(Conference.id == conference_id)
-    conference = session.exec(statement).one()
+    conference = session.get(Conference, conference_id)
     if not conference:
         raise HTTPException(status_code=404, detail="Conference not found")
     session.delete(conference)
@@ -133,8 +131,7 @@ def update_conference(
     conference_in: ConferenceUpdate,
 ) -> Conference:
     """Update a conference by ID."""
-    statement = select(Conference).where(Conference.id == conference_id)
-    conference = session.exec(statement).one()
+    conference = session.get(Conference, conference_id)
     if not conference:
         raise HTTPException(status_code=404, detail="Conference not found")
 
@@ -165,12 +162,11 @@ def add_tag_to_conference(
     tag_id: UUID,
 ) -> Conference:
     """Add a tag to a conference."""
-    statement = select(Conference).where(Conference.id == conference_id)
-    conference = session.exec(statement).one()
+    conference = session.get(Conference, conference_id)
     if not conference:
         raise HTTPException(status_code=404, detail="Conference not found")
     tag_statement = select(Tag).where(Tag.id == tag_id, Tag.user_id == current_user.id)
-    tag = session.exec(tag_statement).one()
+    tag = session.exec(tag_statement).first()
     if not tag:
         raise HTTPException(status_code=404, detail="Tag not found")
     conference.tags.append(tag)
@@ -189,12 +185,11 @@ def remove_tag_from_conference(
     tag_id: UUID,
 ) -> Conference:
     """Remove a tag from a conference."""
-    statement = select(Conference).where(Conference.id == conference_id)
-    conference = session.exec(statement).one()
+    conference = session.get(Conference, conference_id)
     if not conference:
         raise HTTPException(status_code=404, detail="Conference not found")
     tag_statement = select(Tag).where(Tag.id == tag_id, Tag.user_id == current_user.id)
-    tag = session.exec(tag_statement).one()
+    tag = session.exec(tag_statement).first()
     if not tag:
         raise HTTPException(status_code=404, detail="Tag not found")
     conference.tags.remove(tag)
@@ -214,8 +209,7 @@ def update_tags_for_conference(
 ) -> Conference:
     """Update tags for a conference."""
     logger.info(f"Updating tags for conference {conference_id} with tags {tags}")
-    statement = select(Conference).where(Conference.id == conference_id)
-    conference = session.exec(statement).one()
+    conference = session.get(Conference, conference_id)
     if not conference:
         raise HTTPException(status_code=404, detail="Conference not found")
 
@@ -227,7 +221,7 @@ def update_tags_for_conference(
     # Add new tags
     for tag_id in tag_ids_to_add:
         tag_statement = select(Tag).where(Tag.id == tag_id, Tag.user_id == current_user.id)
-        tag = session.exec(tag_statement).one()
+        tag = session.exec(tag_statement).first()
         if not tag:
             raise HTTPException(status_code=404, detail="Tag not found")
         conference.tags.append(tag)
@@ -235,7 +229,7 @@ def update_tags_for_conference(
     # Remove old tags
     for tag_id in tag_ids_to_remove:
         tag_statement = select(Tag).where(Tag.id == tag_id, Tag.user_id == current_user.id)
-        tag = session.exec(tag_statement).one()
+        tag = session.exec(tag_statement).first()
         if not tag:
             raise HTTPException(status_code=404, detail="Tag not found")
         conference.tags.remove(tag)
