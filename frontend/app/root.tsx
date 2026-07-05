@@ -65,8 +65,13 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       <div>
         <h1>Error</h1>
         <p>{error.message}</p>
-        <p>The stack trace is:</p>
-        <pre>{error.stack}</pre>
+        {/* Stack traces must not leak in production builds */}
+        {import.meta.env.DEV && error.stack ? (
+          <>
+            <p>The stack trace is:</p>
+            <pre>{error.stack}</pre>
+          </>
+        ) : null}
       </div>
     );
   } else {

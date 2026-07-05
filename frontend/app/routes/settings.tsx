@@ -1,7 +1,7 @@
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { data, Form, redirect, useNavigation } from "react-router";
-import { tagsReadTags, usersReadUserMe, usersUpdateUserMe } from "~/client";
+import { usersReadUserMe, usersUpdateUserMe } from "~/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +25,7 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { fetchAllTags } from "~/lib/api.server";
 import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import { pickLabelTextColor } from "~/lib/color";
 import type { Route } from "./+types/settings";
@@ -69,9 +70,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     data: userTags,
     error: userTagsError,
     response: userTagsResponse,
-  } = await tagsReadTags({
-    headers: authHeaders,
-  });
+  } = await fetchAllTags(authHeaders);
   if (userTagsError || !userTags) {
     await logoutIfUnauthorized(session, userTagsResponse);
     throw data("Error fetching tags", { status: 500 });

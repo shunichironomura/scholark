@@ -1,6 +1,7 @@
 import { useId } from "react";
 import { data, redirect, useFetcher } from "react-router";
 import { usersRegisterUser } from "~/client";
+import { apiErrorMessage } from "~/lib/api.server";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -28,7 +29,7 @@ export async function action({ request }: Route.ActionArgs) {
     return data({ errors }, { status: 400 });
   }
 
-  const { error } = await usersRegisterUser({
+  const { error, response } = await usersRegisterUser({
     body: {
       username: username,
       password: password,
@@ -36,10 +37,10 @@ export async function action({ request }: Route.ActionArgs) {
   });
 
   if (error) {
-    return data({
-      errors: { general: "username already exists" },
-      status: 400,
-    });
+    return data(
+      { errors: { general: apiErrorMessage(error, "Registration failed") } },
+      { status: response?.status ?? 400 },
+    );
   }
 
   return redirect("/login");
@@ -58,11 +59,17 @@ export default function Register(_: Route.ComponentProps) {
       <fetcher.Form method="post">
         <div className="mb-4">
           <Label htmlFor={usernameId}>Username</Label>
-          <Input type="username" id={usernameId} name="username" required />
+          <Input type="text" autoComplete="username" id={usernameId} name="username" required />
         </div>
         <div className="mb-4">
           <Label htmlFor={passwordId}>Password</Label>
-          <Input type="password" id={passwordId} name="password" required />
+          <Input
+            type="password"
+            autoComplete="new-password"
+            id={passwordId}
+            name="password"
+            required
+          />
         </div>
         <div className="mb-4">
           <Label htmlFor={confirmPasswordId}>Confirm Password</Label>

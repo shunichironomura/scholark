@@ -8,7 +8,13 @@ export async function action({ request, params }: Route.ActionArgs) {
   const { session, authHeaders } = await requireSession(request);
 
   const formData = await request.formData();
-  const tags = JSON.parse(formData.get("tags") as string) as Option[];
+  let tags: Option[];
+  try {
+    tags = JSON.parse(formData.get("tags") as string) as Option[];
+  } catch {
+    // Client-supplied form data; malformed JSON is a bad request, not a 500.
+    throw data("Invalid tags payload", { status: 400 });
+  }
 
   if (!params.conferenceId) {
     throw data("Conference ID is required", { status: 400 });

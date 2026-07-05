@@ -16,7 +16,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   });
   if (error) {
     await logoutIfUnauthorized(session, response);
-    throw data("Conference not found", { status: 404 });
+    throw data("Tag not found", { status: 404 });
   }
   return { tag };
 }

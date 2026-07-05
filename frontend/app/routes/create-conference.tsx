@@ -69,6 +69,7 @@ export default function CreateConference({ actionData }: Route.ComponentProps) {
             type="text"
             placeholder="Conference Name"
             defaultValue="New Conference"
+            required
           />
         </div>
         <div className="space-y-1">
