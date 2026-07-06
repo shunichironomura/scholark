@@ -143,24 +143,49 @@ def update_conference(
     if not conference:
         raise HTTPException(status_code=404, detail="Conference not found")
 
-    new_milestones = conference_in.milestones or []
     update_dict = conference_in.model_dump(exclude_unset=True)
-    # milestones is a relationship, not a column; it is applied separately below.
-    update_dict.pop("milestones", None)
+    # milestones is a relationship, not a column; it is applied separately
+    # below, and only when the client actually sent the key (an omitted
+    # milestones field leaves the existing milestones untouched).
+    milestones_provided = update_dict.pop("milestones", None) is not None
 
     fields_changed = any(getattr(conference, field) != value for field, value in update_dict.items())
-    milestones_changed = [(m.name, m.date, m.time) for m in conference.milestones] != [
-        (m.name, m.date, m.time) for m in new_milestones
-    ]
-
     conference.sqlmodel_update(update_dict)
-    for milestone in conference.milestones:
-        session.delete(milestone)
 
-    conference.milestones = [
-        ConferenceMilestone.model_validate(milestone, update={"conference_id": conference.id})
-        for milestone in new_milestones
-    ]
+    # Update milestones in place by id: milestones with a known id keep their
+    # id and any field the client does not send (such as time); milestones
+    # without a matching id are created; the rest are deleted.
+    milestones_changed = False
+    if milestones_provided:
+        new_milestones = conference_in.milestones or []
+        existing_by_id = {milestone.id: milestone for milestone in conference.milestones}
+        matched_ids: set[UUID] = set()
+        added: list[ConferenceMilestone] = []
+        for milestone_in in new_milestones:
+            existing = existing_by_id.get(milestone_in.id) if milestone_in.id is not None else None
+            if existing is None:
+                added.append(
+                    ConferenceMilestone(
+                        name=milestone_in.name,
+                        date=milestone_in.date,
+                        time=milestone_in.time,
+                        conference_id=conference.id,
+                    ),
+                )
+                milestones_changed = True
+            else:
+                matched_ids.add(existing.id)
+                milestone_update = milestone_in.model_dump(exclude_unset=True, exclude={"id"})
+                if any(getattr(existing, field) != value for field, value in milestone_update.items()):
+                    existing.sqlmodel_update(milestone_update)
+                    milestones_changed = True
+
+        for milestone in conference.milestones:
+            if milestone.id not in matched_ids:
+                session.delete(milestone)
+                milestones_changed = True
+        conference.milestones = [m for m in conference.milestones if m.id in matched_ids] + added
+
     if fields_changed or milestones_changed:
         conference.updated_at = datetime.now(UTC)
     session.add(conference)
