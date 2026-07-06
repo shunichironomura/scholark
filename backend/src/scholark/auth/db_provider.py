@@ -1,3 +1,4 @@
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
 from scholark.core.security import get_password_hash, verify_password
@@ -26,23 +27,24 @@ class DbAuthProvider(AuthProvider):
         # Set default tags for the user
         new_user.tags.extend(default_tags(user_id=new_user.id))
 
-        self.db.add(new_user)
-
-        try:
-            self.db.commit()
-        except Exception as e:
-            self.db.rollback()
-            raise AuthProviderError(status_code=500, detail="Database error") from e
-
-        hashed_password = get_password_hash(user_create.password)
         new_cred = DbAuthCredential(
             user_id=new_user.id,
-            hashed_password=hashed_password,
+            hashed_password=get_password_hash(user_create.password),
         )
-        self.db.add(new_cred)
 
+        # One transaction: committing the user without its credential would
+        # strand a username that exists but can never authenticate.
+        self.db.add(new_user)
         try:
+            # Flush the user row first so the credential's FK target exists;
+            # there is no ORM relationship between the two, so SQLAlchemy
+            # cannot order the inserts on its own. flush() does not commit.
+            self.db.flush()
+            self.db.add(new_cred)
             self.db.commit()
+        except IntegrityError as e:
+            self.db.rollback()
+            raise AuthProviderError(status_code=400, detail="User already exists") from e
         except Exception as e:
             self.db.rollback()
             raise AuthProviderError(status_code=500, detail="Database error") from e
