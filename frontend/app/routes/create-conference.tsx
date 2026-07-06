@@ -6,14 +6,11 @@ import { conferencesCreateConference } from "~/client";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { getSession } from "~/sessions.server";
+import { requireSession } from "~/lib/auth.server";
 import type { Route } from "./+types/create-conference";
 
 export async function action({ request }: Route.ActionArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  if (!session.has("accessToken")) {
-    return redirect("/login");
-  }
+  const { authHeaders } = await requireSession(request);
 
   const formData = await request.formData();
   const updates = Object.fromEntries(formData) as Record<string, string | null>;
@@ -52,7 +49,7 @@ export async function action({ request }: Route.ActionArgs) {
 
   await conferencesCreateConference({
     body: requestBody,
-    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
+    headers: authHeaders,
   });
   return redirect(`/conferences`);
 }

@@ -1,5 +1,5 @@
 import { Bell, BellOff, Calendar, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
-import { data, Form, redirect, useSearchParams, useSubmit } from "react-router";
+import { data, Form, useSearchParams, useSubmit } from "react-router";
 import type { ConferencePublic } from "~/client";
 import { conferencesReadConferences, tagsReadTags } from "~/client";
 import {
@@ -25,27 +25,23 @@ import {
 } from "~/components/ui/card";
 import MultipleSelector from "~/components/ui/multi-select";
 import { Switch } from "~/components/ui/switch";
+import { requireSession } from "~/lib/auth.server";
 import { pickLabelTextColor } from "~/lib/color";
-import { getSession } from "~/sessions.server";
 import type { Route } from "./+types/conferences";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  if (!session.has("accessToken")) {
-    return redirect("/login");
-  }
-  const token = session.get("accessToken");
+  const { session, authHeaders } = await requireSession(request);
   const isSuperUser = session.get("isSuperUser") ?? false;
 
   const { data: conferences, error } = await conferencesReadConferences({
-    headers: { Authorization: `Bearer ${token}` },
+    headers: authHeaders,
   });
   if (error) {
     throw data("Error fetching conferences", { status: 500 });
   }
 
   const { data: tags, error: tagsError } = await tagsReadTags({
-    headers: { Authorization: `Bearer ${token}` },
+    headers: authHeaders,
   });
   if (tagsError) {
     throw data("Error fetching tags", { status: 500 });

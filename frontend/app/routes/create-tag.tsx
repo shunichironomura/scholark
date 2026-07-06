@@ -1,7 +1,7 @@
 import { data, redirect } from "react-router";
 import type { TagCreate } from "~/client";
 import { tagsCreateTag } from "~/client";
-import { getSession } from "~/sessions.server";
+import { requireSession } from "~/lib/auth.server";
 import type { Route } from "./+types/create-tag";
 
 // export async function loader({ request, params }: Route.LoaderArgs) {
@@ -20,10 +20,7 @@ import type { Route } from "./+types/create-tag";
 // }
 
 export async function action({ request }: Route.ActionArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  if (!session.has("accessToken")) {
-    return redirect("/login");
-  }
+  const { authHeaders } = await requireSession(request);
 
   const formData = await request.formData();
   const tagName = formData.get("name") as string;
@@ -35,7 +32,7 @@ export async function action({ request }: Route.ActionArgs) {
   };
 
   const { error } = await tagsCreateTag({
-    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
+    headers: authHeaders,
     body: tagCreate,
   });
   if (error) {

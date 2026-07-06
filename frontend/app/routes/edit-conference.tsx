@@ -6,17 +6,14 @@ import { conferencesReadConference, conferencesUpdateConference } from "~/client
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { getSession } from "~/sessions.server";
+import { requireSession } from "~/lib/auth.server";
 import type { Route } from "./+types/edit-conference";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  if (!session.has("accessToken")) {
-    return redirect("/login");
-  }
+  const { authHeaders } = await requireSession(request);
   const { data: conference, error } = await conferencesReadConference({
     path: { conference_id: params.conferenceId },
-    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
+    headers: authHeaders,
   });
   if (error) {
     throw data("Conference not found", { status: 404 });
@@ -25,10 +22,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  if (!session.has("accessToken")) {
-    return redirect("/login");
-  }
+  const { authHeaders } = await requireSession(request);
   const formData = await request.formData();
   const updates = Object.fromEntries(formData) as Record<string, string | null>;
   // For fields other than name, set to null if empty
@@ -66,7 +60,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   await conferencesUpdateConference({
     path: { conference_id: params.conferenceId },
     body: requestBody,
-    headers: { Authorization: `Bearer ${session.get("accessToken")}` },
+    headers: authHeaders,
   });
   return redirect(`/conferences`);
 }
