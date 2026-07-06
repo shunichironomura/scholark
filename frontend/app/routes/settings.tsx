@@ -104,7 +104,6 @@ function TagDialog({
   /** Setter to change the open dialog id. */
   setOpenTagId: React.Dispatch<React.SetStateAction<string | null>>;
 }) {
-  // const [open, setOpen] = useState(false);
   const [name, setName] = useState(tag.name);
   const [color, setColor] = useState(tag.color);
 
