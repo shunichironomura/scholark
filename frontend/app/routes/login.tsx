@@ -44,14 +44,15 @@ export async function action({ request }: Route.ActionArgs) {
     });
   }
 
-  session.set("accessToken", data_.access_token);
-
   const { data: testTokenData, error: testTokenError } = await loginTestToken({
     headers: { Authorization: `Bearer ${data_.access_token}` },
   });
   if (testTokenError || !testTokenData) {
     session.flash("error", "Login failed");
 
+    // The token must not be in the session here: committing it would make
+    // the /login loader treat the user as logged in and bounce them to a
+    // broken /conferences.
     return redirect("/login", {
       headers: {
         "Set-Cookie": await commitSession(session),
@@ -59,6 +60,7 @@ export async function action({ request }: Route.ActionArgs) {
     });
   }
 
+  session.set("accessToken", data_.access_token);
   session.set("username", testTokenData.username);
   session.set("isSuperUser", testTokenData.is_superuser ?? false);
 
