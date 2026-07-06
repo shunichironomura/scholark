@@ -1,12 +1,12 @@
 import { Trash2 } from "lucide-react";
 import { useId, useState } from "react";
 import { data, Form, redirect, useNavigate } from "react-router";
-import type { ConferenceCreate, ConferenceMilestoneCreate } from "~/client";
 import { conferencesReadConference, conferencesUpdateConference } from "~/client";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
+import { parseConferenceForm } from "~/lib/conference-form";
 import type { Route } from "./+types/edit-conference";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
@@ -29,38 +29,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 export async function action({ request, params }: Route.ActionArgs) {
   const { authHeaders } = await requireSession(request);
   const formData = await request.formData();
-  const updates = Object.fromEntries(formData) as Record<string, string | null>;
-  // For fields other than name, set to null if empty
-  Object.keys(updates).forEach((field) => {
-    if (field !== "name" && updates[field] === "") {
-      updates[field] = null;
-    }
-  });
-
-  // Extract the milestones fields from the form data
-  const milestoneIndices = Object.keys(updates)
-    .filter((key) => key.startsWith("milestone_name__"))
-    .map((key) => parseInt(key.split("__")[1], 10))
-    .filter((index) => updates[`milestone_name__${index}`] && updates[`milestone_date__${index}`]);
-
-  const milestones: ConferenceMilestoneCreate[] = milestoneIndices
-    .map((index): ConferenceMilestoneCreate | null => {
-      const name = updates[`milestone_name__${index}`];
-      const date = updates[`milestone_date__${index}`];
-      if (name == null || date == null) {
-        return null;
-      }
-      return { name, date };
-    })
-    .filter((milestone): milestone is ConferenceMilestoneCreate => milestone !== null);
-  const requestBody: ConferenceCreate = {
-    name: updates.name ?? "New Conference",
-    start_date: updates.start_date,
-    end_date: updates.end_date,
-    location: updates.location,
-    website_url: updates.website_url,
-    milestones: milestones,
-  };
+  const requestBody = parseConferenceForm(formData);
 
   await conferencesUpdateConference({
     path: { conference_id: params.conferenceId },
