@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
@@ -5,6 +7,16 @@ from scholark.core.security import get_password_hash, verify_password
 from scholark.models import DbAuthCredential, User, UserCreate, default_tags
 
 from .base import AuthProvider, AuthProviderError
+
+
+@lru_cache(maxsize=1)
+def _dummy_password_hash() -> str:
+    """Hash to verify against when a username has no credential.
+
+    Verifying a dummy hash keeps the response time of unknown-username logins
+    close to that of known usernames, preventing username enumeration.
+    """
+    return get_password_hash("scholark-dummy-password")
 
 
 class DbAuthProvider(AuthProvider):
@@ -55,13 +67,16 @@ class DbAuthProvider(AuthProvider):
 
     def authenticate(self, username: str, password: str) -> User | None:
         db_user = self.db.exec(select(User).where(User.username == username)).one_or_none()
-        if not db_user:
-            return None
+        db_cred = None
+        if db_user:
+            db_cred = self.db.exec(
+                select(DbAuthCredential).where(DbAuthCredential.user_id == db_user.id),
+            ).one_or_none()
 
-        db_cred = self.db.exec(
-            select(DbAuthCredential).where(DbAuthCredential.user_id == db_user.id),
-        ).one_or_none()
-        if db_cred is None or not verify_password(password, db_cred.hashed_password):
+        if db_cred is None:
+            verify_password(password, _dummy_password_hash())
+            return None
+        if not verify_password(password, db_cred.hashed_password):
             return None
 
         return db_user

@@ -34,10 +34,11 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:  # noqa: ARG001
             init_db(session)
             logger.info("Database initialization completed successfully.")
         except Exception:
-            logger.exception("Database initialization failed")
-            logger.exception("This might happen if migrations haven't been run yet.")
-            logger.exception("In production, ensure migrations are run before starting the application.")
-            logger.exception("For development, auto-migration can be enabled with SCHOLARK_DB_AUTO_MIGRATE=true")
+            logger.exception(
+                "Database initialization failed. This can happen when migrations haven't been applied; "
+                "run them before starting the application (the container startup script does this "
+                "automatically when SCHOLARK_DB_AUTO_MIGRATE=true).",
+            )
             raise
     yield
 

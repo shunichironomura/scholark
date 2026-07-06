@@ -2,10 +2,17 @@ import uuid
 from datetime import UTC, datetime
 from datetime import date as date_
 from datetime import time as time_
+from typing import Annotated
 
 import sqlalchemy as sa
-from pydantic import computed_field
+from pydantic import StringConstraints, computed_field
 from sqlmodel import Field, Relationship, SQLModel
+
+# Validation applies to the create/update payload models only: table models
+# skip validation, and constraining the public (response) models would turn
+# pre-existing non-conforming rows into 500s on read.
+HexColor = Annotated[str, StringConstraints(pattern=r"^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")]
+NonEmptyStr = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
 
 class TagConferenceLink(SQLModel, table=True):
@@ -25,12 +32,13 @@ class TagBase(SQLModel):
 
 
 class TagCreate(TagBase):
-    pass
+    name: NonEmptyStr
+    color: HexColor
 
 
 class TagUpdate(SQLModel):
-    name: str | None = Field(default=None)
-    color: str | None = Field(default=None)
+    name: NonEmptyStr | None = Field(default=None)
+    color: HexColor | None = Field(default=None)
 
 
 class Tag(TagBase, table=True):
@@ -114,10 +122,12 @@ class ConferenceBase(SQLModel):
 
 
 class ConferenceCreate(ConferenceBase):
+    name: NonEmptyStr
     milestones: list[ConferenceMilestoneCreate] | None = Field(default=None)
 
 
 class ConferenceUpdate(ConferenceBase):
+    name: NonEmptyStr
     milestones: list[ConferenceMilestoneUpdate] | None = Field(default=None)
 
 
@@ -138,7 +148,7 @@ class ConferencePublic(ConferenceBase):
     updated_at: datetime
     created_by_user_id: uuid.UUID | None
 
-    tags: list[TagPublic] = Field(default=None)
+    tags: list[TagPublic] = Field(default_factory=list)
     milestones: list[ConferenceMilestonePublic]
     is_subscribed: bool = Field(default=False)
 

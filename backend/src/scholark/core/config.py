@@ -63,6 +63,8 @@ class Settings(BaseSettings):
     # Slack integration (optional)
     SLACK_BOT_TOKEN: str | None = None
     SLACK_CHANNEL_ID: str | None = None
+    # IANA timezone used to compute "today" for milestone reminders.
+    REMINDER_TIMEZONE: str = "UTC"
 
 
 # Missing argument is intentional to allow environment variables to populate the settings.

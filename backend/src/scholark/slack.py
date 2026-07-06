@@ -1,5 +1,6 @@
 import logging
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from slack_sdk import WebClient
 from sqlmodel import Session, col, select
@@ -17,46 +18,57 @@ def _get_slack_client() -> WebClient | None:
     return WebClient(token=settings.SLACK_BOT_TOKEN)
 
 
-def notify_new_conference(conference: Conference) -> None:
-    """Post a notification about a new conference to the configured Slack channel.
+def build_new_conference_message(conference: Conference) -> str | None:
+    """Build the Slack notification text for a new conference.
 
-    No-op if Slack is not configured. Errors are logged but never raised.
+    Pure message construction; returns None if Slack is not configured.
+    """
+    if not settings.SLACK_BOT_TOKEN or not settings.SLACK_CHANNEL_ID:
+        return None
+
+    scholark_url = settings.FRONTEND_HOST.rstrip("/")
+    lines = [
+        f":mega: New conference added: *{conference.name}*",
+    ]
+
+    meta_parts: list[str] = []
+    if conference.start_date and conference.end_date:
+        meta_parts.append(f":date: {conference.start_date} \u2013 {conference.end_date}")
+    elif conference.start_date:
+        meta_parts.append(f":date: {conference.start_date}")
+    if conference.location:
+        meta_parts.append(f":round_pushpin: {conference.location}")
+    if meta_parts:
+        lines.append(" | ".join(meta_parts))
+
+    link_parts: list[str] = []
+    if conference.website_url:
+        link_parts.append(f"<{conference.website_url}|Website>")
+    link_parts.append(f"<{scholark_url}/conferences|View in Scholark>")
+    lines.append(" \u00b7 ".join(link_parts))
+
+    if conference.milestones:
+        milestone_strs = [f"{m.name} ({m.date})" for m in sorted(conference.milestones, key=lambda m: m.date)]
+        lines.append(f"Milestones: {', '.join(milestone_strs)}")
+
+    return "\n".join(lines)
+
+
+def send_channel_message(text: str) -> None:
+    """Post a message to the configured Slack channel.
+
+    No-op if Slack is not configured. Errors are logged but never raised, so
+    this is safe to run as a background task.
     """
     client = _get_slack_client()
     if client is None or not settings.SLACK_CHANNEL_ID:
         return
 
     try:
-        scholark_url = settings.FRONTEND_HOST.rstrip("/")
-        lines = [
-            f":mega: New conference added: *{conference.name}*",
-        ]
-
-        meta_parts: list[str] = []
-        if conference.start_date and conference.end_date:
-            meta_parts.append(f":date: {conference.start_date} \u2013 {conference.end_date}")
-        elif conference.start_date:
-            meta_parts.append(f":date: {conference.start_date}")
-        if conference.location:
-            meta_parts.append(f":round_pushpin: {conference.location}")
-        if meta_parts:
-            lines.append(" | ".join(meta_parts))
-
-        link_parts: list[str] = []
-        if conference.website_url:
-            link_parts.append(f"<{conference.website_url}|Website>")
-        link_parts.append(f"<{scholark_url}/conferences|View in Scholark>")
-        lines.append(" \u00b7 ".join(link_parts))
-
-        if conference.milestones:
-            milestone_strs = [f"{m.name} ({m.date})" for m in sorted(conference.milestones, key=lambda m: m.date)]
-            lines.append(f"Milestones: {', '.join(milestone_strs)}")
-
-        text = "\n".join(lines)
         client.chat_postMessage(channel=settings.SLACK_CHANNEL_ID, text=text)
-        logger.info(f"Slack notification sent for conference {conference.name}")
+        logger.info("Slack channel notification sent")
     except Exception:
-        logger.exception(f"Failed to send Slack notification for conference {conference.name}")
+        logger.exception("Failed to send Slack channel notification")
 
 
 def send_milestone_reminders(session: Session) -> None:
@@ -70,7 +82,9 @@ def send_milestone_reminders(session: Session) -> None:
         logger.info("Slack not configured, skipping milestone reminders")
         return
 
-    today = datetime.now(tz=UTC).date()
+    # "Today" in the configured reminder timezone; computing it in UTC would
+    # deliver the 7/30-day reminders a day early for users west of UTC.
+    today = datetime.now(tz=ZoneInfo(settings.REMINDER_TIMEZONE)).date()
     target_dates = {
         today + timedelta(days=30): 30,
         today + timedelta(days=7): 7,

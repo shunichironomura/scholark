@@ -4,7 +4,14 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import func, select
 
-from scholark.api.deps import AuthProviderDep, CurrentUser, SessionDep, get_current_active_superuser
+from scholark.api.deps import (
+    AuthProviderDep,
+    CurrentUser,
+    LimitParam,
+    SessionDep,
+    SkipParam,
+    get_current_active_superuser,
+)
 from scholark.models import (
     Message,
     User,
@@ -23,7 +30,7 @@ router = APIRouter(prefix="/users", tags=["users"])
     dependencies=[Depends(get_current_active_superuser)],
     response_model=UsersPublic,
 )
-def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
+def read_users(session: SessionDep, skip: SkipParam = 0, limit: LimitParam = 100) -> Any:
     """Retrieve users."""
     count_statement = select(func.count()).select_from(User)
     count = session.exec(count_statement).one()
@@ -47,7 +54,7 @@ def create_user(*, user_in: UserCreate, auth_provider: AuthProviderDep) -> Any:
     if user is not None:
         raise HTTPException(
             status_code=400,
-            detail="The user with this email already exists in the system.",
+            detail="A user with this username already exists in the system.",
         )
 
     return auth_provider.create_user(user_create=user_in)
@@ -82,7 +89,7 @@ def register_user(auth_provider: AuthProviderDep, user_in: UserRegister) -> Any:
     if user is not None:
         raise HTTPException(
             status_code=400,
-            detail="The user with this email already exists in the system",
+            detail="A user with this username already exists in the system",
         )
     user_create = UserCreate.model_validate(user_in)
     return auth_provider.create_user(user_create=user_create)

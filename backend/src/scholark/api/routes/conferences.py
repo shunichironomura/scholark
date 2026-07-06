@@ -2,10 +2,10 @@ import logging
 from datetime import UTC, datetime
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from sqlmodel import col, func, select
 
-from scholark.api.deps import CurrentUser, SessionDep, get_current_active_superuser
+from scholark.api.deps import CurrentUser, LimitParam, SessionDep, SkipParam, get_current_active_superuser
 from scholark.models import (
     Conference,
     ConferenceCreate,
@@ -18,7 +18,7 @@ from scholark.models import (
     Tag,
     TagPublic,
 )
-from scholark.slack import notify_new_conference
+from scholark.slack import build_new_conference_message, send_channel_message
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/conferences", tags=["conferences"])
@@ -45,8 +45,8 @@ def _conference_to_public(conference: Conference, user_id: UUID) -> ConferencePu
 def read_conferences(
     session: SessionDep,
     current_user: CurrentUser,
-    skip: int = 0,
-    limit: int = 100,
+    skip: SkipParam = 0,
+    limit: LimitParam = 100,
 ) -> ConferencesPublic:
     """Retrieve a list of conferences."""
     count_statement = select(func.count()).select_from(Conference)
@@ -66,6 +66,7 @@ def create_conference(
     current_user: CurrentUser,
     session: SessionDep,
     conference_in: ConferenceCreate,
+    background_tasks: BackgroundTasks,
 ) -> ConferencePublic:
     """Create a new conference."""
     milestones = conference_in.milestones or []
@@ -88,7 +89,11 @@ def create_conference(
     session.commit()
     session.refresh(conference)
 
-    notify_new_conference(conference)
+    # Build the message now (while the session is alive) but post it after
+    # the response: the Slack HTTP call must not delay conference creation.
+    notification = build_new_conference_message(conference)
+    if notification is not None:
+        background_tasks.add_task(send_channel_message, notification)
 
     return _conference_to_public(conference, current_user.id)
 

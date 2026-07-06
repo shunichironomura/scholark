@@ -1,8 +1,9 @@
+import uuid
 from collections.abc import Generator
 from typing import Annotated
 
 import jwt
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Query, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from pydantic import ValidationError
@@ -28,26 +29,31 @@ def get_db() -> Generator[Session]:
 SessionDep = Annotated[Session, Depends(get_db)]
 TokenDep = Annotated[str, Depends(oauth2_scheme)]
 
+# Clamped pagination query parameters for list endpoints.
+SkipParam = Annotated[int, Query(ge=0)]
+LimitParam = Annotated[int, Query(ge=1, le=100)]
+
 
 def get_current_user(session: SessionDep, token: TokenDep) -> User:
     credentials_exception = HTTPException(
-        status_code=status.HTTP_403_FORBIDDEN,
+        status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
     )
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[security.ALGORITHM])
         token_data = TokenPayload.model_validate(payload)
         if token_data.sub is None:
             raise credentials_exception
-    except (InvalidTokenError, ValidationError):
+        user_id = uuid.UUID(token_data.sub)
+    except (InvalidTokenError, ValidationError, ValueError):
         raise credentials_exception from None
 
-    user = session.get(User, token_data.sub)
+    user = session.get(User, user_id)
     if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found",
-        )
+        # The token was valid but its user no longer exists; treat the bearer
+        # as unauthenticated rather than answering 404 on every endpoint.
+        raise credentials_exception
     if user.disabled:
         # 401 so clients treat the token as no longer valid and re-authenticate.
         raise HTTPException(
