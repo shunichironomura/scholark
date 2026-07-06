@@ -22,6 +22,8 @@ def login_access_token(
     )
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
+    if user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
     return Token(access_token=security.create_access_token(user.id))
 
 

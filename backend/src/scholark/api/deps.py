@@ -48,6 +48,13 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found",
         )
+    if user.disabled:
+        # 401 so clients treat the token as no longer valid and re-authenticate.
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Inactive user",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
     return user
 
