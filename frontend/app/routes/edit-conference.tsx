@@ -6,16 +6,21 @@ import { conferencesReadConference, conferencesUpdateConference } from "~/client
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { requireSession } from "~/lib/auth.server";
+import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import type { Route } from "./+types/edit-conference";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
-  const { authHeaders } = await requireSession(request);
-  const { data: conference, error } = await conferencesReadConference({
+  const { session, authHeaders } = await requireSession(request);
+  const {
+    data: conference,
+    error,
+    response,
+  } = await conferencesReadConference({
     path: { conference_id: params.conferenceId },
     headers: authHeaders,
   });
   if (error) {
+    await logoutIfUnauthorized(session, response);
     throw data("Conference not found", { status: 404 });
   }
   return { conference };

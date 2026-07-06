@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { requireSession } from "~/lib/auth.server";
+import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import { pickLabelTextColor } from "~/lib/color";
 import type { Route } from "./+types/timeline";
 
@@ -31,20 +31,30 @@ interface ScheduleItem {
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const { authHeaders } = await requireSession(request);
+  const { session, authHeaders } = await requireSession(request);
 
-  const { data: conferences, error } = await conferencesReadConferences({
+  const {
+    data: conferences,
+    error,
+    response,
+  } = await conferencesReadConferences({
     headers: authHeaders,
   });
   if (error) {
-    throw new Response("Error fetching conferences", { status: 500 });
+    await logoutIfUnauthorized(session, response);
+    throw data("Error fetching conferences", { status: 500 });
   }
 
-  const { data: userTags, error: userTagsError } = await tagsReadTags({
+  const {
+    data: userTags,
+    error: userTagsError,
+    response: userTagsResponse,
+  } = await tagsReadTags({
     headers: authHeaders,
   });
   if (userTagsError || !userTags) {
-    throw data("User tags not found", { status: 404 });
+    await logoutIfUnauthorized(session, userTagsResponse);
+    throw data("Error fetching tags", { status: 500 });
   }
 
   return { conferences, userTags };
