@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -62,7 +62,6 @@ export function MainFrame({
                 <DropdownMenu>
                   <DropdownMenuTrigger className="flex items-center space-x-2">
                     <Avatar className="w-8 h-8">
-                      <AvatarImage src="/path/to/avatar.jpg" alt="User Avatar" />
                       <AvatarFallback>{username.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <span className="text-zinc-600">{username}</span>

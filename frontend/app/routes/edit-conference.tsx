@@ -77,6 +77,7 @@ export default function EditConference({ loaderData, actionData }: Route.Compone
             type="text"
             defaultValue={conference.name}
             placeholder="Conference Name"
+            required
           />
         </div>
         <div className="space-y-1">

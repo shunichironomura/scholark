@@ -37,7 +37,7 @@ export async function action({ request }: Route.ActionArgs) {
   });
   if (error) {
     await logoutIfUnauthorized(session, response);
-    throw data("Tag not found", { status: 404 });
+    throw data("Failed to create the tag", { status: response?.status ?? 500 });
   }
   return redirect("/settings");
 }

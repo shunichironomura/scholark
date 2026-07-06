@@ -1,7 +1,6 @@
 import { Bell, BellOff, Calendar, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
 import { data, Form, useSearchParams, useSubmit } from "react-router";
 import type { ConferencePublic } from "~/client";
-import { conferencesReadConferences, tagsReadTags } from "~/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +24,7 @@ import {
 } from "~/components/ui/card";
 import MultipleSelector from "~/components/ui/multi-select";
 import { Switch } from "~/components/ui/switch";
+import { fetchAllConferences, fetchAllTags } from "~/lib/api.server";
 import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import { pickLabelTextColor } from "~/lib/color";
 import { diffCalendarDays, parseDateOnly, startOfToday } from "~/lib/date";
@@ -34,26 +34,14 @@ export async function loader({ request }: Route.LoaderArgs) {
   const { session, authHeaders } = await requireSession(request);
   const isSuperUser = session.get("isSuperUser") ?? false;
 
-  const {
-    data: conferences,
-    error,
-    response,
-  } = await conferencesReadConferences({
-    headers: authHeaders,
-  });
-  if (error) {
+  const { data: conferences, error, response } = await fetchAllConferences(authHeaders);
+  if (error || !conferences) {
     await logoutIfUnauthorized(session, response);
     throw data("Error fetching conferences", { status: 500 });
   }
 
-  const {
-    data: tags,
-    error: tagsError,
-    response: tagsResponse,
-  } = await tagsReadTags({
-    headers: authHeaders,
-  });
-  if (tagsError) {
+  const { data: tags, error: tagsError, response: tagsResponse } = await fetchAllTags(authHeaders);
+  if (tagsError || !tags) {
     await logoutIfUnauthorized(session, tagsResponse);
     throw data("Error fetching tags", { status: 500 });
   }
@@ -152,11 +140,11 @@ export default function Conferences({ loaderData }: Route.ComponentProps) {
                 <CardDescription>
                   <div className="text-sm text-gray-500 space-y-1">
                     <div className="flex items-center">
-                      <MapPin className="w-4 h-4 mr-1 shrink-0" area-hidden="true" />
+                      <MapPin className="w-4 h-4 mr-1 shrink-0" aria-hidden="true" />
                       {conference.location}
                     </div>
                     <div className="flex items-center">
-                      <Calendar className="w-4 h-4 mr-1 shrink-0" area-hidden="true" />
+                      <Calendar className="w-4 h-4 mr-1 shrink-0" aria-hidden="true" />
                       {formatDateRange(conference.start_date, conference.end_date)}
                     </div>
                   </div>
@@ -167,10 +155,10 @@ export default function Conferences({ loaderData }: Route.ComponentProps) {
                 {conference.milestones && conference.milestones.length > 0 ? (
                   <ul className="list-disc list-inside">
                     {conference.milestones
-                      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                      .toSorted((a, b) => a.date.localeCompare(b.date))
                       .map((milestone) => (
                         <li
-                          key={`${milestone.name}-${milestone.date}`}
+                          key={milestone.id}
                           className={`${getDeadlineStatus(milestone.date)} text-sm`}
                         >
                           {milestone.name}: {formatDate(milestone.date)}

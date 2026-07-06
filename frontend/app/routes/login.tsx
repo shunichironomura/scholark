@@ -83,11 +83,17 @@ export default function Login({ loaderData }: Route.ComponentProps) {
       <Form method="post">
         <div className="mb-4">
           <Label htmlFor={usernameId}>Username</Label>
-          <Input type="username" id={usernameId} name="username" required />
+          <Input type="text" autoComplete="username" id={usernameId} name="username" required />
         </div>
         <div className="mb-4">
           <Label htmlFor={passwordId}>Password</Label>
-          <Input type="password" id={passwordId} name="password" required />
+          <Input
+            type="password"
+            autoComplete="current-password"
+            id={passwordId}
+            name="password"
+            required
+          />
         </div>
         <Button type="submit">Login</Button>
       </Form>

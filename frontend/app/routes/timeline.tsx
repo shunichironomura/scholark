@@ -1,6 +1,6 @@
 import { Calendar } from "lucide-react";
 import { data, useSearchParams } from "react-router";
-import { conferencesReadConferences, tagsReadTags } from "~/client";
+import { fetchAllConferences, fetchAllTags } from "~/lib/api.server";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
 import { Label } from "~/components/ui/label";
@@ -34,14 +34,8 @@ interface ScheduleItem {
 export async function loader({ request }: Route.LoaderArgs) {
   const { session, authHeaders } = await requireSession(request);
 
-  const {
-    data: conferences,
-    error,
-    response,
-  } = await conferencesReadConferences({
-    headers: authHeaders,
-  });
-  if (error) {
+  const { data: conferences, error, response } = await fetchAllConferences(authHeaders);
+  if (error || !conferences) {
     await logoutIfUnauthorized(session, response);
     throw data("Error fetching conferences", { status: 500 });
   }
@@ -50,9 +44,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     data: userTags,
     error: userTagsError,
     response: userTagsResponse,
-  } = await tagsReadTags({
-    headers: authHeaders,
-  });
+  } = await fetchAllTags(authHeaders);
   if (userTagsError || !userTags) {
     await logoutIfUnauthorized(session, userTagsResponse);
     throw data("Error fetching tags", { status: 500 });
