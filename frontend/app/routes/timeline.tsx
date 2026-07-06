@@ -16,6 +16,7 @@ import {
 } from "~/components/ui/select";
 import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import { pickLabelTextColor } from "~/lib/color";
+import { diffCalendarDays, formatDateOnly, parseDateOnly, startOfToday } from "~/lib/date";
 import type { Route } from "./+types/timeline";
 
 // Define the schedule item interface
@@ -66,18 +67,14 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
   const selectedTagId = searchParams.get("selectedTagId") ?? "_all";
   const showPast = searchParams.get("showPast") === "true";
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = startOfToday();
 
   const scheduleItems: ScheduleItem[] = [];
+  // Renders the item's local calendar date plus its distance from today.
+  // Must not mutate its argument: it runs during render on loader data.
   const formatDate = (date: Date) => {
-    const dateString = date.toISOString().slice(0, 10); // Format as YYYY-MM-DD
-
-    const today = new Date();
-
-    date.setHours(0, 0, 0, 0); // Set time to midnight for comparison
-    today.setHours(0, 0, 0, 0); // Set time to midnight for comparison
-    const diffDays = Math.floor((date.getTime() - today.getTime()) / (1000 * 3600 * 24));
+    const dateString = formatDateOnly(date);
+    const diffDays = diffCalendarDays(date, today);
 
     const diffDaysText =
       diffDays === 0
@@ -87,7 +84,7 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
   };
   // Helper function to get month and year from date
   const getYearMonth = (date: Date): string => {
-    return date.toISOString().slice(0, 7); // Format as YYYY-MM
+    return formatDateOnly(date).slice(0, 7); // Format as YYYY-MM
   };
   conferences.data.forEach((conference) => {
     const conferenceTags = conference.tags ?? [];
@@ -95,7 +92,7 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
     if (selectedTagId === "_all" || conferenceTags.some((tag) => tag.id === selectedTagId)) {
       if (conference.start_date) {
         scheduleItems.push({
-          date: new Date(conference.start_date),
+          date: parseDateOnly(conference.start_date),
           type: "conference_start",
           title: `${conference.name} – Start`,
           tags: conferenceTags,
@@ -103,7 +100,7 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
       }
       if (conference.end_date) {
         scheduleItems.push({
-          date: new Date(conference.end_date),
+          date: parseDateOnly(conference.end_date),
           type: "conference_end",
           title: `${conference.name} – End`,
           tags: conferenceTags,
@@ -113,7 +110,7 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
         conference.milestones.forEach((milestone) => {
           if (milestone.date) {
             scheduleItems.push({
-              date: new Date(milestone.date),
+              date: parseDateOnly(milestone.date),
               type: "milestone",
               title: `${conference.name} – ${milestone.name}`,
               tags: conferenceTags,
@@ -213,12 +210,12 @@ export default function Timeline({ loaderData }: Route.ComponentProps) {
       </div>
       <div className="flex flex-col gap-4">
         {Object.entries(groupedScheduleItems).map(([yearMonth, items]) => {
-          const isAllPast = items.every((item) => item.date < new Date());
+          const isAllPast = items.every((item) => item.date < today);
           return (
             <div key={yearMonth} className="flex flex-col gap-2">
               <h2 className={`text-2xl font-bold ${isAllPast ? "opacity-50" : ""}`}>{yearMonth}</h2>
               {items.map((item) => {
-                const isPast = item.date < new Date();
+                const isPast = item.date < today;
                 return (
                   <Card
                     key={`${item.type}-${item.title}-${item.date.toISOString()}`}
