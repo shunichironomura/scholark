@@ -16,6 +16,7 @@ from scholark.models import (
     ConferenceUpdate,
     Message,
     Tag,
+    TagPublic,
 )
 from scholark.slack import notify_new_conference
 
@@ -24,10 +25,20 @@ router = APIRouter(prefix="/conferences", tags=["conferences"])
 
 
 def _conference_to_public(conference: Conference, user_id: UUID) -> ConferencePublic:
-    """Convert a Conference to ConferencePublic with is_subscribed computed for the given user."""
-    cp = ConferencePublic.model_validate(conference)
-    cp.is_subscribed = any(s.id == user_id for s in conference.subscribers)
-    return cp
+    """Convert a Conference to ConferencePublic for the given user.
+
+    Only the user's own tags are included, and is_subscribed is computed for
+    the user. Filtering happens while building the response model; the ORM
+    relationship must not be mutated for presentation, since SQLAlchemy would
+    flush the removal as DELETEs on the tag-conference link table.
+    """
+    return ConferencePublic.model_validate(
+        conference,
+        update={
+            "tags": [TagPublic.model_validate(tag) for tag in conference.tags if tag.user_id == user_id],
+            "is_subscribed": any(s.id == user_id for s in conference.subscribers),
+        },
+    )
 
 
 @router.get("/")
@@ -43,10 +54,6 @@ def read_conferences(
     statement = select(Conference).order_by(col(Conference.start_date)).offset(skip).limit(limit)
 
     conferences = session.exec(statement).all()
-
-    # Filter tags by user
-    for conference in conferences:
-        conference.tags = [tag for tag in conference.tags if tag.user_id == current_user.id]
 
     conferences_public = [_conference_to_public(conference, current_user.id) for conference in conferences]
 
@@ -98,8 +105,6 @@ def read_conference(
     if not conference:
         raise HTTPException(status_code=404, detail="Conference not found")
 
-    # Filter tags by user
-    conference.tags = [tag for tag in conference.tags if tag.user_id == current_user.id]
     return _conference_to_public(conference, current_user.id)
 
 
