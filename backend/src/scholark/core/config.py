@@ -1,4 +1,3 @@
-import secrets
 from datetime import timedelta
 from typing import Annotated, Any, Literal
 
@@ -20,7 +19,9 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Scholark"
 
     API_V1_STR: str = "/api/v1"
-    SECRET_KEY: str = secrets.token_urlsafe(32)
+    # Required: a per-process random default would invalidate all issued
+    # tokens on every restart and break auth across multiple workers.
+    SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE: timedelta = Field(default=timedelta(days=7))
 
     FRONTEND_HOST: str
