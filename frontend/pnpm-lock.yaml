@@ -64,7 +64,7 @@ importers:
         version: 4.4.0
       isbot:
         specifier: ^5.1.28
-        version: 5.2.0
+        version: 5.2.1
       lucide-react:
         specifier: 1.24.0
         version: 1.24.0(react@19.2.7)
@@ -2404,8 +2404,8 @@ packages:
     resolution: {integrity: sha512-e6rvdUCiQCAuumZslxRJWR/Doq4VpPR82kqclvcS0efgt430SlGIk05vdCN58+VrzgtIcfNODjozVielycD4Sw==}
     engines: {node: '>=16'}
 
-  isbot@5.2.0:
-    resolution: {integrity: sha512-gbZiGCb4B5xaoxg9mS7koAyRdvJnArk10VLSHOgz6rtBG93/pi1xOFaVvXMKZ7JXgyZ8zAbNRK5uIBdIUTFSqw==}
+  isbot@5.2.1:
+    resolution: {integrity: sha512-dJ+LpKyClQZ7NG+j3OensC/mAZkGpukE9YUrgPYvAZj2doVL0edfDgywTUh5CXa0o+nW9a1V9e5+CJTX8+SxRw==}
     engines: {node: '>=18'}
 
   isexe@2.0.0:
@@ -4409,7 +4409,7 @@ snapshots:
       dedent: 1.7.2
       es-module-lexer: 2.3.0
       exit-hook: 5.1.0
-      isbot: 5.2.0
+      isbot: 5.2.1
       jsesc: 3.1.0
       lodash: 4.18.1
       p-map: 7.0.5
@@ -5298,7 +5298,7 @@ snapshots:
     dependencies:
       is-inside-container: 1.0.0
 
-  isbot@5.2.0: {}
+  isbot@5.2.1: {}
 
   isexe@2.0.0: {}
 
