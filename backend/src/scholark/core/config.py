@@ -69,4 +69,4 @@ class Settings(BaseSettings):
 
 # Missing argument is intentional to allow environment variables to populate the settings.
 # The required fields will be validated at runtime.
-settings = Settings()  # type: ignore[call-arg] # ty: ignore[missing-argument]
+settings = Settings()  # type: ignore[call-arg]
