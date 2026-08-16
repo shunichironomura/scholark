@@ -83,4 +83,4 @@ lint-frontend:
   vp check
 
 lint-markdown:
-  pnpm dlx markdownlint-cli .
+  uvx --from rumdl==0.2.55 rumdl check .
