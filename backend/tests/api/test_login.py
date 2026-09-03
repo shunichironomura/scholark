@@ -1,7 +1,10 @@
-from fastapi.testclient import TestClient
-from sqlmodel import Session
+from datetime import UTC, datetime, timedelta
 
-from scholark.models import User
+from fastapi.testclient import TestClient
+from sqlmodel import Session, select
+
+from scholark.core.security import create_access_token
+from scholark.models import RefreshSession, User
 from tests.conftest import HeadersFor
 
 API = "/api/v1"
@@ -15,12 +18,93 @@ def login(client: TestClient, username: str, password: str) -> tuple[int, dict[s
     return response.status_code, response.json()
 
 
+def refresh(client: TestClient, refresh_token: str) -> tuple[int, dict[str, str]]:
+    response = client.post(f"{API}/login/refresh", json={"refresh_token": refresh_token})
+    return response.status_code, response.json()
+
+
 def test_login_success(client: TestClient, user: User) -> None:
     status_code, body = login(client, "alice", "alicepassword")
     assert status_code == 200
+    assert body["refresh_token"]
     response = client.get(f"{API}/users/me", headers={"Authorization": f"Bearer {body['access_token']}"})
     assert response.status_code == 200
     assert response.json()["username"] == "alice"
+
+
+def test_refresh_success_rotates_tokens(client: TestClient, user: User) -> None:
+    _, login_body = login(client, "alice", "alicepassword")
+
+    status_code, refresh_body = refresh(client, login_body["refresh_token"])
+
+    assert status_code == 200
+    assert refresh_body["access_token"]
+    assert refresh_body["refresh_token"] != login_body["refresh_token"]
+    assert refresh(client, login_body["refresh_token"])[0] == 401
+
+
+def test_expired_access_token_can_be_refreshed(client: TestClient, user: User) -> None:
+    _, login_body = login(client, "alice", "alicepassword")
+    expired_access_token = create_access_token(user.id, expires_delta=timedelta(seconds=-1))
+    expired_response = client.get(
+        f"{API}/users/me",
+        headers={"Authorization": f"Bearer {expired_access_token}"},
+    )
+    assert expired_response.status_code == 401
+
+    status_code, refresh_body = refresh(client, login_body["refresh_token"])
+    assert status_code == 200
+    response = client.get(
+        f"{API}/users/me",
+        headers={"Authorization": f"Bearer {refresh_body['access_token']}"},
+    )
+    assert response.status_code == 200
+
+
+def test_revoked_refresh_token_returns_401(client: TestClient, session: Session, user: User) -> None:
+    _, body = login(client, "alice", "alicepassword")
+    refresh_session = session.exec(select(RefreshSession).where(RefreshSession.user_id == user.id)).one()
+    session.delete(refresh_session)
+    session.commit()
+
+    assert refresh(client, body["refresh_token"])[0] == 401
+
+
+def test_expired_refresh_token_returns_401(client: TestClient, session: Session, user: User) -> None:
+    _, body = login(client, "alice", "alicepassword")
+    refresh_session = session.exec(select(RefreshSession).where(RefreshSession.user_id == user.id)).one()
+    refresh_session.expires_at = datetime.now(UTC) - timedelta(seconds=1)
+    session.add(refresh_session)
+    session.commit()
+
+    assert refresh(client, body["refresh_token"])[0] == 401
+
+
+def test_logout_revokes_refresh_token(client: TestClient, user: User) -> None:
+    _, body = login(client, "alice", "alicepassword")
+
+    response = client.post(f"{API}/login/logout", json={"refresh_token": body["refresh_token"]})
+
+    assert response.status_code == 204
+    assert refresh(client, body["refresh_token"])[0] == 401
+
+
+def test_disabled_user_refresh_returns_401(client: TestClient, session: Session, user: User) -> None:
+    _, body = login(client, "alice", "alicepassword")
+    user.disabled = True
+    session.add(user)
+    session.commit()
+
+    assert refresh(client, body["refresh_token"])[0] == 401
+    assert session.exec(select(RefreshSession).where(RefreshSession.user_id == user.id)).all() == []
+
+
+def test_deleted_user_refresh_returns_401(client: TestClient, session: Session, user: User) -> None:
+    _, body = login(client, "alice", "alicepassword")
+    session.delete(user)
+    session.commit()
+
+    assert refresh(client, body["refresh_token"])[0] == 401
 
 
 def test_login_wrong_password_returns_400(client: TestClient, user: User) -> None:

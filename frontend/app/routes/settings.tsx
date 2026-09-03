@@ -35,13 +35,13 @@ import type { Route } from "./+types/settings";
 // - Change password
 // - Change username
 
-export async function action({ request }: Route.ActionArgs) {
-  const { session, authHeaders } = await requireSession(request);
+export async function action({ request, context }: Route.ActionArgs) {
+  const { session, client } = await requireSession(context);
   const formData = await request.formData();
   const slackUserId = formData.get("slack_user_id") as string | null;
 
   const { error, response } = await usersUpdateUserMe({
-    headers: authHeaders,
+    client,
     body: { slack_user_id: slackUserId || null },
   });
   if (error) {
@@ -51,15 +51,15 @@ export async function action({ request }: Route.ActionArgs) {
   return redirect("/settings");
 }
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const { session, authHeaders } = await requireSession(request);
+export async function loader({ context }: Route.LoaderArgs) {
+  const { session, client } = await requireSession(context);
 
   const {
     data: user,
     error: userError,
     response: userResponse,
   } = await usersReadUserMe({
-    headers: authHeaders,
+    client,
   });
   if (userError || !user) {
     await logoutIfUnauthorized(session, userResponse);
@@ -70,7 +70,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     data: userTags,
     error: userTagsError,
     response: userTagsResponse,
-  } = await fetchAllTags(authHeaders);
+  } = await fetchAllTags(client);
   if (userTagsError || !userTags) {
     await logoutIfUnauthorized(session, userTagsResponse);
     throw data("Error fetching tags", { status: 500 });

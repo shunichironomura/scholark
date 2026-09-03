@@ -10,15 +10,15 @@ import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import { parseConferenceForm } from "~/lib/conference-form";
 import type { Route } from "./+types/edit-conference";
 
-export async function loader({ request, params }: Route.LoaderArgs) {
-  const { session, authHeaders } = await requireSession(request);
+export async function loader({ params, context }: Route.LoaderArgs) {
+  const { session, client } = await requireSession(context);
   const {
     data: conference,
     error,
     response,
   } = await conferencesReadConference({
     path: { conference_id: params.conferenceId },
-    headers: authHeaders,
+    client,
   });
   if (error) {
     await logoutIfUnauthorized(session, response);
@@ -27,15 +27,15 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   return { conference };
 }
 
-export async function action({ request, params }: Route.ActionArgs) {
-  const { session, authHeaders } = await requireSession(request);
+export async function action({ request, params, context }: Route.ActionArgs) {
+  const { session, client } = await requireSession(context);
   const formData = await request.formData();
   const requestBody = parseConferenceForm(formData);
 
   const { error, response } = await conferencesUpdateConference({
     path: { conference_id: params.conferenceId },
     body: requestBody,
-    headers: authHeaders,
+    client,
   });
   if (error) {
     await logoutIfUnauthorized(session, response);

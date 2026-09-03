@@ -11,5 +11,8 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  test: {
+    env: { SCHOLARK_SESSION_SECRET: "test-session-secret" },
+  },
   plugins: [tailwindcss(), reactRouter()],
 });

@@ -4,8 +4,8 @@ import type { Option } from "~/components/ui/multi-select";
 import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import type { Route } from "./+types/conference-tags";
 
-export async function action({ request, params }: Route.ActionArgs) {
-  const { session, authHeaders } = await requireSession(request);
+export async function action({ request, params, context }: Route.ActionArgs) {
+  const { session, client } = await requireSession(context);
 
   const formData = await request.formData();
   let tags: Option[];
@@ -21,7 +21,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   }
   const { error, response } = await conferencesUpdateTagsForConference({
     path: { conference_id: params.conferenceId },
-    headers: authHeaders,
+    client,
     body: tags.map((tag) => tag.value),
   });
   if (error) {

@@ -10,15 +10,15 @@ import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import { parseConferenceForm } from "~/lib/conference-form";
 import type { Route } from "./+types/create-conference";
 
-export async function action({ request }: Route.ActionArgs) {
-  const { session, authHeaders } = await requireSession(request);
+export async function action({ request, context }: Route.ActionArgs) {
+  const { session, client } = await requireSession(context);
 
   const formData = await request.formData();
   const requestBody = parseConferenceForm(formData);
 
   const { error, response } = await conferencesCreateConference({
     body: requestBody,
-    headers: authHeaders,
+    client,
   });
   if (error) {
     await logoutIfUnauthorized(session, response);

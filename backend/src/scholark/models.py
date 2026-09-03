@@ -208,10 +208,23 @@ class DbAuthCredential(SQLModel, table=True):
     hashed_password: str
 
 
-# JSON payload containing access token
+class RefreshSession(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", index=True, ondelete="CASCADE")
+    token_hash: str = Field(unique=True, index=True, max_length=64)
+    expires_at: datetime = Field(sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
+
+
+# JSON payload containing an access/refresh token pair
 class Token(SQLModel):
     access_token: str
+    refresh_token: str
     token_type: str = "bearer"  # noqa: S105
+
+
+class RefreshTokenRequest(SQLModel):
+    refresh_token: str
 
 
 # Contents of JWT token
