@@ -1,6 +1,6 @@
 import { useId } from "react";
 import { data, Form, Link, redirect } from "react-router";
-import { loginLoginAccessToken, loginTestToken } from "~/client";
+import { loginLoginAccessToken, loginLogout, loginTestToken } from "~/client";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -48,6 +48,7 @@ export async function action({ request }: Route.ActionArgs) {
     headers: { Authorization: `Bearer ${data_.access_token}` },
   });
   if (testTokenError || !testTokenData) {
+    await loginLogout({ body: { refresh_token: data_.refresh_token } });
     session.flash("error", "Login failed");
 
     // The token must not be in the session here: committing it would make
@@ -61,6 +62,7 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   session.set("accessToken", data_.access_token);
+  session.set("refreshToken", data_.refresh_token);
   session.set("username", testTokenData.username);
   session.set("isSuperUser", testTokenData.is_superuser ?? false);
 

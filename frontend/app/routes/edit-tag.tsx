@@ -4,15 +4,15 @@ import { tagsReadTag, tagsUpdateTag } from "~/client";
 import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import type { Route } from "./+types/edit-tag";
 
-export async function loader({ request, params }: Route.LoaderArgs) {
-  const { session, authHeaders } = await requireSession(request);
+export async function loader({ params, context }: Route.LoaderArgs) {
+  const { session, client } = await requireSession(context);
   const {
     data: tag,
     error,
     response,
   } = await tagsReadTag({
     path: { tag_id: params.tagId },
-    headers: authHeaders,
+    client,
   });
   if (error) {
     await logoutIfUnauthorized(session, response);
@@ -21,8 +21,8 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   return { tag };
 }
 
-export async function action({ request, params }: Route.ActionArgs) {
-  const { session, authHeaders } = await requireSession(request);
+export async function action({ request, params, context }: Route.ActionArgs) {
+  const { session, client } = await requireSession(context);
   const formData = await request.formData();
   const tagName = formData.get("name") as string | null;
   const tagColor = formData.get("color") as string | null;
@@ -34,7 +34,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const { error, response } = await tagsUpdateTag({
     path: { tag_id: params.tagId },
-    headers: authHeaders,
+    client,
     body: tagUpdate,
   });
   if (error) {

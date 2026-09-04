@@ -3,8 +3,8 @@ import { conferencesSubscribeToConference, conferencesUnsubscribeFromConference 
 import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import type { Route } from "./+types/conference-subscribe";
 
-export async function action({ request, params }: Route.ActionArgs) {
-  const { session, authHeaders: headers } = await requireSession(request);
+export async function action({ request, params, context }: Route.ActionArgs) {
+  const { session, client } = await requireSession(context);
 
   if (!params.conferenceId) {
     throw data("Conference ID is required", { status: 400 });
@@ -13,7 +13,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   if (request.method === "DELETE") {
     const { error, response } = await conferencesUnsubscribeFromConference({
       path: { conference_id: params.conferenceId },
-      headers,
+      client,
     });
     if (error) {
       await logoutIfUnauthorized(session, response);
@@ -22,7 +22,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   } else {
     const { error, response } = await conferencesSubscribeToConference({
       path: { conference_id: params.conferenceId },
-      headers,
+      client,
     });
     if (error) {
       await logoutIfUnauthorized(session, response);

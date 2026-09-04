@@ -30,17 +30,17 @@ import { pickLabelTextColor } from "~/lib/color";
 import { diffCalendarDays, parseDateOnly, startOfToday } from "~/lib/date";
 import type { Route } from "./+types/conferences";
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const { session, authHeaders } = await requireSession(request);
+export async function loader({ context }: Route.LoaderArgs) {
+  const { session, client } = await requireSession(context);
   const isSuperUser = session.get("isSuperUser") ?? false;
 
-  const { data: conferences, error, response } = await fetchAllConferences(authHeaders);
+  const { data: conferences, error, response } = await fetchAllConferences(client);
   if (error || !conferences) {
     await logoutIfUnauthorized(session, response);
     throw data("Error fetching conferences", { status: 500 });
   }
 
-  const { data: tags, error: tagsError, response: tagsResponse } = await fetchAllTags(authHeaders);
+  const { data: tags, error: tagsError, response: tagsResponse } = await fetchAllTags(client);
   if (tagsError || !tags) {
     await logoutIfUnauthorized(session, tagsResponse);
     throw data("Error fetching tags", { status: 500 });

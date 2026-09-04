@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     # tokens on every restart and break auth across multiple workers.
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE: timedelta = Field(default=timedelta(days=7))
+    REFRESH_TOKEN_EXPIRE: timedelta = Field(default=timedelta(days=365))
 
     FRONTEND_HOST: str
     BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = []

@@ -4,8 +4,8 @@ import { tagsCreateTag } from "~/client";
 import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import type { Route } from "./+types/create-tag";
 
-export async function action({ request }: Route.ActionArgs) {
-  const { session, authHeaders } = await requireSession(request);
+export async function action({ request, context }: Route.ActionArgs) {
+  const { session, client } = await requireSession(context);
 
   const formData = await request.formData();
   const tagName = formData.get("name") as string;
@@ -17,7 +17,7 @@ export async function action({ request }: Route.ActionArgs) {
   };
 
   const { error, response } = await tagsCreateTag({
-    headers: authHeaders,
+    client,
     body: tagCreate,
   });
   if (error) {

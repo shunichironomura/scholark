@@ -31,10 +31,10 @@ interface ScheduleItem {
   tags: Tag[];
 }
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const { session, authHeaders } = await requireSession(request);
+export async function loader({ context }: Route.LoaderArgs) {
+  const { session, client } = await requireSession(context);
 
-  const { data: conferences, error, response } = await fetchAllConferences(authHeaders);
+  const { data: conferences, error, response } = await fetchAllConferences(client);
   if (error || !conferences) {
     await logoutIfUnauthorized(session, response);
     throw data("Error fetching conferences", { status: 500 });
@@ -44,7 +44,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     data: userTags,
     error: userTagsError,
     response: userTagsResponse,
-  } = await fetchAllTags(authHeaders);
+  } = await fetchAllTags(client);
   if (userTagsError || !userTags) {
     await logoutIfUnauthorized(session, userTagsResponse);
     throw data("Error fetching tags", { status: 500 });

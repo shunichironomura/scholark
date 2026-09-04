@@ -263,6 +263,16 @@ export type Message = {
 };
 
 /**
+ * RefreshTokenRequest
+ */
+export type RefreshTokenRequest = {
+  /**
+   * Refresh Token
+   */
+  refresh_token: string;
+};
+
+/**
  * TagCreate
  */
 export type TagCreate = {
@@ -334,6 +344,10 @@ export type Token = {
    * Access Token
    */
   access_token: string;
+  /**
+   * Refresh Token
+   */
+  refresh_token: string;
   /**
    * Token Type
    */
@@ -905,6 +919,58 @@ export type LoginLoginAccessTokenResponses = {
 
 export type LoginLoginAccessTokenResponse =
   LoginLoginAccessTokenResponses[keyof LoginLoginAccessTokenResponses];
+
+export type LoginRefreshAccessTokenData = {
+  body: RefreshTokenRequest;
+  path?: never;
+  query?: never;
+  url: "/api/v1/login/refresh";
+};
+
+export type LoginRefreshAccessTokenErrors = {
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
+};
+
+export type LoginRefreshAccessTokenError =
+  LoginRefreshAccessTokenErrors[keyof LoginRefreshAccessTokenErrors];
+
+export type LoginRefreshAccessTokenResponses = {
+  /**
+   * Successful Response
+   */
+  200: Token;
+};
+
+export type LoginRefreshAccessTokenResponse =
+  LoginRefreshAccessTokenResponses[keyof LoginRefreshAccessTokenResponses];
+
+export type LoginLogoutData = {
+  body: RefreshTokenRequest;
+  path?: never;
+  query?: never;
+  url: "/api/v1/login/logout";
+};
+
+export type LoginLogoutErrors = {
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
+};
+
+export type LoginLogoutError = LoginLogoutErrors[keyof LoginLogoutErrors];
+
+export type LoginLogoutResponses = {
+  /**
+   * Successful Response
+   */
+  204: void;
+};
+
+export type LoginLogoutResponse = LoginLogoutResponses[keyof LoginLogoutResponses];
 
 export type LoginTestTokenData = {
   body?: never;

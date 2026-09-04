@@ -3,12 +3,12 @@ import { tagsDeleteTag } from "~/client";
 import { logoutIfUnauthorized, requireSession } from "~/lib/auth.server";
 import type { Route } from "./+types/delete-tag";
 
-export async function action({ request, params }: Route.ActionArgs) {
-  const { session, authHeaders } = await requireSession(request);
+export async function action({ params, context }: Route.ActionArgs) {
+  const { session, client } = await requireSession(context);
 
   const { error, response } = await tagsDeleteTag({
     path: { tag_id: params.tagId },
-    headers: authHeaders,
+    client,
   });
   if (error) {
     await logoutIfUnauthorized(session, response);

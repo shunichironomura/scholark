@@ -45,6 +45,12 @@ import type {
   LoginLoginAccessTokenData,
   LoginLoginAccessTokenErrors,
   LoginLoginAccessTokenResponses,
+  LoginLogoutData,
+  LoginLogoutErrors,
+  LoginLogoutResponses,
+  LoginRefreshAccessTokenData,
+  LoginRefreshAccessTokenErrors,
+  LoginRefreshAccessTokenResponses,
   LoginTestTokenData,
   LoginTestTokenResponses,
   TagsCreateTagData,
@@ -352,6 +358,44 @@ export const loginLoginAccessToken = <ThrowOnError extends boolean = false>(
     ...options,
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
+      ...options.headers,
+    },
+  });
+
+/**
+ * Refresh Access Token
+ *
+ * Exchange a valid refresh session for a new, rotated token pair.
+ */
+export const loginRefreshAccessToken = <ThrowOnError extends boolean = false>(
+  options: Options<LoginRefreshAccessTokenData, ThrowOnError>,
+): RequestResult<LoginRefreshAccessTokenResponses, LoginRefreshAccessTokenErrors, ThrowOnError> =>
+  (options.client ?? client).post<
+    LoginRefreshAccessTokenResponses,
+    LoginRefreshAccessTokenErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/login/refresh",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
+ * Logout
+ *
+ * Revoke the current refresh session.
+ */
+export const loginLogout = <ThrowOnError extends boolean = false>(
+  options: Options<LoginLogoutData, ThrowOnError>,
+): RequestResult<LoginLogoutResponses, LoginLogoutErrors, ThrowOnError> =>
+  (options.client ?? client).post<LoginLogoutResponses, LoginLogoutErrors, ThrowOnError>({
+    url: "/api/v1/login/logout",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
       ...options.headers,
     },
   });

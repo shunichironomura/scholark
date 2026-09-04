@@ -7,8 +7,29 @@ import {
   ScrollRestoration,
 } from "react-router";
 
+import { authSessionContext } from "~/lib/auth.server";
+import { commitSession, getSession } from "~/sessions.server";
 import type { Route } from "./+types/root";
 import "./app.css";
+
+export const middleware: Route.MiddlewareFunction[] = [
+  async ({ request, context }, next) => {
+    const authSession = {
+      session: await getSession(request.headers.get("Cookie")),
+      needsCommit: false,
+    };
+    context.set(authSessionContext, authSession);
+
+    const response = await next();
+    // A route-authored cookie must win. In particular, if a refreshed retry is
+    // also rejected, logoutIfUnauthorized returns a cookie that destroys this
+    // session and must not be overwritten with the newly refreshed values.
+    if (authSession.needsCommit && !response.headers.has("Set-Cookie")) {
+      response.headers.append("Set-Cookie", await commitSession(authSession.session));
+    }
+    return response;
+  },
+];
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
