@@ -21,6 +21,9 @@ export const middleware: Route.MiddlewareFunction[] = [
     context.set(authSessionContext, authSession);
 
     const response = await next();
+    // A route-authored cookie must win. In particular, if a refreshed retry is
+    // also rejected, logoutIfUnauthorized returns a cookie that destroys this
+    // session and must not be overwritten with the newly refreshed values.
     if (authSession.needsCommit && !response.headers.has("Set-Cookie")) {
       response.headers.append("Set-Cookie", await commitSession(authSession.session));
     }

@@ -1,10 +1,10 @@
 import { isRouteErrorResponse, Outlet } from "react-router";
-import { getSession } from "~/sessions.server";
+import { authSessionContext } from "~/lib/auth.server";
 import type { Route } from "./+types/main";
 import { MainFrame } from "./main-frame";
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
+export function loader({ context }: Route.LoaderArgs) {
+  const { session } = context.get(authSessionContext);
   const username = session.get("username");
   return { username };
 }

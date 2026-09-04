@@ -21,9 +21,15 @@ export interface AuthenticatedSession {
   client: Client;
 }
 
-const refreshRequests = new Map<string, Promise<Token | undefined>>();
+type RefreshOutcome =
+  | { status: "refreshed"; tokens: Token }
+  | { status: "unauthorized" }
+  | { status: "failed"; error: unknown };
 
-function refreshTokens(refreshToken: string): Promise<Token | undefined> {
+const REFRESH_RESULT_TTL_MS = 30_000;
+const refreshRequests = new Map<string, Promise<RefreshOutcome>>();
+
+function refreshTokens(refreshToken: string): Promise<RefreshOutcome> {
   const activeRequest = refreshRequests.get(refreshToken);
   if (activeRequest) {
     return activeRequest;
@@ -31,10 +37,35 @@ function refreshTokens(refreshToken: string): Promise<Token | undefined> {
 
   const request = loginRefreshAccessToken({
     body: { refresh_token: refreshToken },
-  })
-    .then(({ data }) => data)
-    .finally(() => refreshRequests.delete(refreshToken));
+  }).then(({ data, error, response }): RefreshOutcome => {
+    if (data) {
+      return { status: "refreshed", tokens: data };
+    }
+    if (response?.status === 401) {
+      return { status: "unauthorized" };
+    }
+    return { status: "failed", error };
+  });
   refreshRequests.set(refreshToken, request);
+
+  void request.then(
+    (outcome) => {
+      if (outcome.status !== "refreshed") {
+        refreshRequests.delete(refreshToken);
+        return;
+      }
+
+      // A second request can receive its API 401 just after rotation finishes.
+      // Keep the result briefly so that request can commit the same token pair
+      // instead of retrying the now-invalid old refresh token.
+      setTimeout(() => {
+        if (refreshRequests.get(refreshToken) === request) {
+          refreshRequests.delete(refreshToken);
+        }
+      }, REFRESH_RESULT_TTL_MS).unref();
+    },
+    () => refreshRequests.delete(refreshToken),
+  );
   return request;
 }
 
@@ -65,10 +96,15 @@ export async function requireSession(
           return response;
         }
 
-        const tokens = await refreshTokens(refreshToken);
-        if (!tokens) {
+        const outcome = await refreshTokens(refreshToken);
+        if (outcome.status === "unauthorized") {
           return response;
         }
+        if (outcome.status === "failed") {
+          throw outcome.error;
+        }
+
+        const { tokens } = outcome;
 
         accessToken = tokens.access_token;
         refreshToken = tokens.refresh_token;
