@@ -23,7 +23,7 @@ class TagConferenceLink(SQLModel, table=True):
 class ConferenceSubscription(SQLModel, table=True):
     user_id: uuid.UUID = Field(foreign_key="user.id", primary_key=True, ondelete="CASCADE")
     conference_id: uuid.UUID = Field(foreign_key="conference.id", primary_key=True, ondelete="CASCADE")
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))
 
 
 class TagBase(SQLModel):
@@ -73,7 +73,7 @@ class TagsPublic(SQLModel):
 class ConferenceMilestoneBase(SQLModel):
     name: str
     date: date_
-    time: time_ | None = Field(default=None, sa_type=sa.Time(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
+    time: time_ | None = Field(default=None, sa_type=sa.Time(timezone=True))
 
     @computed_field
     def as_datetime(self) -> datetime:
@@ -133,8 +133,8 @@ class ConferenceUpdate(ConferenceBase):
 
 class Conference(ConferenceBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))
     created_by_user_id: uuid.UUID | None = Field(foreign_key="user.id", ondelete="SET NULL")
 
     tags: list[Tag] = Relationship(back_populates="conferences", link_model=TagConferenceLink)
@@ -178,8 +178,8 @@ class UserRegister(SQLModel):
 
 class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))
     disabled: bool = Field(default=False)
     role: str = Field(default="member")
     slack_user_id: str | None = Field(default=None)
@@ -212,8 +212,8 @@ class RefreshSession(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     user_id: uuid.UUID = Field(foreign_key="user.id", index=True, ondelete="CASCADE")
     token_hash: str = Field(unique=True, index=True, max_length=64)
-    expires_at: datetime = Field(sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))  # type: ignore[call-overload] # ty: ignore[invalid-argument-type]
+    expires_at: datetime = Field(sa_type=sa.DateTime(timezone=True))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), sa_type=sa.DateTime(timezone=True))
 
 
 # JSON payload containing an access/refresh token pair
