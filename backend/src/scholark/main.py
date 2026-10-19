@@ -6,6 +6,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
+from sqlalchemy import literal
 from sqlmodel import Session, select
 
 from scholark.api.main import api_router
@@ -25,7 +26,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:  # noqa: ARG001
     with Session(engine) as session:
         # Test database connection
         try:
-            session.exec(select(1))
+            session.exec(select(literal(1)))
             logger.info("Database connection established successfully.")
         except Exception:
             logger.exception("Failed to connect to database.")
