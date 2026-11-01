@@ -8,10 +8,9 @@ workflows:
     '.github/workflows/docker-build.yaml':
         - 'actions/checkout@v7.0.1'
         - 'docker/setup-buildx-action@v4.4.1'
+        - 'voidzero-dev/setup-vp@v1.22.0'
     '.github/workflows/lint-frontend.yaml':
         - 'actions/checkout@v7.0.1'
-        - 'actions/setup-node@v7.1.0'
-        - 'pnpm/action-setup@v6.1.0'
         - 'voidzero-dev/setup-vp@v1.22.0'
     '.github/workflows/lint-python.yaml':
         - 'actions/checkout@v7.0.1'
@@ -24,11 +23,6 @@ dependencies:
         commit: 'sha1-3d3c42e5aac5ba805825da76410c181273ba90b1'
         owner_id: 44036562
         repo_id: 197814629
-    'actions/setup-node@v7.1.0':
-        ref: 'v7.1.0'
-        commit: 'sha1-949feb2413d6458794dcd2491c4babbbce0c15c1'
-        owner_id: 44036562
-        repo_id: 189476904
     'actions/setup-python@v7.1.0':
         ref: 'v7.1.0'
         commit: 'sha1-6d4fd22b20465ccc0f7354476588e8df7c9ca0e0'
@@ -49,11 +43,6 @@ dependencies:
         commit: 'sha1-44924fe9ef4a6f88253c4b6b1bf11c689d3ce53d'
         owner_id: 10510431
         repo_id: 1052387486
-    'pnpm/action-setup@v6.1.0':
-        ref: 'v6.1.0'
-        commit: 'sha1-ea17c68df8912ef543352723c149a84f56e3d413'
-        owner_id: 21320719
-        repo_id: 262289747
     'voidzero-dev/setup-vp@v1.22.0':
         ref: 'v1.22.0'
         commit: 'sha1-cab1ab9eaff52d4857875f4f2c016e36af8f2c76'

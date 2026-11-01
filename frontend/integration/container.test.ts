@@ -53,7 +53,7 @@ describe.skipIf(!image)("frontend production container", () => {
         container,
         "node",
         "-e",
-        'console.log(JSON.stringify({ version: process.versions.node, env: process.env.NODE_ENV, uid: process.getuid() }))',
+        "console.log(JSON.stringify({ version: process.versions.node, env: process.env.NODE_ENV, uid: process.getuid() }))",
       ),
     );
     expect(runtime.version).toBe(readFileSync(".node-version", "utf8").trim());
