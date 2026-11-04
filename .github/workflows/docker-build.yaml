@@ -25,6 +25,19 @@ jobs:
         run: |
           docker compose build
 
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@v1.22.0
+        with:
+          working-directory: frontend
+          cache: true
+
+      - name: Test frontend production container
+        working-directory: frontend
+        run: |
+          SCHOLARK_TEST_IMAGE="$(docker compose build --print | jq -er '.target.frontend.tags[0]')"
+          export SCHOLARK_TEST_IMAGE
+          vp test run integration/container.test.ts
+
   collect-docker-build:
     needs: [docker-compose-build]
     runs-on: ubuntu-latest
