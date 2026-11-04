@@ -1,29 +1,7 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
-  extends: ["config:best-practices"],
-  lockFileMaintenance: {
-    enabled: true,
-  },
-  labels: ["dependencies"],
-  minimumReleaseAge: "7 days",
+  extends: ["github>shunichironomura/renovate-config"],
   packageRules: [
-    {
-      // .github/workflows/actions.lock pins action commits; gh actions-lock strips inline digests.
-      description: "Use the actions lockfile instead of inline digest pins",
-      matchManagers: ["github-actions"],
-      pinDigests: false,
-    },
-    {
-      // Override the 3-day minimumReleaseAge from config:best-practices
-      // (security:minimumReleaseAgeNpm) to match pnpm's minimumReleaseAge (7 days)
-      // in pnpm-workspace.yaml, preventing artifact update failures.
-      matchDatasources: ["npm"],
-      minimumReleaseAge: "7 days",
-    },
-    {
-      matchUpdateTypes: ["lockFileMaintenance"],
-      minimumReleaseAge: null,
-    },
     {
       // Vite+ publishes tightly coupled packages together. Keep the pnpm
       // catalog aliases in sync so Renovate does not create incompatible
@@ -35,24 +13,9 @@
       minimumGroupSize: 2,
     },
     {
-      matchCategories: ["ci"],
-      addLabels: ["ci"],
-    },
-    {
       matchManagers: ["pep621"],
       matchDepTypes: ["dependency-groups"],
       addLabels: ["dev dependencies"],
-      automerge: true,
-    },
-  ],
-  customManagers: [
-    {
-      customType: "regex",
-      description: "Track the gh-actions-lock version used to verify the actions lockfile",
-      managerFilePatterns: ["/^\\.github/workflows/[^/]+\\.ya?ml$/"],
-      matchStrings: ["gh extension install github/gh-actions-lock --pin (?<currentValue>v[^\\s]+)"],
-      depNameTemplate: "github/gh-actions-lock",
-      datasourceTemplate: "github-releases",
     },
   ],
 }
